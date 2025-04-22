@@ -1,0 +1,184 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Inicio - GestorSpa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1540406591-142875a901a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        color: white;
+        margin-top: -76px;
+    }
+    .feature-card {
+        transition: transform 0.3s;
+        cursor: pointer;
+    }
+    .feature-card:hover {
+        transform: translateY(-10px);
+    }
+    .service-card {
+        height: 100%;
+    }
+    .service-card img {
+        height: 200px;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');">
+    <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+            <h1 class="hero-title" style="font-weight: 500; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Bienvenido a Spa "Sentirse bien"</h1>
+            <p class="hero-subtitle" style="font-weight: 400; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Tu espacio de bienestar y relajación</p>
+            <a href="{% url 'turnos:turno_create' %}" class="btn btn-primary btn-lg">
+                Reserva tu sesión
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Servicios Section -->
+<section class="py-5" id="servicios">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-4 mb-3">Nuestros Servicios Exclusivos</h2>
+            <p class="lead elegant-text">Experiencia de Bienestar Personalizada</p>
+        </div>
+        
+        <div class="row">
+            {% for servicio in servicios %}
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                <div class="card h-100 service-card">
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <i class="{{ servicio.icono }} fa-3x" style="color: var(--color-gold);"></i>
+                        </div>
+                        <h3 class="card-title h4">{{ servicio.nombre }}</h3>
+                        <p class="card-text elegant-text">{{ servicio.descripcion|truncatewords:30 }}</p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge" style="background-color: var(--color-primary)">{{ servicio.duracion }} minutos</span>
+                            <span class="h5 mb-0">${{ servicio.precio }}</span>
+                        </div>
+                        <a href="{% url 'turnos:turno_create' %}?servicio={{ servicio.id }}" class="btn btn-primary btn-lg w-100">
+                            Reservar ahora
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-4" data-aos="fade-right">
+                <img src="{% static 'images/12.jpg' %}" 
+                     class="img-fluid rounded-3 shadow" alt="Masaje relajante en spa">
+            </div>
+            <div class="col-md-6" data-aos="fade-left">
+                <h2 class="mb-4">¿Por qué elegirnos?</h2>
+                <div class="mb-4">
+                    <h4 class="elegant-text"><i class="fa-solid fa-check" style="color: var(--color-gold)"></i> Profesionales expertos</h4>
+                    <p>Nuestro equipo está altamente capacitado para brindarte la mejor experiencia.</p>
+                </div>
+                <div class="mb-4">
+                    <h4 class="elegant-text"><i class="fa-solid fa-check" style="color: var(--color-gold)"></i> Ambiente relajante</h4>
+                    <p>Instalaciones diseñadas para tu máxima comodidad y tranquilidad.</p>
+                </div>
+                <div class="mb-4">
+                    <h4 class="elegant-text"><i class="fa-solid fa-check" style="color: var(--color-gold)"></i> Productos premium</h4>
+                    <p>Utilizamos productos de la más alta calidad para tu cuidado.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-4 mb-3">Lo que dicen nuestros clientes</h2>
+            <p class="lead elegant-text">Experiencias reales de bienestar</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="card-text">"Una experiencia increíble. El personal es muy profesional y el ambiente es perfecto para relajarse."</p>
+                        <p class="card-text"><small class="text-muted">- María G.</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="card-text">"Los masajes son excelentes. Me ayudaron mucho con mi dolor de espalda crónico."</p>
+                        <p class="card-text"><small class="text-muted">- Carlos R.</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="card-text">"El servicio de aromaterapia es increíble. Me siento renovada después de cada sesión."</p>
+                        <p class="card-text"><small class="text-muted">- Ana P.</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 text-white" style="background-color: var(--color-primary)">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 mb-3 mb-md-0">
+                <h2 class="mb-0 text-white">¿Listo para una experiencia de bienestar única?</h2>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'turnos:turno_create' %}" class="btn btn-light btn-lg" style="color: var(--color-primary)">
+                    Reserva ahora
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

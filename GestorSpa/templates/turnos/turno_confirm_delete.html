@@ -1,0 +1,59 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Confirmar Eliminación de Turno{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead mb-4">¿Estás seguro que deseas eliminar este turno?</p>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3">Detalles del Turno:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-spa text-primary me-2"></i>
+                                <strong>Servicio:</strong> {{ object.servicio }}
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-calendar-day text-primary me-2"></i>
+                                <strong>Fecha:</strong> {{ object.fecha }}
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                <strong>Hora:</strong> {{ object.hora_inicio }}
+                            </li>
+                            {% if object.notas %}
+                            <li class="mb-2">
+                                <i class="fas fa-sticky-note text-primary me-2"></i>
+                                <strong>Notas:</strong> {{ object.notas }}
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'turnos:turno_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

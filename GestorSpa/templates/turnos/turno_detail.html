@@ -1,0 +1,73 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Detalle del Turno - GestorSpa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" data-aos="fade-right">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'turnos:turno_list' %}" class="text-decoration-none">Turnos</a></li>
+            <li class="breadcrumb-item active">Detalle del Turno</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8" data-aos="fade-up">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="display-6 mb-0">Detalle de la Reserva</h1>
+                        <span class="badge {% if object.estado == 'pendiente' %}bg-warning
+                                          {% elif object.estado == 'confirmado' %}bg-success
+                                          {% elif object.estado == 'cancelado' %}bg-danger
+                                          {% elif object.estado == 'completado' %}bg-info
+                                          {% endif %} p-2">
+                            {{ object.estado }}
+                        </span>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-3">Información del Cliente</h5>
+                            <p class="mb-1"><strong>Nombre:</strong> {{ object.nombre }}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{ object.email }}</p>
+                            <p class="mb-3"><strong>Teléfono:</strong> {{ object.telefono }}</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-3">Detalles de la Reserva</h5>
+                            <p class="mb-1"><strong>Servicio:</strong> {{ object.servicio.nombre }}</p>
+                            <p class="mb-1"><strong>Fecha:</strong> {{ object.fecha }}</p>
+                            <p class="mb-3"><strong>Horario:</strong> {{ object.hora_inicio|time:"H:i" }} - {{ object.hora_fin|time:"H:i" }}</p>
+                        </div>
+
+                        {% if object.notas %}
+                        <div class="col-12">
+                            <h5 class="text-muted mb-3">Notas Adicionales</h5>
+                            <p class="mb-0">{{ object.notas }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex gap-2">
+                        {% if user.is_staff %}
+                        <a href="{% url 'turnos:turno_update' object.id %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Editar Turno
+                        </a>
+                        <a href="{% url 'turnos:turno_delete' object.id %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-2"></i>Cancelar Turno
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'turnos:turno_list' %}" class="btn btn-outline-secondary ms-auto">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a la Lista
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
