@@ -23,6 +23,7 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('usuarios/', include('GestorSpa.apps.usuarios.urls')),
     path('', views.home, name='home'),
     path('servicios/', include('GestorSpa.apps.servicios.urls')),
     path('turnos/', include('GestorSpa.apps.turnos.urls')),

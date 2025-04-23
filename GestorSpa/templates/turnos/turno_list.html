@@ -1,104 +1,134 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Turnos - GestorSpa{% endblock %}
+{% block title %}Gestión de Turnos - GestorSpa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge-estado {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .estado-pendiente {
+        background-color: #79927d;
+        color: white;
+    }
+
+    .estado-vencido {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .estado-cancelado {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .estado-en-atencion {
+        background-color: #79927d;
+        color: white;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .btn-action {
+        padding: 0.25rem 0.5rem;
+        margin: 0 0.25rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <div class="row mb-4 align-items-center">
-        <div class="col-md-8">
-            <h1 class="display-4 mb-0" data-aos="fade-right">Gestión de Turnos</h1>
-            <p class="lead text-muted mt-2" data-aos="fade-right" data-aos-delay="100">Administra las reservas de servicios</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-4 mb-0">Gestión de Turnos</h1>
+            <p class="lead text-muted">Administra las reservas de servicios</p>
         </div>
-        <div class="col-md-4 text-md-end" data-aos="fade-left">
-            <a href="{% url 'turnos:turno_create' %}" class="btn btn-primary">
-                <i class="fas fa-calendar-plus me-2"></i>Nuevo Turno
-            </a>
-        </div>
+        <a href="{% url 'turnos:turno_create' %}" class="btn btn-primary" data-aos="fade-left">
+            <i class="fas fa-plus-circle me-2"></i>NUEVO TURNO
+        </a>
     </div>
 
     {% if messages %}
-    <div class="row mb-4">
-        <div class="col">
-            {% for message in messages %}
+        {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            {% endfor %}
-        </div>
-    </div>
+        {% endfor %}
     {% endif %}
 
-    {% if object_list %}
-    <div class="row">
-        <div class="col">
-            <div class="card border-0 shadow-sm" data-aos="fade-up">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Servicio</th>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Estado</th>
-                                <th class="text-end">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for turno in object_list %}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div>
-                                            <div class="fw-bold">{{ turno.nombre }}</div>
-                                            <div class="small text-muted">{{ turno.email }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ turno.servicio.nombre }}</td>
-                                <td>{{ turno.fecha }}</td>
-                                <td>{{ turno.hora_inicio|time:"H:i" }} - {{ turno.hora_fin|time:"H:i" }}</td>
-                                <td>
-                                    <span class="badge {% if turno.estado == 'pendiente' %}bg-warning
-                                                      {% elif turno.estado == 'confirmado' %}bg-success
-                                                      {% elif turno.estado == 'cancelado' %}bg-danger
-                                                      {% elif turno.estado == 'completado' %}bg-info
-                                                      {% endif %}">
-                                        {{ turno.estado }}
-                                    </span>
-                                </td>
-                                <td class="text-end">
-                                    <div class="btn-group">
-                                        <a href="{% url 'turnos:turno_detail' turno.id %}" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{% url 'turnos:turno_update' turno.id %}" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{% url 'turnos:turno_delete' turno.id %}" class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for turno in object_list %}
+                        <tr>
+                            <td>
+                                <div>{{ turno.nombre }}</div>
+                                <small class="text-muted">{{ turno.email }}</small>
+                            </td>
+                            <td>{{ turno.servicio }}</td>
+                            <td>{{ turno.fecha|date:"d M Y" }}</td>
+                            <td>{{ turno.hora_inicio|time:"H:i" }} - {{ turno.hora_fin|time:"H:i" }}</td>
+                            <td>
+                                {% now "Y-m-d" as current_date %}
+                                {% now "H:i" as current_time %}
+                                {% if turno.estado == 'cancelado' %}
+                                    <span class="badge badge-estado estado-cancelado">Cancelado</span>
+                                {% elif turno.estado == 'en_atencion' %}
+                                    <span class="badge badge-estado estado-en-atencion">En atención</span>
+                                {% elif turno.fecha|date:"Y-m-d" < current_date or turno.fecha|date:"Y-m-d" == current_date and turno.hora_inicio|time:"H:i" < current_time %}
+                                    <span class="badge badge-estado estado-vencido">Vencido</span>
+                                {% else %}
+                                    <span class="badge badge-estado estado-pendiente">Pendiente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'turnos:turno_detail' turno.id %}" class="btn btn-sm btn-outline-primary btn-action">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'turnos:turno_update' turno.id %}" class="btn btn-sm btn-outline-primary btn-action">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'turnos:turno_delete' turno.id %}" class="btn btn-sm btn-outline-danger btn-action">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                <p class="mb-0">No hay turnos registrados</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="text-center py-5" data-aos="fade-up">
-        <i class="fas fa-calendar fa-3x text-muted mb-3"></i>
-        <h3>No hay turnos registrados</h3>
-        <p class="text-muted">Comienza agregando nuevos turnos para tus clientes.</p>
-        <a href="{% url 'turnos:turno_create' %}" class="btn btn-primary mt-3">
-            <i class="fas fa-calendar-plus me-2"></i>Agregar Turno
-        </a>
-    </div>
-    {% endif %}
 </div>
 {% endblock %} 
