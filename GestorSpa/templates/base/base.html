@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,19 +7,32 @@
     <title>{% block title %}GestorSpa{% endblock %}</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         :root {
-            --color-primary: #79927d;
-            --color-primary-rgb: 121, 146, 125;
-            --color-secondary: #5c7161;
-            --color-gold: #ffd700;
-            --color-accent: #e9db9c;
-            --color-dark: #555231;
-            --color-light: #f5f5f5;
+            /* Colores principales con transparencia */
+            --color-sage: rgba(154, 168, 168, 0.8);      /* #9AA8A8 */
+            --color-forest: rgba(70, 106, 68, 0.8);      /* #466A44 */
+            --color-sand: rgba(224, 213, 190, 0.8);      /* #E0D5BE */
+            --color-coral: rgba(224, 144, 141, 0.8);     /* #E0908D */
+            --color-berry: rgba(199, 73, 92, 0.8);       /* #C7495C */
+            
+            /* Variantes claras */
+            --color-sage-light: rgba(154, 168, 168, 0.1);
+            --color-forest-light: rgba(70, 106, 68, 0.1);
+            --color-sand-light: rgba(224, 213, 190, 0.15);
+            --color-coral-light: rgba(224, 144, 141, 0.1);
+            --color-berry-light: rgba(199, 73, 92, 0.1);
+            
+            /* Variantes para hover */
+            --color-sage-hover: rgba(154, 168, 168, 0.9);
+            --color-forest-hover: rgba(70, 106, 68, 0.9);
+            --color-sand-hover: rgba(224, 213, 190, 0.9);
+            --color-coral-hover: rgba(224, 144, 141, 0.9);
+            --color-berry-hover: rgba(199, 73, 92, 0.9);
         }
         
         /* Estilos para la barra de desplazamiento */
@@ -27,31 +41,31 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--color-light);
+            background: var(--color-sand-light);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--color-primary);
+            background: var(--color-sage);
             border-radius: 6px;
-            border: 3px solid var(--color-light);
+            border: 3px solid var(--color-sand-light);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--color-secondary);
+            background: var(--color-forest);
         }
         
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 300;
-            background-color: var(--color-light);
-            color: var(--color-dark);
+            background-color: var(--color-sand-light);
+            color: #2c3e50;
             letter-spacing: 0.3px;
         }
 
         h1, h2, h3, h4 {
             font-family: 'Raleway', sans-serif;
             font-weight: 300;
-            color: var(--color-primary);
+            color: var(--color-forest);
             letter-spacing: 1px;
         }
 
@@ -98,8 +112,7 @@
         }
         
         .navbar {
-            background-color: rgba(121, 146, 125, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
         }
@@ -116,17 +129,16 @@
         }
         
         .nav-link:hover {
-            color: var(--color-gold) !important;
+            color: var(--color-sand) !important;
             transform: translateY(-2px);
         }
         
         .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background-color: white;
+            border: 1px solid var(--color-sage);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
         }
         
         .card:hover {
@@ -135,8 +147,8 @@
         }
         
         .btn-primary {
-            background-color: var(--color-primary);
-            border-color: var(--color-primary);
+            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
+            border: none;
             color: white;
             padding: 0.8rem 2rem;
             transition: all 0.3s ease;
@@ -146,21 +158,20 @@
         }
         
         .btn-primary:hover {
-            background-color: var(--color-dark);
-            border-color: var(--color-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, var(--color-forest-hover), var(--color-sage-hover));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(70, 106, 68, 0.2);
         }
         
         .btn-secondary {
-            background-color: var(--color-secondary);
-            border-color: var(--color-secondary);
+            background-color: var(--color-forest);
+            border-color: var(--color-forest);
         }
         
         .btn-accent {
-            background-color: var(--color-accent);
-            border-color: var(--color-accent);
-            color: var(--color-dark);
+            background-color: var(--color-sand);
+            border-color: var(--color-sand);
+            color: var(--color-forest);
         }
         
         .footer {
@@ -178,7 +189,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(to right, var(--color-gold), var(--color-secondary), var(--color-accent));
+            background: linear-gradient(to right, var(--color-sand), var(--color-forest), var(--color-sage));
         }
         
         .footer-contact-item {
@@ -189,7 +200,7 @@
         }
 
         .footer-contact-item i {
-            color: var(--color-gold);
+            color: var(--color-sand);
             margin-right: 10px;
             font-size: 1.2rem;
         }
@@ -213,7 +224,7 @@
         }
 
         .social-icons a:hover {
-            background-color: var(--color-gold);
+            background-color: var(--color-sand);
             transform: translateY(-3px);
         }
 
@@ -269,6 +280,116 @@
             padding: 1rem 2.5rem;
             font-size: 1.1rem;
         }
+
+        /* Forms */
+        .form-control:focus {
+            border-color: var(--color-forest);
+            box-shadow: 0 0 0 0.2rem var(--color-forest-light);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--color-forest);
+            border-color: var(--color-forest);
+        }
+
+        /* Tables */
+        .table thead th {
+            background-color: var(--color-sage);
+            color: white;
+            border: none;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: var(--color-sand-light);
+        }
+
+        /* Alerts */
+        .alert-success {
+            background-color: var(--color-forest-light);
+            border-color: var(--color-forest);
+            color: var(--color-forest);
+        }
+
+        .alert-danger {
+            background-color: var(--color-berry-light);
+            border-color: var(--color-berry);
+            color: var(--color-berry);
+        }
+
+        /* Links */
+        a {
+            color: var(--color-forest);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--color-forest-hover);
+        }
+
+        /* Badges */
+        .badge.bg-primary {
+            background: var(--color-forest) !important;
+        }
+
+        .badge.bg-danger {
+            background: var(--color-berry) !important;
+        }
+
+        /* Custom Components */
+        .section-card {
+            background-color: white;
+            border: 1px solid var(--color-sage);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            color: var(--color-forest);
+            border-bottom: 2px solid var(--color-sand);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Utilities */
+        .text-primary {
+            color: var(--color-forest) !important;
+        }
+
+        .text-danger {
+            color: var(--color-berry) !important;
+        }
+
+        .border-primary {
+            border-color: var(--color-forest) !important;
+        }
+
+        .bg-light {
+            background-color: var(--color-sand-light) !important;
+        }
+
+        /* Pagination */
+        .page-link {
+            color: var(--color-forest);
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--color-forest);
+            border-color: var(--color-forest);
+        }
+
+        /* Modal */
+        .modal-header {
+            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -301,11 +422,6 @@
                             </a>
                         </li>
                         {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'usuarios:perfil' %}">
-                                <i class="fas fa-user me-1"></i> Perfil
-                            </a>
-                        </li>
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}" class="d-inline">
                                 {% csrf_token %}
@@ -389,7 +505,7 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>

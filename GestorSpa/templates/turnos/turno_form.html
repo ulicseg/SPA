@@ -13,417 +13,405 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_green.css">
 <style>
-    .card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .form-container {
+        max-width: 100%;
+        min-height: calc(100vh - 56px);
+        margin: 0;
+        padding: 1rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
     }
     
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        width: 100%;
+        max-width: 700px;
+        height: auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(121, 146, 125, 0.1);
     }
-
-    .btn-primary {
-        background-color: #79927d;
-        border-color: #79927d;
+    
+    .form-header {
+        background: linear-gradient(135deg, #79927d 0%, #5c7161 100%);
+        padding: 0.8rem 1.2rem;
+        color: white;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .form-body {
+        padding: 1.2rem;
+        overflow-y: auto;
+        flex: 1;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        padding: 0.4rem 0.8rem;
+        border: 1px solid #e9ecef;
         transition: all 0.3s ease;
+        font-size: 0.9rem;
+        height: auto;
     }
-
-    .btn-primary:hover {
-        background-color: #5c7161;
-        border-color: #5c7161;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(92, 113, 97, 0.2);
-    }
-
+    
     .form-control:focus {
         border-color: #79927d;
-        box-shadow: 0 0 0 0.2rem rgba(121, 146, 125, 0.25);
+        box-shadow: 0 0 0 0.15rem rgba(121, 146, 125, 0.15);
     }
-
-    .bg-gradient {
-        background: linear-gradient(135deg, #79927d 0%, #5c7161 100%) !important;
+    
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.2rem;
+        font-size: 0.85rem;
     }
-
-    /* Estilos para los campos de fecha y hora */
-    .flatpickr-calendar {
-        background: #fff;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #79927d 0%, #5c7161 100%);
+        border: none;
         border-radius: 8px;
+        padding: 0.4rem 1rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
     }
-
+    
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(121, 146, 125, 0.2);
+    }
+    
+    .btn-outline-secondary {
+        border-radius: 8px;
+        padding: 0.4rem 1rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        border: 1px solid #ced4da;
+    }
+    
+    .form-check-input:checked {
+        background-color: #79927d;
+        border-color: #79927d;
+    }
+    
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.75rem;
+        margin-top: 0.1rem;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-right: none;
+        color: #79927d;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+        border-radius: 8px 0 0 8px;
+    }
+    
+    .input-group .form-control {
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .input-group:focus-within .input-group-text {
+        border-color: #79927d;
+    }
+    
+    .input-group:focus-within .form-control {
+        border-color: #79927d;
+    }
+    
+    .flatpickr-calendar {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border: 1px solid rgba(121, 146, 125, 0.1);
+    }
+    
     .flatpickr-day.selected {
         background: #79927d !important;
         border-color: #79927d !important;
     }
-
-    .flatpickr-time input:hover,
-    .flatpickr-time .flatpickr-am-pm:hover,
-    .flatpickr-time input:focus,
-    .flatpickr-time .flatpickr-am-pm:focus {
-        background: #f0f8f1;
+    
+    .flatpickr-day:hover {
+        background: rgba(121, 146, 125, 0.1);
     }
-
-    .form-label {
-        color: #5c7161;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+    
+    .section-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        margin-bottom: 0.8rem;
+        border: 1px solid rgba(121, 146, 125, 0.1);
     }
-
-    .input-group-text {
-        background-color: #f8f9fa;
-        border-color: #dee2e6;
+    
+    .section-title {
         color: #79927d;
+        font-weight: 500;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.95rem;
     }
-
-    .input-group-text i {
-        width: 16px;
-        text-align: center;
+    
+    .row {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
     }
-
-    .form-control {
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
-        border-color: #dee2e6;
-        font-size: 1rem;
-    }
-
-    .input-group .form-control {
-        border-start-start-radius: 0;
-        border-end-start-radius: 0;
-    }
-
-    .input-group-text {
-        border-end-end-radius: 0.5rem;
-        border-start-end-radius: 0.5rem;
-    }
-
-    .card-header {
-        border-bottom: none;
-        padding: 1.5rem;
-    }
-
-    .card-header h5 {
-        margin: 0;
-        font-weight: 600;
-        color: #79927d;
-    }
-
-    .card-body {
-        padding: 2rem;
-    }
-
-    .text-primary {
-        color: #79927d !important;
-    }
-
-    .btn-outline-secondary {
-        color: #6c757d;
-        border-color: #6c757d;
-        transition: all 0.3s ease;
-    }
-
-    .btn-outline-secondary:hover {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.2);
-    }
-
-    .shadow-sm {
-        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075) !important;
-    }
-
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-        margin-bottom: 2rem;
-    }
-
-    .breadcrumb-item a {
-        color: #79927d;
-        text-decoration: none;
-    }
-
-    .breadcrumb-item.active {
-        color: #6c757d;
-    }
-
-    /* Animaciones para los elementos del formulario */
+    
     .form-group {
-        transition: all 0.3s ease;
+        margin-bottom: 0.4rem;
     }
-
-    .form-group:hover {
-        transform: translateX(5px);
-    }
-
-    /* Estilo para el textarea de notas */
+    
     textarea.form-control {
-        min-height: 120px;
-        resize: vertical;
+        min-height: 60px;
+        max-height: 80px;
+        border-radius: 8px;
+    }
+    
+    .alert-danger {
+        border-radius: 8px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.8rem;
+        border: 1px solid rgba(220, 53, 69, 0.1);
+    }
+    
+    .h4 {
+        font-size: 1.1rem;
+        margin: 0;
+        font-weight: 500;
+    }
+    
+    .mb-2 {
+        margin-bottom: 0.6rem !important;
+    }
+    
+    .col-md-6, .col-12 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 
-    /* Mejoras en la visualización de errores */
-    .invalid-feedback {
-        font-size: 0.875rem;
-        color: #dc3545;
-        margin-top: 0.5rem;
-    }
-
-    /* Estilo para los iconos en los inputs */
-    .input-group-text i {
-        color: #79927d;
+    @media (min-width: 768px) {
+        .form-container {
+            padding: 0.5rem;
+        }
+        
+        .form-card {
+            border-radius: 6px;
+            max-width: 700px;
+            height: auto;
+            min-height: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <nav aria-label="breadcrumb" data-aos="fade-right">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'turnos:turno_list' %}">Turnos</a></li>
-            <li class="breadcrumb-item active">
-                {% if object %}Editar Turno{% else %}Nuevo Turno{% endif %}
-            </li>
-        </ol>
-    </nav>
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1 class="h4 mb-0">
+                {% if object %}
+                    <i class="fas fa-edit me-1"></i> Editar Turno
+                {% else %}
+                    <i class="fas fa-calendar-plus me-1"></i> Reservar Nuevo Turno
+                {% endif %}
+            </h1>
+        </div>
+        
+        <div class="form-body">
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-1">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card border-0 shadow-lg rounded-3 overflow-hidden" data-aos="fade-up">
-                <div class="card-header bg-gradient py-4">
-                    <h4 class="mb-0 text-white text-center">
-                        {% if object %}
-                            <i class="fas fa-edit me-2"></i> Editar Turno
-                        {% else %}
-                            <i class="fas fa-calendar-plus me-2"></i> Reservar Nuevo Turno
-                        {% endif %}
-                    </h4>
-                </div>
-                <div class="card-body p-4 p-md-5">
-                    <form method="post" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {% for error in form.non_field_errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <div class="row g-4">
-                            <!-- Información Personal -->
-                            <div class="col-md-6">
-                                <div class="card h-100 border-0 shadow-sm">
-                                    <div class="card-header bg-light py-3">
-                                        <h5 class="mb-0">
-                                            <i class="fas fa-user me-2"></i> Información Personal
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-4">
-                                            <label for="{{ form.nombre.id_for_label }}" class="form-label">
-                                                {{ form.nombre.label }}
-                                                {% if form.nombre.field.required %}
-                                                    <span class="text-danger">*</span>
-                                                {% endif %}
-                                            </label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                                {{ form.nombre }}
-                                            </div>
-                                            {% if form.nombre.help_text %}
-                                                <div class="form-text">{{ form.nombre.help_text }}</div>
-                                            {% endif %}
-                                            {% if form.nombre.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.nombre.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                        
-                                        <div class="mb-4">
-                                            <label for="{{ form.email.id_for_label }}" class="form-label">
-                                                {{ form.email.label }}
-                                                {% if form.email.field.required %}
-                                                    <span class="text-danger">*</span>
-                                                {% endif %}
-                                            </label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                                {{ form.email }}
-                                            </div>
-                                            {% if form.email.help_text %}
-                                                <div class="form-text">{{ form.email.help_text }}</div>
-                                            {% endif %}
-                                            {% if form.email.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.email.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                        
-                                        <div class="mb-4">
-                                            <label for="{{ form.telefono.id_for_label }}" class="form-label">
-                                                {{ form.telefono.label }}
-                                                {% if form.telefono.field.required %}
-                                                    <span class="text-danger">*</span>
-                                                {% endif %}
-                                            </label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                                {{ form.telefono }}
-                                            </div>
-                                            {% if form.telefono.help_text %}
-                                                <div class="form-text">{{ form.telefono.help_text }}</div>
-                                            {% endif %}
-                                            {% if form.telefono.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.telefono.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="row g-2">
+                    <!-- Información Personal -->
+                    <div class="col-md-6">
+                        <div class="section-card">
+                            <h5 class="section-title">
+                                <i class="fas fa-user"></i> Información Personal
+                            </h5>
                             
-                            <!-- Detalles de la Reserva -->
-                            <div class="col-md-6">
-                                <div class="card h-100 border-0 shadow-sm">
-                                    <div class="card-header bg-light py-3">
-                                        <h5 class="mb-0">
-                                            <i class="fas fa-calendar-alt me-2"></i> Detalles de la Reserva
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-4">
-                                            <label for="{{ form.servicio.id_for_label }}" class="form-label">
-                                                {{ form.servicio.label }}
-                                                {% if form.servicio.field.required %}
-                                                    <span class="text-danger">*</span>
-                                                {% endif %}
-                                            </label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-spa"></i></span>
-                                                {{ form.servicio }}
-                                            </div>
-                                            {% if form.servicio.help_text %}
-                                                <div class="form-text">{{ form.servicio.help_text }}</div>
-                                            {% endif %}
-                                            {% if form.servicio.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.servicio.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                        
-                                        <div class="mb-4">
-                                            <label for="{{ form.fecha.id_for_label }}" class="form-label">
-                                                {{ form.fecha.label }}
-                                                {% if form.fecha.field.required %}
-                                                    <span class="text-danger">*</span>
-                                                {% endif %}
-                                            </label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                                <input type="text" name="fecha" required id="id_fecha" class="form-control datepicker" placeholder="Selecciona una fecha">
-                                            </div>
-                                            {% if form.fecha.help_text %}
-                                                <div class="form-text">{{ form.fecha.help_text }}</div>
-                                            {% endif %}
-                                            {% if form.fecha.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.fecha.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                        
-                                        <div class="mb-4">
-                                            <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">
-                                                {{ form.hora_inicio.label }}
-                                                {% if form.hora_inicio.field.required %}
-                                                    <span class="text-danger">*</span>
-                                                {% endif %}
-                                            </label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                                                <input type="text" name="hora_inicio" required id="id_hora_inicio" class="form-control timepicker" placeholder="Selecciona una hora">
-                                            </div>
-                                            {% if form.hora_inicio.help_text %}
-                                                <div class="form-text">{{ form.hora_help_text }}</div>
-                                            {% endif %}
-                                            {% if form.hora_inicio.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.hora_inicio.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                            <div class="mb-2">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                                    {{ form.nombre.label }}
+                                    {% if form.nombre.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    {{ form.nombre }}
                                 </div>
-                            </div>
-                            
-                            <!-- Notas Adicionales -->
-                            <div class="col-12">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-header bg-light py-3">
-                                        <h5 class="mb-0">
-                                            <i class="fas fa-sticky-note me-2"></i> Información Adicional
-                                            <small class="text-muted ms-2 fw-normal" style="font-size: 0.85rem;">(Opcional)</small>
-                                        </h5>
+                                {% if form.nombre.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.nombre.errors %}
+                                            {{ error }}
+                                        {% endfor %}
                                     </div>
-                                    <div class="card-body">
-                                        <div class="mb-4">
-                                            <label for="{{ form.notas.id_for_label }}" class="form-label">
-                                                {{ form.notas.label }}
-                                                <small class="text-muted">(Puede incluir preferencias especiales, condiciones médicas relevantes o cualquier otra información importante)</small>
-                                            </label>
-                                            <textarea name="notas" cols="40" rows="4" class="form-control" id="id_notas" placeholder="Por ejemplo:&#10;- Preferencias de música o temperatura&#10;- Alergias o sensibilidades&#10;- Áreas específicas que requieren atención"></textarea>
-                                            {% if form.notas.help_text %}
-                                                <div class="form-text">{{ form.notas.help_text }}</div>
-                                            {% endif %}
-                                            {% if form.notas.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.notas.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="{% url 'turnos:turno_list' %}" class="btn btn-outline-secondary px-4 py-2">
-                                <i class="fas fa-times me-2"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary px-4 py-2">
-                                <i class="fas fa-save me-2"></i> 
-                                {% if object %}
-                                    Guardar Cambios
-                                {% else %}
-                                    Confirmar Reserva
                                 {% endif %}
-                            </button>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    {{ form.email.label }}
+                                    {% if form.email.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    {{ form.email }}
+                                </div>
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-2">
+                                <label for="{{ form.telefono.id_for_label }}" class="form-label">
+                                    {{ form.telefono.label }}
+                                    {% if form.telefono.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    {{ form.telefono }}
+                                </div>
+                                {% if form.telefono.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.telefono.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                    </form>
+                    </div>
+
+                    <!-- Detalles del Turno -->
+                    <div class="col-md-6">
+                        <div class="section-card">
+                            <h5 class="section-title">
+                                <i class="fas fa-calendar-alt"></i> Detalles del Turno
+                            </h5>
+                            
+                            <div class="mb-2">
+                                <label for="{{ form.servicio.id_for_label }}" class="form-label">
+                                    {{ form.servicio.label }}
+                                    {% if form.servicio.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-spa"></i></span>
+                                    {{ form.servicio }}
+                                </div>
+                                {% if form.servicio.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.servicio.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-2">
+                                <label for="{{ form.fecha.id_for_label }}" class="form-label">
+                                    {{ form.fecha.label }}
+                                    {% if form.fecha.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    {{ form.fecha }}
+                                </div>
+                                {% if form.fecha.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.fecha.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-2">
+                                <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">
+                                    {{ form.hora_inicio.label }}
+                                    {% if form.hora_inicio.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                    {{ form.hora_inicio }}
+                                </div>
+                                {% if form.hora_inicio.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.hora_inicio.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notas Adicionales -->
+                    <div class="col-12">
+                        <div class="section-card">
+                            <h5 class="section-title">
+                                <i class="fas fa-sticky-note"></i> Notas Adicionales
+                            </h5>
+                            
+                            <div class="mb-2">
+                                <label for="{{ form.notas.id_for_label }}" class="form-label">
+                                    {{ form.notas.label }}
+                                </label>
+                                {{ form.notas }}
+                                {% if form.notas.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.notas.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <div class="d-flex gap-2 mt-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        {% if object %}Actualizar{% else %}Reservar{% endif %} Turno
+                    </button>
+                    <a href="{% url 'turnos:turno_list' %}" class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -433,52 +421,30 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Configuración del selector de fecha
-        flatpickr("#id_fecha", {
+        // Agregar clases de Bootstrap a los campos del formulario
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], textarea, select');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+
+        // Configurar Flatpickr para el campo de fecha
+        flatpickr("#{{ form.fecha.id_for_label }}", {
             locale: "es",
             dateFormat: "Y-m-d",
             minDate: "today",
-            disableMobile: true,
-            altInput: true,
-            altFormat: "d/m/Y",
-            theme: "material_green"
+            disableMobile: true
         });
 
-        // Configuración del selector de hora
-        flatpickr("#id_hora_inicio", {
+        // Configurar Flatpickr para el campo de hora
+        flatpickr("#{{ form.hora_inicio.id_for_label }}", {
             enableTime: true,
             noCalendar: true,
             dateFormat: "H:i",
             time_24hr: true,
-            minuteIncrement: 30,
-            disableMobile: true,
-            defaultHour: 9,
-            theme: "material_green",
-            placeholder: "Selecciona una hora",
             minTime: "09:00",
             maxTime: "20:00",
-            // Función para deshabilitar horarios específicos
-            disable: [
-                function(date) {
-                    const hour = date.getHours();
-                    // Deshabilitar horarios entre 12:00 y 15:00
-                    return hour >= 12 && hour < 15;
-                }
-            ],
-            // Función para validar que la hora seleccionada esté en los rangos permitidos
-            onChange: function(selectedDates, dateStr, instance) {
-                const hour = selectedDates[0].getHours();
-                if (hour >= 12 && hour < 15) {
-                    instance.clear();
-                }
-            }
+            disableMobile: true
         });
-        
-        // Agregar clases Bootstrap a los campos
-        $('input, select, textarea').addClass('form-control');
-        
-        // Ajustar altura del textarea
-        $('#id_notas').css('min-height', '120px');
     });
 </script>
 {% endblock %}

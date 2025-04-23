@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
@@ -9,29 +9,31 @@ from .models import Turno
 from GestorSpa.apps.servicios.models import Servicio
 from datetime import datetime, timedelta
 
-class TurnoListView(LoginRequiredMixin, ListView):
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_staff
+
+class TurnoListView(AdminRequiredMixin, ListView):
     model = Turno
     template_name = 'turnos/turno_list.html'
     context_object_name = 'turnos'
 
     def get_queryset(self):
-        # Mostrar todos los turnos para usuarios autenticados
         return Turno.objects.all()
 
-class TurnoDetailView(LoginRequiredMixin, DetailView):
+class TurnoDetailView(AdminRequiredMixin, DetailView):
     model = Turno
     template_name = 'turnos/turno_detail.html'
     context_object_name = 'turno'
 
     def get_queryset(self):
-        # Mostrar todos los turnos para usuarios autenticados
         return Turno.objects.all()
 
-class TurnoCreateView(LoginRequiredMixin, CreateView):
+class TurnoCreateView(CreateView):
     model = Turno
     template_name = 'turnos/turno_form.html'
     fields = ['nombre', 'email', 'telefono', 'servicio', 'fecha', 'hora_inicio', 'notas']
-    success_url = reverse_lazy('turnos:turno_list')
+    success_url = reverse_lazy('turnos:turno_confirmacion')
 
     def form_valid(self, form):
         servicio = form.cleaned_data['servicio']
@@ -52,8 +54,11 @@ class TurnoCreateView(LoginRequiredMixin, CreateView):
             messages.error(self.request, 'Ya existe un turno para este servicio en este horario.')
             return redirect('turnos:turno_create')
             
+        response = super().form_valid(form)
+        # Guardar el ID del turno en la sesión para la página de confirmación
+        self.request.session['turno_id'] = self.object.id
         messages.success(self.request, 'Turno creado exitosamente.')
-        return super().form_valid(form)
+        return response
 
 class TurnoConfirmacionView(TemplateView):
     template_name = 'turnos/turno_confirmacion.html'
@@ -70,16 +75,15 @@ class TurnoConfirmacionView(TemplateView):
                 messages.error(self.request, 'No se encontró el turno solicitado.')
         else:
             messages.warning(self.request, 'No hay un turno para confirmar.')
-        return context 
+        return context
 
-class TurnoUpdateView(LoginRequiredMixin, UpdateView):
+class TurnoUpdateView(AdminRequiredMixin, UpdateView):
     model = Turno
     template_name = 'turnos/turno_form.html'
-    fields = ['nombre', 'email', 'telefono', 'servicio', 'fecha', 'hora_inicio', 'notas']
+    fields = ['nombre', 'email', 'telefono', 'servicio', 'fecha', 'hora_inicio', 'notas', 'estado']
     success_url = reverse_lazy('turnos:turno_list')
 
     def get_queryset(self):
-        # Mostrar todos los turnos para usuarios autenticados
         return Turno.objects.all()
 
     def form_valid(self, form):
@@ -104,13 +108,12 @@ class TurnoUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, 'Turno actualizado exitosamente.')
         return super().form_valid(form)
 
-class TurnoDeleteView(LoginRequiredMixin, DeleteView):
+class TurnoDeleteView(AdminRequiredMixin, DeleteView):
     model = Turno
     template_name = 'turnos/turno_confirm_delete.html'
     success_url = reverse_lazy('turnos:turno_list')
 
     def get_queryset(self):
-        # Mostrar todos los turnos para usuarios autenticados
         return Turno.objects.all()
 
     def delete(self, request, *args, **kwargs):

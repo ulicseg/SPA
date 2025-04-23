@@ -5,14 +5,19 @@ from .views import (
     TurnoCreateView,
     TurnoUpdateView,
     TurnoDeleteView,
+    TurnoConfirmacionView,
 )
 
 app_name = 'turnos'
 
 urlpatterns = [
-    path('', TurnoListView.as_view(), name='turno_list'),
-    path('nuevo/', TurnoCreateView.as_view(), name='turno_create'),
-    path('<int:pk>/', TurnoDetailView.as_view(), name='turno_detail'),
-    path('<int:pk>/editar/', TurnoUpdateView.as_view(), name='turno_update'),
-    path('<int:pk>/eliminar/', TurnoDeleteView.as_view(), name='turno_delete'),
+    # Rutas públicas
+    path('reservar/', TurnoCreateView.as_view(), name='turno_create'),
+    path('confirmacion/', TurnoConfirmacionView.as_view(), name='turno_confirmacion'),
+    
+    # Rutas administrativas
+    path('admin/', TurnoListView.as_view(), name='turno_list'),
+    path('admin/<int:pk>/', TurnoDetailView.as_view(), name='turno_detail'),
+    path('admin/<int:pk>/editar/', TurnoUpdateView.as_view(), name='turno_update'),
+    path('admin/<int:pk>/eliminar/', TurnoDeleteView.as_view(), name='turno_delete'),
 ] 
