@@ -1,450 +1,286 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}
-    {% if object %}
-        Editar Turno
-    {% else %}
-        Reservar Turno
-    {% endif %}
-{% endblock %}
+{% block title %}Reservar Turno - GestorSpa{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_green.css">
 <style>
     .form-container {
-        max-width: 100%;
-        min-height: calc(100vh - 56px);
-        margin: 0;
-        padding: 1rem;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-    }
-    
-    .form-card {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1.5rem;
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        width: 100%;
-        max-width: 700px;
-        height: auto;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid rgba(121, 146, 125, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     .form-header {
-        background: linear-gradient(135deg, #79927d 0%, #5c7161 100%);
-        padding: 0.8rem 1.2rem;
-        color: white;
-        border-radius: 12px 12px 0 0;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-header h2 {
+        color: var(--color-primary);
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
     }
     
-    .form-body {
-        padding: 1.2rem;
-        overflow-y: auto;
-        flex: 1;
+    .form-header p {
+        color: #6c757d;
+    }
+    
+    .form-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-section-title {
+        color: var(--color-primary);
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
     .form-control {
-        border-radius: 8px;
-        padding: 0.4rem 0.8rem;
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-        height: auto;
-    }
-    
-    .form-control:focus {
-        border-color: #79927d;
-        box-shadow: 0 0 0 0.15rem rgba(121, 146, 125, 0.15);
-    }
-    
-    .form-label {
-        font-weight: 500;
-        color: #495057;
-        margin-bottom: 0.2rem;
-        font-size: 0.85rem;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #79927d 0%, #5c7161 100%);
-        border: none;
-        border-radius: 8px;
-        padding: 0.4rem 1rem;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(121, 146, 125, 0.2);
-    }
-    
-    .btn-outline-secondary {
-        border-radius: 8px;
-        padding: 0.4rem 1rem;
-        font-weight: 500;
-        font-size: 0.9rem;
         border: 1px solid #ced4da;
+        border-radius: 6px;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 0.2rem rgba(70, 106, 68, 0.25);
     }
     
-    .form-check-input:checked {
-        background-color: #79927d;
-        border-color: #79927d;
+    .horarios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .horario-btn {
+        background: white;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        padding: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .horario-btn:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
     }
     
-    .invalid-feedback {
-        color: #dc3545;
-        font-size: 0.75rem;
-        margin-top: 0.1rem;
+    .horario-btn.selected {
+        background: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
     }
     
-    .input-group-text {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-right: none;
-        color: #79927d;
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
-        border-radius: 8px 0 0 8px;
+    .btn-submit {
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        transition: all 0.2s;
     }
     
-    .input-group .form-control {
-        border-left: none;
-        border-radius: 0 8px 8px 0;
-    }
-    
-    .input-group:focus-within .input-group-text {
-        border-color: #79927d;
-    }
-    
-    .input-group:focus-within .form-control {
-        border-color: #79927d;
+    .btn-submit:hover {
+        background: var(--color-gold);
+        transform: translateY(-2px);
     }
     
     .flatpickr-calendar {
         border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: 1px solid rgba(121, 146, 125, 0.1);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     .flatpickr-day.selected {
-        background: #79927d !important;
-        border-color: #79927d !important;
+        background: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
     }
     
-    .flatpickr-day:hover {
-        background: rgba(121, 146, 125, 0.1);
-    }
-    
-    .section-card {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 0.8rem 1rem;
-        margin-bottom: 0.8rem;
-        border: 1px solid rgba(121, 146, 125, 0.1);
-    }
-    
-    .section-title {
-        color: #79927d;
-        font-weight: 500;
-        margin-bottom: 0.8rem;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.95rem;
-    }
-    
-    .row {
-        margin-left: -0.5rem;
-        margin-right: -0.5rem;
-    }
-    
-    .form-group {
-        margin-bottom: 0.4rem;
-    }
-    
-    textarea.form-control {
-        min-height: 60px;
-        max-height: 80px;
-        border-radius: 8px;
-    }
-    
-    .alert-danger {
-        border-radius: 8px;
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-        margin-bottom: 0.8rem;
-        border: 1px solid rgba(220, 53, 69, 0.1);
-    }
-    
-    .h4 {
-        font-size: 1.1rem;
-        margin: 0;
-        font-weight: 500;
-    }
-    
-    .mb-2 {
-        margin-bottom: 0.6rem !important;
-    }
-    
-    .col-md-6, .col-12 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
     }
 
-    @media (min-width: 768px) {
+    @media (max-width: 768px) {
         .form-container {
-            padding: 0.5rem;
+            margin: 1rem;
+            padding: 1rem;
         }
         
-        .form-card {
-            border-radius: 6px;
-            max-width: 700px;
-            height: auto;
-            min-height: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .form-section {
+            padding: 1rem;
+        }
+
+        .horarios-grid {
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <div class="form-card">
-        <div class="form-header">
-            <h1 class="h4 mb-0">
-                {% if object %}
-                    <i class="fas fa-edit me-1"></i> Editar Turno
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">
+                        {% if form.instance.pk %}
+                            Editar Turno
                 {% else %}
-                    <i class="fas fa-calendar-plus me-1"></i> Reservar Nuevo Turno
+                            Nuevo Turno
                 {% endif %}
-            </h1>
+                    </h2>
         </div>
-        
-        <div class="form-body">
-            <form method="post" class="needs-validation" novalidate>
+                <div class="card-body">
+                    <form method="post" id="turnoForm">
                 {% csrf_token %}
                 
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger py-1">
-                        {% for error in form.non_field_errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                <div class="row g-2">
-                    <!-- Información Personal -->
+                        <div class="row mb-3">
                     <div class="col-md-6">
-                        <div class="section-card">
-                            <h5 class="section-title">
-                                <i class="fas fa-user"></i> Información Personal
-                            </h5>
-                            
-                            <div class="mb-2">
-                                <label for="{{ form.nombre.id_for_label }}" class="form-label">
-                                    {{ form.nombre.label }}
-                                    {% if form.nombre.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre</label>
                                     {{ form.nombre }}
-                                </div>
                                 {% if form.nombre.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.nombre.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {{ form.nombre.errors }}
                                     </div>
                                 {% endif %}
                             </div>
-                            
-                            <div class="mb-2">
-                                <label for="{{ form.email.id_for_label }}" class="form-label">
-                                    {{ form.email.label }}
-                                    {% if form.email.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
                                     {{ form.email }}
-                                </div>
                                 {% if form.email.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.email.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {{ form.email.errors }}
                                     </div>
                                 {% endif %}
                             </div>
+                            </div>
                             
-                            <div class="mb-2">
-                                <label for="{{ form.telefono.id_for_label }}" class="form-label">
-                                    {{ form.telefono.label }}
-                                    {% if form.telefono.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
                                     {{ form.telefono }}
-                                </div>
                                 {% if form.telefono.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.telefono.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {{ form.telefono.errors }}
                                     </div>
                                 {% endif %}
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Detalles del Turno -->
                     <div class="col-md-6">
-                        <div class="section-card">
-                            <h5 class="section-title">
-                                <i class="fas fa-calendar-alt"></i> Detalles del Turno
-                            </h5>
-                            
-                            <div class="mb-2">
-                                <label for="{{ form.servicio.id_for_label }}" class="form-label">
-                                    {{ form.servicio.label }}
-                                    {% if form.servicio.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-spa"></i></span>
+                                <label for="{{ form.servicio.id_for_label }}" class="form-label">Servicio</label>
                                     {{ form.servicio }}
-                                </div>
                                 {% if form.servicio.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.servicio.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {{ form.servicio.errors }}
                                     </div>
                                 {% endif %}
                             </div>
+                            </div>
                             
-                            <div class="mb-2">
-                                <label for="{{ form.fecha.id_for_label }}" class="form-label">
-                                    {{ form.fecha.label }}
-                                    {% if form.fecha.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.fecha.id_for_label }}" class="form-label">Fecha</label>
                                     {{ form.fecha }}
-                                </div>
                                 {% if form.fecha.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.fecha.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {{ form.fecha.errors }}
                                     </div>
                                 {% endif %}
                             </div>
-                            
-                            <div class="mb-2">
-                                <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">
-                                    {{ form.hora_inicio.label }}
-                                    {% if form.hora_inicio.field.required %}
-                                        <span class="text-danger">*</span>
-                                    {% endif %}
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                            <div class="col-md-6">
+                                <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">Hora</label>
                                     {{ form.hora_inicio }}
-                                </div>
                                 {% if form.hora_inicio.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.hora_inicio.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {{ form.hora_inicio.errors }}
                                     </div>
                                 {% endif %}
                             </div>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.notas.id_for_label }}" class="form-label">Notas</label>
+                            {{ form.notas }}
+                            {% if form.notas.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.notas.errors }}
+                                </div>
+                            {% endif %}
                     </div>
 
-                    <!-- Notas Adicionales -->
-                    <div class="col-12">
-                        <div class="section-card">
-                            <h5 class="section-title">
-                                <i class="fas fa-sticky-note"></i> Notas Adicionales
-                            </h5>
-                            
-                            <div class="form-group">
-                                <label for="notas" class="form-label">Notas Adicionales (Opcional)</label>
-                                <textarea class="form-control" id="notas" name="notas" rows="3" placeholder="Ejemplos de información que puedes incluir:
-• Preferencias de música o temperatura
-• Alergias o sensibilidades
-• Áreas específicas que requieren atención
-• Condiciones médicas relevantes
-• Cualquier otra información importante para tu tratamiento"></textarea>
-                                <small class="text-muted">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Esta información nos ayudará a personalizar mejor tu experiencia.
-                                </small>
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        {% endif %}
 
-                <div class="d-flex gap-2 mt-2">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>
-                        {% if object %}Actualizar{% else %}Reservar{% endif %} Turno
-                    </button>
-                    <a href="{% url 'turnos:turno_list' %}" class="btn btn-outline-secondary">
-                        Cancelar
-                    </a>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'turnos:turno_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+                </div>
         </div>
     </div>
 </div>
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Agregar clases de Bootstrap a los campos del formulario
-        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], textarea, select');
-        inputs.forEach(input => {
-            input.classList.add('form-control');
-        });
+    const servicioSelect = document.getElementById('{{ form.servicio.id_for_label }}');
+    const fechaInput = document.getElementById('{{ form.fecha.id_for_label }}');
+    const horaSelect = document.getElementById('{{ form.hora_inicio.id_for_label }}');
 
-        // Configurar Flatpickr para el campo de fecha
-        flatpickr("#{{ form.fecha.id_for_label }}", {
-            locale: "es",
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            disableMobile: true
-        });
+    async function actualizarHorariosDisponibles() {
+        const fecha = fechaInput.value;
+        const servicioId = servicioSelect.value;
 
-        // Configurar Flatpickr para el campo de hora
-        flatpickr("#{{ form.hora_inicio.id_for_label }}", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true,
-            minTime: "09:00",
-            maxTime: "20:00",
-            disableMobile: true
-        });
+        if (!fecha || !servicioId) return;
+
+        try {
+            const response = await fetch(`{% url 'turnos:verificar_disponibilidad' %}?fecha=${fecha}&servicio=${servicioId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                horaSelect.innerHTML = '';
+                data.horarios_disponibles.forEach(hora => {
+                    const option = document.createElement('option');
+                    option.value = hora;
+                    option.textContent = hora;
+                    horaSelect.appendChild(option);
+                });
+            } else {
+                console.error('Error al obtener horarios:', data.error);
+            }
+        } catch (error) {
+            console.error('Error en la petición:', error);
+        }
+    }
+
+    servicioSelect.addEventListener('change', actualizarHorariosDisponibles);
+    fechaInput.addEventListener('change', actualizarHorariosDisponibles);
     });
 </script>
 {% endblock %}

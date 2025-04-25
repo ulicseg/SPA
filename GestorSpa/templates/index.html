@@ -5,8 +5,17 @@
 
 {% block extra_css %}
 <style>
+    /* Estilos generales */
+    :root {
+        --card-spacing: 2rem;
+        --card-radius: 15px;
+        --transition-speed: 0.3s;
+    }
+
+    /* Hero Section */
     .hero-section {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1540406591-142875a901a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                    url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=100');
         background-size: cover;
         background-position: center;
         height: 100vh;
@@ -15,31 +24,254 @@
         color: white;
         margin-top: -76px;
     }
-    .feature-card {
-        transition: transform 0.3s;
-        cursor: pointer;
+
+    /* Servicios Section */
+    .services-section {
+        padding: 40px 0;
+        background: linear-gradient(180deg, 
+            #ffffff 0%,
+            rgba(214, 220, 214, 0.3) 15%,
+            rgba(214, 220, 214, 0.3) 85%,
+            #ffffff 100%
+        );
+        position: relative;
+        overflow: hidden;
     }
-    .feature-card:hover {
-        transform: translateY(-10px);
+
+    .services-section::before,
+    .services-section::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 120px;
+        pointer-events: none;
     }
+
+    .services-section::before {
+        top: 0;
+        background: linear-gradient(180deg, 
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0) 100%
+        );
+    }
+
+    .services-section::after {
+        bottom: 0;
+        background: linear-gradient(0deg, 
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0) 100%
+        );
+    }
+
+    .services-title {
+        font-size: 1.75rem;
+        color: #4A665A;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+        position: relative;
+    }
+
+    .services-subtitle {
+        font-size: 0.9rem;
+        color: #7B8B84;
+        text-align: center;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        padding: 0 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+    }
+
     .service-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(214, 220, 214, 0.5);
+        overflow: hidden;
+        transition: all var(--transition-speed);
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 15px rgba(74, 102, 90, 0.05);
     }
-    .service-card img {
-        height: 200px;
+
+    .service-card:hover {
+        transform: translateY(-3px);
+        border: 1px solid rgba(74, 102, 90, 0.2);
+        box-shadow: 0 8px 20px rgba(74, 102, 90, 0.08);
+    }
+
+    .service-image {
+        width: 100%;
+        height: 120px;
         object-fit: cover;
+        border-bottom: 1px solid rgba(214, 220, 214, 0.5);
+    }
+
+    .service-icon {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, 
+            rgba(214, 220, 214, 0.2),
+            rgba(214, 220, 214, 0.1)
+        );
+        color: #4A665A;
+        border-bottom: 1px solid rgba(214, 220, 214, 0.5);
+    }
+
+    .service-content {
+        padding: 0.75rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(214, 220, 214, 0.1) 100%
+        );
+    }
+
+    .service-content h3 {
+        color: #4A665A;
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .service-description {
+        color: #7B8B84;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+        flex-grow: 1;
+        font-size: 0.85rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .service-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.4rem 0.75rem;
+        background: linear-gradient(135deg,
+            rgba(214, 220, 214, 0.2),
+            rgba(214, 220, 214, 0.1)
+        );
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        border: 1px solid rgba(214, 220, 214, 0.5);
+    }
+
+    .duration, .price {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: #4A665A;
+        font-weight: 500;
+    }
+
+    .duration i, .price i {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        color: #4A665A;
+    }
+
+    .btn-forest {
+        background: linear-gradient(135deg,
+            #4A665A 0%,
+            #5B7A6C 100%
+        );
+        color: white;
+        padding: 0.4rem 0.75rem;
+        border-radius: 12px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all var(--transition-speed);
+        border: none;
+        display: block;
+        font-size: 0.8rem;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .btn-forest:hover {
+        background: linear-gradient(135deg,
+            #5B7A6C 0%,
+            #4A665A 100%
+        );
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(74, 102, 90, 0.2);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .services-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            padding: 0 1rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .services-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .services-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .services-section {
+            padding: 30px 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .services-grid {
+            grid-template-columns: repeat(1, 1fr);
+            max-width: 280px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');">
+<section class="hero-section">
     <div class="container">
         <div class="hero-content" data-aos="fade-up">
-            <h1 class="hero-title" style="font-weight: 500; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Bienvenido a Spa "Sentirse bien"</h1>
-            <p class="hero-subtitle" style="font-weight: 400; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Tu espacio de bienestar y relajación</p>
-            <a href="{% url 'turnos:turno_create' %}" class="btn btn-primary btn-lg">
+            <h1 class="hero-title" style="font-weight: 500; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                Bienvenido a Spa "Sentirse bien"
+            </h1>
+            <p class="hero-subtitle" style="font-weight: 400; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+                Tu espacio de bienestar y relajación
+            </p>
+            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-primary btn-lg">
                 Reserva tu sesión
             </a>
         </div>
@@ -47,28 +279,36 @@
 </section>
 
 <!-- Servicios Section -->
-<section class="py-5" id="servicios">
+<section class="services-section">
     <div class="container">
-        <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="display-4 mb-3">Nuestros Servicios Exclusivos</h2>
-            <p class="lead elegant-text">Experiencia de Bienestar Personalizada</p>
-        </div>
+        <h2 class="services-title">Nuestros Servicios Exclusivos</h2>
+        <p class="services-subtitle">Descubre nuestra selección de tratamientos diseñados para tu bienestar y relajación</p>
         
-        <div class="row">
+        <div class="services-grid">
             {% for servicio in servicios %}
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
-                <div class="card h-100 service-card">
-                    <div class="card-body text-center">
-                        <div class="mb-4">
-                            <i class="{{ servicio.icono }} fa-3x" style="color: var(--color-gold);"></i>
+            <div class="servicio-item">
+                <div class="service-card">
+                    {% if servicio.imagen %}
+                        <img src="{{ servicio.imagen.url }}" alt="{{ servicio.nombre }}" class="service-image">
+                    {% else %}
+                        <div class="service-icon">
+                            <i class="{{ servicio.icono }}"></i>
                         </div>
-                        <h3 class="card-title h4">{{ servicio.nombre }}</h3>
-                        <p class="card-text elegant-text">{{ servicio.descripcion|truncatewords:30 }}</p>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge" style="background-color: var(--color-primary)">{{ servicio.duracion }} minutos</span>
-                            <span class="h5 mb-0">${{ servicio.precio }}</span>
+                    {% endif %}
+                    <div class="service-content">
+                        <h3>{{ servicio.nombre }}</h3>
+                        <p class="service-description">{{ servicio.descripcion }}</p>
+                        <div class="service-info">
+                            <span class="duration">
+                                <i class="fas fa-clock"></i>
+                                {{ servicio.duracion }} min
+                            </span>
+                            <span class="price">
+                                <i class="fas fa-tag"></i>
+                                ${{ servicio.precio }}
+                            </span>
                         </div>
-                        <a href="{% url 'turnos:turno_create' %}?servicio={{ servicio.id }}" class="btn btn-primary btn-lg w-100">
+                        <a href="{% url 'turnos:turno_reserva_unificada' %}?servicio={{ servicio.id }}" class="btn btn-forest">
                             Reservar ahora
                         </a>
                     </div>
@@ -90,15 +330,24 @@
             <div class="col-md-6" data-aos="fade-left">
                 <h2 class="mb-4">¿Por qué elegirnos?</h2>
                 <div class="mb-4">
-                    <h4 class="elegant-text"><i class="fa-solid fa-check" style="color: var(--color-gold)"></i> Profesionales expertos</h4>
+                    <h4 class="elegant-text">
+                        <i class="fa-solid fa-check" style="color: var(--color-forest)"></i> 
+                        Profesionales expertos
+                    </h4>
                     <p>Nuestro equipo está altamente capacitado para brindarte la mejor experiencia.</p>
                 </div>
                 <div class="mb-4">
-                    <h4 class="elegant-text"><i class="fa-solid fa-check" style="color: var(--color-gold)"></i> Ambiente relajante</h4>
+                    <h4 class="elegant-text">
+                        <i class="fa-solid fa-check" style="color: var(--color-forest)"></i> 
+                        Ambiente relajante
+                    </h4>
                     <p>Instalaciones diseñadas para tu máxima comodidad y tranquilidad.</p>
                 </div>
                 <div class="mb-4">
-                    <h4 class="elegant-text"><i class="fa-solid fa-check" style="color: var(--color-gold)"></i> Productos premium</h4>
+                    <h4 class="elegant-text">
+                        <i class="fa-solid fa-check" style="color: var(--color-forest)"></i> 
+                        Productos premium
+                    </h4>
                     <p>Utilizamos productos de la más alta calidad para tu cuidado.</p>
                 </div>
             </div>
@@ -106,75 +355,18 @@
     </div>
 </section>
 
-<!-- Testimonials Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="display-4 mb-3">Lo que dicen nuestros clientes</h2>
-            <p class="lead elegant-text">Experiencias reales de bienestar</p>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="mb-3 text-warning">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <p class="card-text">"Una experiencia increíble. El personal es muy profesional y el ambiente es perfecto para relajarse."</p>
-                        <p class="card-text"><small class="text-muted">- María G.</small></p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="mb-3 text-warning">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <p class="card-text">"Los masajes son excelentes. Me ayudaron mucho con mi dolor de espalda crónico."</p>
-                        <p class="card-text"><small class="text-muted">- Carlos R.</small></p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="mb-3 text-warning">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <p class="card-text">"El servicio de aromaterapia es increíble. Me siento renovada después de cada sesión."</p>
-                        <p class="card-text"><small class="text-muted">- Ana P.</small></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- CTA Section -->
-<section class="py-5 text-white" style="background-color: var(--color-primary)">
+<section class="py-5" style="background-color: var(--color-sage-light)">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8 mb-3 mb-md-0">
-                <h2 class="mb-0 text-white">¿Listo para una experiencia de bienestar única?</h2>
+                <h2 class="mb-0" style="color: var(--color-forest);">
+                    ¿Listo para una experiencia de bienestar única?
+                </h2>
             </div>
             <div class="col-md-4 text-md-end">
-                <a href="{% url 'turnos:turno_create' %}" class="btn btn-light btn-lg" style="color: var(--color-primary)">
+                <a href="{% url 'turnos:turno_reserva_unificada' %}" 
+                   class="btn btn-forest btn-lg">
                     Reserva ahora
                 </a>
             </div>
