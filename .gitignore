@@ -45,8 +45,5 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Django Secret Key
-GestorSpa/configuraciones/settings.py
-
 # Static files
 staticfiles/ 
