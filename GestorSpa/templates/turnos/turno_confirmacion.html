@@ -62,10 +62,30 @@
         text-decoration: none;
         display: inline-block;
         margin-top: 20px;
+        margin-right: 10px;
     }
 
     .btn-volver:hover {
         background: var(--color-sage);
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .btn-descargar {
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 12px 25px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    .btn-descargar:hover {
+        background: #218838;
         transform: translateY(-2px);
         color: white;
     }
@@ -117,9 +137,14 @@
         <p>Si necesita modificar o cancelar su turno, por favor contáctenos con al menos 24 horas de anticipación a este correo o numero: +54 3624567890,
             info@gestorspa.com</p>
         
-        <a href="{% url 'home' %}" class="btn-volver">
-            <i class="fas fa-home me-2"></i>Volver al Inicio
-        </a>
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn-volver">
+                <i class="fas fa-home me-2"></i>Volver al Inicio
+            </a>
+            <a href="{% url 'turnos:turno_pdf' turno.pk %}" class="btn-descargar">
+                <i class="fas fa-file-pdf me-2"></i>Descargar Comprobante
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %} 

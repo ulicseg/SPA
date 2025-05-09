@@ -12,4 +12,5 @@ urlpatterns = [
     path('verificar-disponibilidad/', views.verificar_disponibilidad, name='verificar_disponibilidad'),
     path('reservar/', views.TurnoReservaUnificadaView.as_view(), name='turno_reserva_unificada'),
     path('confirmacion/', views.TurnoConfirmacionView.as_view(), name='turno_confirmacion'),
+    path('pdf/<int:pk>/', views.turno_pdf, name='turno_pdf'),
 ] 

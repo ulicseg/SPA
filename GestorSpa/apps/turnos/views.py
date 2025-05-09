@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import Turno
 from GestorSpa.apps.servicios.models import Servicio
 from datetime import datetime, timedelta, date
@@ -14,6 +14,9 @@ from calendar import monthcalendar, month_name
 import locale
 from .forms import TurnoForm
 from django.views.decorators.http import require_http_methods
+from weasyprint import HTML
+from django.template.loader import render_to_string
+import os
 
 # Configurar locale para español
 try:
@@ -281,4 +284,29 @@ class TurnoReservaUnificadaView(TemplateView):
             messages.error(request, f'Error al procesar la reserva: {str(e)}')
             context = self.get_context_data()
             context['form'] = form
-            return self.render_to_response(context) 
+            return self.render_to_response(context)
+
+def turno_pdf(request, pk):
+    turno = get_object_or_404(Turno, pk=pk)
+    
+    # Si el usuario no está autenticado, verificar si el turno fue creado recientemente
+    if not request.user.is_authenticated:
+        # Verificar si el turno fue creado recientemente (en los últimos 5 minutos)
+        if (timezone.now() - turno.created_at).total_seconds() > 300:  # 300 segundos = 5 minutos
+            messages.error(request, 'No tiene permiso para acceder a este recurso.')
+            return redirect('home')
+    
+    # Renderizar el template HTML
+    html_string = render_to_string('turnos/turno_pdf.html', {
+        'turno': turno,
+        'base_url': request.build_absolute_uri('/')[:-1]
+    })
+    
+    # Generar el PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="turno_{turno.id}.pdf"'
+    
+    # Generar el PDF usando WeasyPrint
+    HTML(string=html_string).write_pdf(response)
+    
+    return response 

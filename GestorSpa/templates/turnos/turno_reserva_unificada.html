@@ -288,6 +288,11 @@
         // Mostrar paso 2
         document.getElementById('paso2').classList.add('visible');
         
+        // Scroll automático a Paso 2
+        setTimeout(function() {
+            document.getElementById('paso2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+        
         // Resetear selección de fecha y hora
         fechaSeleccionada = null;
         horaSeleccionada = null;
@@ -349,6 +354,10 @@
             
             // Mostrar paso 3
             document.getElementById('paso3').classList.add('visible');
+            // Scroll automático a Paso 3
+            setTimeout(function() {
+                document.getElementById('paso3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
         }
     }
 

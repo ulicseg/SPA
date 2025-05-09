@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Turno - {{ turno.nombre }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        .turno-info {
+            margin: 20px 0;
+        }
+        .turno-info h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .info-row {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Comprobante de Turno</h1>
+        <p>SPA Sentirse Bien</p>
+    </div>
+
+    <div class="turno-info">
+        <h2>Detalles del Turno</h2>
+        <div class="info-row">
+            <span class="info-label">Nombre:</span>
+            <span>{{ turno.nombre }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Servicio:</span>
+            <span>{{ turno.servicio.nombre }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Fecha:</span>
+            <span>{{ turno.fecha|date:"d/m/Y" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Hora:</span>
+            <span>{{ turno.hora_inicio|time:"H:i" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Duración:</span>
+            <span>{{ turno.servicio.duracion }} minutos</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Estado:</span>
+            <span>{{ turno.get_estado_display }}</span>
+        </div>
+    </div>
+
+    <div class="turno-info">
+        <h2>Información de Contacto</h2>
+        <div class="info-row">
+            <span class="info-label">Email:</span>
+            <span>{{ turno.email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Teléfono:</span>
+            <span>{{ turno.telefono }}</span>
+        </div>
+        {% if turno.notas %}
+        <div class="info-row">
+            <span class="info-label">Notas:</span>
+            <span>{{ turno.notas }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>Este es un comprobante generado automáticamente.</p>
+        <p>Fecha de emisión: {{ turno.created_at|date:"d/m/Y H:i" }}</p>
+    </div>
+</body>
+</html> 

@@ -211,6 +211,11 @@
                                        title="Eliminar turno">
                                         <i class="fas fa-trash"></i>
                                     </a>
+                                    <a href="{% url 'turnos:turno_pdf' turno.pk %}" 
+                                       class="btn btn-sm btn-outline-success"
+                                       title="Descargar PDF">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
