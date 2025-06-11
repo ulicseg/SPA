@@ -5,556 +5,634 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GestorSpa{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <style>
+        /* Configuración de colores personalizados para Tailwind */
         :root {
-            /* Colores principales con transparencia */
-            --color-sage: rgba(154, 168, 168, 0.8);      /* #9AA8A8 */
-            --color-forest: rgba(70, 106, 68, 0.8);      /* #466A44 */
-            --color-sand: rgba(224, 213, 190, 0.8);      /* #E0D5BE */
-            --color-coral: rgba(224, 144, 141, 0.8);     /* #E0908D */
-            --color-berry: rgba(199, 73, 92, 0.8);       /* #C7495C */
-            
-            /* Variantes claras */
-            --color-sage-light: rgba(154, 168, 168, 0.1);
-            --color-forest-light: rgba(70, 106, 68, 0.1);
-            --color-sand-light: rgba(224, 213, 190, 0.15);
-            --color-coral-light: rgba(224, 144, 141, 0.1);
-            --color-berry-light: rgba(199, 73, 92, 0.1);
-            
-            /* Variantes para hover */
-            --color-sage-hover: rgba(154, 168, 168, 0.9);
-            --color-forest-hover: rgba(70, 106, 68, 0.9);
-            --color-sand-hover: rgba(224, 213, 190, 0.9);
-            --color-coral-hover: rgba(224, 144, 141, 0.9);
-            --color-berry-hover: rgba(199, 73, 92, 0.9);
+            --sage: 154, 168, 168;
+            --forest: 70, 106, 68;
+            --sand: 224, 213, 190;
+            --coral: 224, 144, 141;
+            --berry: 199, 73, 92;
         }
         
-        /* Estilos para la barra de desplazamiento */
+        /* Scrollbar personalizada */
         ::-webkit-scrollbar {
-            width: 12px;
+            width: 8px;
         }
-
+        
         ::-webkit-scrollbar-track {
-            background: var(--color-sand-light);
+            background: rgb(var(--sand) / 0.2);
         }
-
+        
         ::-webkit-scrollbar-thumb {
-            background: var(--color-sage);
-            border-radius: 6px;
-            border: 3px solid var(--color-sand-light);
+            background: rgb(var(--sage));
+            border-radius: 4px;
         }
-
+        
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--color-forest);
+            background: rgb(var(--forest));
         }
         
-        body {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 300;
-            background-color: var(--color-sand-light);
-            color: #2c3e50;
-            letter-spacing: 0.3px;
-        }
-
-        h1, h2, h3, h4 {
-            font-family: 'Raleway', sans-serif;
-            font-weight: 300;
-            color: var(--color-forest);
-            letter-spacing: 1px;
-        }
-
-        .elegant-text {
-            font-family: 'Raleway', serif;
-            font-weight: 200;
-            letter-spacing: 0.5px;
-        }
-
-        .navbar-brand {
-            font-family: 'Raleway', sans-serif;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-
-        .nav-link {
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
-        .btn {
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
-        .footer-heading {
-            font-family: 'Raleway', sans-serif;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .hero-title {
-            font-family: 'Raleway', sans-serif;
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .hero-subtitle {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            color: rgba(255, 255, 255, 0.95);
+        /* Fuentes */
+        .font-primary {
+            font-family: 'Inter', sans-serif;
         }
         
-        .navbar {
-            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            padding: 1rem 0;
+        .font-secondary {
+            font-family: 'Playfair Display', serif;
         }
         
-        .navbar-scrolled {
-            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
-            padding: 0.5rem 0;
+        /* Animaciones personalizadas */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .navbar-brand, .nav-link {
-            color: white !important;
-            transition: all 0.3s ease;
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .nav-link:hover {
-            color: var(--color-sand) !important;
-            transform: translateY(-2px);
+        @keyframes scale-in {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         
-        .card {
-            background-color: white;
-            border: 1px solid var(--color-sage);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+        .animate-fade-in {
+            animation: fade-in 0.6s ease-out;
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        .animate-slide-up {
+            animation: slide-up 0.8s ease-out;
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
-            border: none;
-            color: white;
-            padding: 0.8rem 2rem;
-            transition: all 0.3s ease;
+        .animate-scale-in {
+            animation: scale-in 0.5s ease-out;
+        }
+        
+        /* Clases de utilidad personalizadas */
+        .text-sage { color: rgb(var(--sage)); }
+        .text-forest { color: rgb(var(--forest)); }
+        .text-sand { color: rgb(var(--sand)); }
+        .text-coral { color: rgb(var(--coral)); }
+        .text-berry { color: rgb(var(--berry)); }
+        
+        .bg-sage { background-color: rgb(var(--sage)); }
+        .bg-forest { background-color: rgb(var(--forest)); }
+        .bg-sand { background-color: rgb(var(--sand)); }
+        .bg-coral { background-color: rgb(var(--coral)); }
+        .bg-berry { background-color: rgb(var(--berry)); }
+        
+        .bg-sage\/10 { background-color: rgb(var(--sage) / 0.1); }
+        .bg-forest\/10 { background-color: rgb(var(--forest) / 0.1); }
+        .bg-sand\/10 { background-color: rgb(var(--sand) / 0.1); }
+        .bg-coral\/10 { background-color: rgb(var(--coral) / 0.1); }
+        .bg-berry\/10 { background-color: rgb(var(--berry) / 0.1); }
+        
+        .border-sage { border-color: rgb(var(--sage)); }
+        .border-forest { border-color: rgb(var(--forest)); }
+        .border-sand { border-color: rgb(var(--sand)); }
+        .border-coral { border-color: rgb(var(--coral)); }
+        .border-berry { border-color: rgb(var(--berry)); }
+        
+        .hover\:bg-sage:hover { background-color: rgb(var(--sage)); }
+        .hover\:bg-forest:hover { background-color: rgb(var(--forest)); }
+        .hover\:bg-sand:hover { background-color: rgb(var(--sand)); }
+        .hover\:bg-coral:hover { background-color: rgb(var(--coral)); }
+        .hover\:bg-berry:hover { background-color: rgb(var(--berry)); }
+        
+        .hover\:text-sage:hover { color: rgb(var(--sage)); }
+        .hover\:text-forest:hover { color: rgb(var(--forest)); }
+        .hover\:text-sand:hover { color: rgb(var(--sand)); }
+        .hover\:text-coral:hover { color: rgb(var(--coral)); }
+        .hover\:text-berry:hover { color: rgb(var(--berry)); }
+        
+        /* Gradientes */
+        .gradient-forest-sage {
+            background: linear-gradient(135deg, rgb(var(--forest)), rgb(var(--sage)));
+        }
+        
+        .gradient-coral-berry {
+            background: linear-gradient(135deg, rgb(var(--coral)), rgb(var(--berry)));
+        }
+        
+        .gradient-sand-coral {
+            background: linear-gradient(135deg, rgb(var(--sand)), rgb(var(--coral)));
+        }
+        
+        /* Mejoras para el menú de navegación */
+        .nav-dropdown {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgb(var(--sage));
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 400;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 1rem 0.25rem;
+            border-bottom: 1px solid rgba(var(--sage), 0.1);
+            margin-bottom: 0.25rem;
         }
         
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--color-forest-hover), var(--color-sage-hover));
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(70, 106, 68, 0.2);
+        .nav-item {
+            transition: all 0.2s ease;
         }
         
-        .btn-secondary {
-            background-color: var(--color-forest);
-            border-color: var(--color-forest);
+        .nav-item:hover {
+            background: rgba(var(--sage), 0.1);
+            transform: translateX(2px);
         }
         
-        .btn-accent {
-            background-color: var(--color-sand);
-            border-color: var(--color-sand);
-            color: var(--color-forest);
-        }
-        
-        .footer {
-            background-color: #79927d;
-            color: white;
-            padding: 50px 0 20px;
-            margin-top: 50px;
-            position: relative;
-        }
-
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(to right, var(--color-sand), var(--color-forest), var(--color-sage));
-        }
-        
-        .footer-contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .footer-contact-item i {
-            color: var(--color-sand);
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-icons a {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .social-icons a:hover {
-            background-color: var(--color-sand);
-            transform: translateY(-3px);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 30px;
-            padding-top: 20px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* Efectos de scroll */
-        .scroll-fade {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease;
-        }
-
-        .scroll-fade.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Estilos para el hero section */
-        .hero-section {
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            color: white;
-            text-align: center;
-            padding: 100px 0;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.3));
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-lg {
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-        }
-
-        /* Forms */
-        .form-control:focus {
-            border-color: var(--color-forest);
-            box-shadow: 0 0 0 0.2rem var(--color-forest-light);
-        }
-
-        .form-check-input:checked {
-            background-color: var(--color-forest);
-            border-color: var(--color-forest);
-        }
-
-        /* Tables */
-        .table thead th {
-            background-color: var(--color-sage);
-            color: white;
-            border: none;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: var(--color-sand-light);
-        }
-
-        /* Alerts */
-        .alert-success {
-            background-color: var(--color-forest-light);
-            border-color: var(--color-forest);
-            color: var(--color-forest);
-        }
-
-        .alert-danger {
-            background-color: var(--color-berry-light);
-            border-color: var(--color-berry);
-            color: var(--color-berry);
-        }
-
-        /* Links */
-        a {
-            color: var(--color-forest);
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: var(--color-forest-hover);
-        }
-
-        /* Badges */
-        .badge.bg-primary {
-            background: var(--color-forest) !important;
-        }
-
-        .badge.bg-danger {
-            background: var(--color-berry) !important;
-        }
-
-        /* Custom Components */
-        .section-card {
-            background-color: white;
-            border: 1px solid var(--color-sage);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .section-title {
-            color: var(--color-forest);
-            border-bottom: 2px solid var(--color-sand);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Utilities */
-        .text-primary {
-            color: var(--color-forest) !important;
-        }
-
-        .text-danger {
-            color: var(--color-berry) !important;
-        }
-
-        .border-primary {
-            border-color: var(--color-forest) !important;
-        }
-
-        .bg-light {
-            background-color: var(--color-sand-light) !important;
-        }
-
-        /* Pagination */
-        .page-link {
-            color: var(--color-forest);
-        }
-
-        .page-item.active .page-link {
-            background-color: var(--color-forest);
-            border-color: var(--color-forest);
-        }
-
-        /* Modal */
-        .modal-header {
-            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
-            color: white;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .modal-content {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        .nav-icon {
+            width: 1rem;
+            margin-right: 0.75rem;
         }
     </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="fa-solid fa-spa"></i> Spa "Sentirse Bien"
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">
-                            <i class="fa-solid fa-home"></i> Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
-                            <i class="fa-solid fa-calendar-plus"></i> Reservar Turno
-                        </a>
-                    </li>
+<body class="font-primary bg-sand/10 text-gray-800 antialiased">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 gradient-forest-sage shadow-lg transition-all duration-300" x-data="{ isOpen: false, scrolled: false }" x-init="
+        window.addEventListener('scroll', () => {
+            scrolled = window.scrollY > 50;
+        })
+    ">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="{% url 'home' %}" class="font-secondary text-xl font-semibold text-white hover:text-sand transition-colors duration-300 flex items-center space-x-2">
+                    <i class="fas fa-spa text-sand"></i>
+                    <span class="tracking-wide">Spa "Sentirse Bien"</span>
+                </a>
+                
+                <!-- Mobile menu button -->
+                <button @click="isOpen = !isOpen" class="md:hidden text-white hover:text-sand transition-colors duration-300 p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path x-show="!isOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <path x-show="isOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <!-- Inicio -->
                     {% if user.is_authenticated %}
-                        {% if user.is_staff %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'servicios:servicio_list' %}">
-                                <i class="fa-solid fa-spa"></i> Gestionar Servicios
+                        <!-- Dashboard -->
+                        <a href="{% url 'usuarios:dashboard_rol' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Panel</span>
+                        </a>
+                        
+                        <!-- Menú según rol -->
+                        {% if user.perfil.rol == 'cliente' %}
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Reservar Turno</span>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'turnos:turno_list' %}">
-                                <i class="fa-solid fa-list"></i> Gestionar Turnos
+                            <a href="{% url 'turnos:turno_list' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                <i class="fas fa-list"></i>
+                                <span>Mis Turnos</span>
                             </a>
-                        </li>
-
-                        {% endif %}
-                        <li class="nav-item">
-                            <form method="post" action="{% url 'logout' %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="nav-link border-0 bg-transparent">
-                                    <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+                        
+                        {% elif user.perfil.rol == 'profesional' %}
+                            <!-- Menú mejorado para profesional -->
+                            <a href="{% url 'turnos:turno_list' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Mis Turnos</span>
+                            </a>
+                            <a href="{% url 'turnos:calendario_disponibilidad' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Disponibilidad</span>
+                            </a>
+                            <a href="{% url 'servicios:servicio_list' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                <i class="fas fa-spa"></i>
+                                <span>Servicios</span>
+                            </a>
+                        
+                        {% elif user.perfil.rol == 'administrador' %}
+                            <!-- Dropdown Gestión Principal -->
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                    <i class="fas fa-cogs"></i>
+                                    <span>Gestión</span>
+                                    <svg class="w-4 h-4 ml-1 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
                                 </button>
-                            </form>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">
-                                <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
+                                <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="absolute right-0 mt-2 w-64 nav-dropdown rounded-lg shadow-xl border border-sage/20 py-2">
+                                    <!-- Sección Turnos -->
+                                    <div class="nav-section-title">Turnos</div>
+                                    <a href="{% url 'turnos:turno_list' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-calendar-alt nav-icon text-forest"></i>
+                                        Gestionar Turnos
+                                    </a>
+                                    <a href="{% url 'turnos:calendario_disponibilidad' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-clock nav-icon text-coral"></i>
+                                        Calendario y Disponibilidad
+                                    </a>
+                                    
+                                    <hr class="my-2 border-sage/20">
+                                    
+                                    <!-- Sección Servicios -->
+                                    <div class="nav-section-title">Servicios</div>
+                                    <a href="{% url 'servicios:servicio_list' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-spa nav-icon text-coral"></i>
+                                        Gestionar Servicios
+                                    </a>
+                                    
+                                    <hr class="my-2 border-sage/20">
+                                    
+                                    <!-- Sección Personal -->
+                                    <div class="nav-section-title">Personal</div>
+                                    <a href="{% url 'usuarios:usuario_list' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-users nav-icon text-forest"></i>
+                                        Gestionar Usuarios
+                                    </a>
+                                    <a href="{% url 'usuarios:profesional_gestion' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-user-tie nav-icon text-berry"></i>
+                                        Gestionar Profesionales
+                                    </a>
+                                    <a href="{% url 'usuarios:especialidad_gestion' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-certificate nav-icon text-coral"></i>
+                                        Gestionar Especialidades
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Acceso rápido a funciones comunes -->
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Crear Turno</span>
                             </a>
-                        </li>
+                            
+                            <!-- Dropdown Herramientas Avanzadas -->
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                    <i class="fas fa-tools"></i>
+                                    <span>Herramientas</span>
+                                    <svg class="w-4 h-4 ml-1 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="absolute right-0 mt-2 w-56 nav-dropdown rounded-lg shadow-xl border border-sage/20 py-2">
+                                    <a href="/admin/" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-database nav-icon text-berry"></i>
+                                        Panel Django Admin
+                                    </a>
+                                    <a href="{% url 'usuarios:profesional_lista' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-user-friends nav-icon text-sage"></i>
+                                        Directorio de Profesionales
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Dropdown Usuario -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                                <i class="fas fa-user"></i>
+                                <span>{{ user.first_name|default:user.username }}</span>
+                                <svg class="w-4 h-4 ml-1 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="absolute right-0 mt-2 w-48 nav-dropdown rounded-lg shadow-xl border border-sage/20 py-2">
+                                <a href="{% url 'usuarios:perfil_update' %}" class="nav-item flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                    <i class="fas fa-edit nav-icon"></i>
+                                    Editar Perfil
+                                </a>
+                                <hr class="my-2 border-sage/20">
+                                <form method="post" action="{% url 'logout' %}" class="block">
+                                    {% csrf_token %}
+                                    <button type="submit" class="nav-item w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:text-forest">
+                                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                                        Cerrar Sesión
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'turnos:turno_reserva_unificada' %}" class="text-white hover:text-sand px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 flex items-center space-x-1">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Reservar Turno</span>
+                        </a>
+                        <a href="{% url 'login' %}" class="bg-sand text-forest hover:bg-sand/90 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 flex items-center space-x-1">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Iniciar Sesión</span>
+                        </a>
                     {% endif %}
-                </ul>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div x-show="isOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-4" class="md:hidden pb-4">
+                <div class="flex flex-col space-y-2">
+                    <!-- Mobile menu items -->
+                    <a href="{% url 'home' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                        <i class="fas fa-home mr-2"></i> Inicio
+                    </a>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'usuarios:dashboard_rol' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                            <i class="fas fa-tachometer-alt mr-2"></i> Panel
+                        </a>
+                        
+                        {% if user.perfil.rol == 'cliente' %}
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-calendar-plus mr-2"></i> Reservar Turno
+                            </a>
+                            <a href="{% url 'turnos:turno_list' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-list mr-2"></i> Mis Turnos
+                            </a>
+                        {% elif user.perfil.rol == 'profesional' %}
+                            <!-- Menú móvil mejorado para profesional -->
+                            <a href="{% url 'turnos:turno_list' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-calendar-check mr-2"></i> Mis Turnos
+                            </a>
+                            <a href="{% url 'turnos:calendario_disponibilidad' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-calendar-alt mr-2"></i> Disponibilidad
+                            </a>
+                            <a href="{% url 'servicios:servicio_list' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-spa mr-2"></i> Servicios
+                            </a>
+                        {% elif user.perfil.rol == 'administrador' %}
+                            <!-- Sección de Turnos -->
+                            <div class="px-3 py-1 text-xs font-semibold text-sand uppercase tracking-wider">Turnos</div>
+                            <a href="{% url 'turnos:turno_list' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-calendar-alt mr-2"></i> Gestionar Turnos
+                            </a>
+                            <a href="{% url 'turnos:calendario_disponibilidad' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-clock mr-2"></i> Calendario y Disponibilidad
+                            </a>
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-calendar-plus mr-2"></i> Crear Turno
+                            </a>
+                            
+                            <!-- Sección de Servicios -->
+                            <div class="px-3 py-1 text-xs font-semibold text-sand uppercase tracking-wider mt-3">Servicios</div>
+                            <a href="{% url 'servicios:servicio_list' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-spa mr-2"></i> Gestionar Servicios
+                            </a>
+                            
+                            <!-- Sección de Personal -->
+                            <div class="px-3 py-1 text-xs font-semibold text-sand uppercase tracking-wider mt-3">Personal</div>
+                            <a href="{% url 'usuarios:usuario_list' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-users mr-2"></i> Gestionar Usuarios
+                            </a>
+                            <a href="{% url 'usuarios:profesional_gestion' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-user-tie mr-2"></i> Gestionar Profesionales
+                            </a>
+                            <a href="{% url 'usuarios:especialidad_gestion' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-certificate mr-2"></i> Gestionar Especialidades
+                            </a>
+                            
+                            <!-- Sección de Herramientas -->
+                            <div class="px-3 py-1 text-xs font-semibold text-sand uppercase tracking-wider mt-3">Herramientas</div>
+                            <a href="/admin/" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-database mr-2"></i> Panel Django Admin
+                            </a>
+                            <a href="{% url 'usuarios:profesional_lista' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-user-friends mr-2"></i> Directorio de Profesionales
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'usuarios:perfil_update' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                            <i class="fas fa-edit mr-2"></i> Editar Perfil
+                        </a>
+                        <form method="post" action="{% url 'logout' %}" class="block">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full text-left text-white hover:text-sand px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'turnos:turno_reserva_unificada' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                            <i class="fas fa-calendar-plus mr-2"></i> Reservar Turno
+                        </a>
+                        <a href="{% url 'login' %}" class="text-white hover:text-sand block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300">
+                            <i class="fas fa-sign-in-alt mr-2"></i> Iniciar Sesión
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="content-wrapper" style="padding-top: 76px;">
+    <!-- Main Content -->
+    <main class="pt-16 min-h-screen">
+        <!-- Messages -->
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
+            <div class="fixed top-20 right-4 z-40 space-y-2" x-data="{ messages: [] }" x-init="
+                {% for message in messages %}
+                    messages.push({
+                        id: {{ forloop.counter }},
+                        type: '{{ message.tags }}',
+                        text: '{{ message|escapejs }}',
+                        show: true
+                    });
+                {% endfor %}
+                messages.forEach((msg, index) => {
+                    setTimeout(() => {
+                        msg.show = false;
+                    }, 5000 + (index * 500));
+                });
+            ">
+                {% for message in messages %}
+                    <div x-show="messages[{{ forloop.counter0 }}]?.show" 
+                         x-transition:enter="transform transition ease-out duration-300"
+                         x-transition:enter-start="translate-x-full opacity-0"
+                         x-transition:enter-end="translate-x-0 opacity-100"
+                         x-transition:leave="transform transition ease-in duration-200"
+                         x-transition:leave-start="translate-x-0 opacity-100"
+                         x-transition:leave-end="translate-x-full opacity-0"
+                         class="max-w-sm w-full shadow-lg rounded-lg pointer-events-auto overflow-hidden animate-scale-in
+                         {% if message.tags == 'success' %}bg-forest/90 text-white border-l-4 border-forest{% endif %}
+                         {% if message.tags == 'error' %}bg-berry/90 text-white border-l-4 border-berry{% endif %}
+                         {% if message.tags == 'warning' %}bg-coral/90 text-white border-l-4 border-coral{% endif %}
+                         {% if message.tags == 'info' %}bg-sage/90 text-white border-l-4 border-sage{% endif %}">
+                        <div class="p-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    {% if message.tags == 'success' %}
+                                        <i class="fas fa-check-circle text-white"></i>
+                                    {% elif message.tags == 'error' %}
+                                        <i class="fas fa-exclamation-circle text-white"></i>
+                                    {% elif message.tags == 'warning' %}
+                                        <i class="fas fa-exclamation-triangle text-white"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle text-white"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-3 w-0 flex-1">
+                                    <p class="text-sm font-medium">{{ message }}</p>
+                                </div>
+                                <div class="ml-4 flex-shrink-0 flex">
+                                    <button @click="messages[{{ forloop.counter0 }}].show = false" class="inline-flex text-white hover:text-gray-200 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
         
-        {% block content %}{% endblock %}
-    </div>
+        <!-- Page Content -->
+        <div class="animate-fade-in">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading" style="color: #fdfffc;">Contacto</h4>
-                    <div class="footer-contact-item">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>+54 3624567890</span>
-                    </div>
-                    <div class="footer-contact-item">
-                        <i class="fa-solid fa-envelope"></i>
-                        <span>info@gestorspa.com</span>
-                    </div>
-                    <div class="footer-contact-item">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>Av. San Martin 123, Ciudad de Resistencia</span>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading" style="color: #fdfffc;">Horarios</h4>
-                    <div class="footer-contact-item">
-                        <i class="fa-solid fa-clock"></i>
-                        <span>Lunes a Sabados: 9:00 - 20:00</span>
-                    </div>
-                      <div class="footer-contact-item">
-                        <i class="fa-solid fa-clock"></i>
-                        <span>Domingos: Cerrado</span>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-forest text-white relative overflow-hidden">
+        <!-- Gradient decoration -->
+        <div class="absolute top-0 left-0 right-0 h-1 gradient-sand-coral"></div>
+        
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Contacto -->
+                <div class="animate-slide-up">
+                    <h4 class="font-secondary text-xl font-semibold mb-6 text-sand">Contacto</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center text-white/90 hover:text-white transition-colors duration-300">
+                            <i class="fas fa-phone text-sand mr-3 w-5"></i>
+                            <span>+54 3624567890</span>
+                        </div>
+                        <div class="flex items-center text-white/90 hover:text-white transition-colors duration-300">
+                            <i class="fas fa-envelope text-sand mr-3 w-5"></i>
+                            <span>info@gestorspa.com</span>
+                        </div>
+                        <div class="flex items-center text-white/90 hover:text-white transition-colors duration-300">
+                            <i class="fas fa-map-marker-alt text-sand mr-3 w-5"></i>
+                            <span>Av. San Martin 123, Ciudad de Resistencia</span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading" style="color: #fdfffc;">Síguenos</h4>
-                    <p class="mb-3">Mantente al día con nuestras últimas novedades y promociones</p>
-                    <div class="social-icons">
-                        <a href="#" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                
+                <!-- Horarios -->
+                <div class="animate-slide-up" style="animation-delay: 0.2s;">
+                    <h4 class="font-secondary text-xl font-semibold mb-6 text-sand">Horarios</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center text-white/90">
+                            <i class="fas fa-clock text-sand mr-3 w-5"></i>
+                            <span>Lunes a Sábados: 9:00 - 20:00</span>
+                        </div>
+                        <div class="flex items-center text-white/90">
+                            <i class="fas fa-clock text-sand mr-3 w-5"></i>
+                            <span>Domingos: Cerrado</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Redes Sociales -->
+                <div class="animate-slide-up" style="animation-delay: 0.4s;">
+                    <h4 class="font-secondary text-xl font-semibold mb-6 text-sand">Síguenos</h4>
+                    <p class="text-white/90 mb-6">Mantente al día con nuestras últimas novedades y promociones</p>
+                    <div class="flex space-x-4">
+                        <a href="#" target="_blank" class="w-10 h-10 bg-white/10 hover:bg-sand rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                            <i class="fab fa-facebook-f text-white hover:text-forest transition-colors duration-300"></i>
+                        </a>
+                        <a href="#" target="_blank" class="w-10 h-10 bg-white/10 hover:bg-sand rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                            <i class="fab fa-instagram text-white hover:text-forest transition-colors duration-300"></i>
+                        </a>
+                        <a href="#" target="_blank" class="w-10 h-10 bg-white/10 hover:bg-sand rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                            <i class="fab fa-twitter text-white hover:text-forest transition-colors duration-300"></i>
+                        </a>
+                        <a href="#" target="_blank" class="w-10 h-10 bg-white/10 hover:bg-sand rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                            <i class="fab fa-whatsapp text-white hover:text-forest transition-colors duration-300"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; {% now "Y" %} GestorSpa. Todos los derechos reservados.</p>
+            
+            <!-- Footer bottom -->
+            <div class="border-t border-white/20 mt-8 pt-6 text-center">
+                <p class="text-white/70">&copy; {% now "Y" %} GestorSpa - Spa "Sentirse Bien". Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Scripts -->
     <script>
-        // Inicializar AOS
-        AOS.init({
-            duration: 800,
-            once: true
-        });
-
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
-            }
-        });
-
-        // Scroll fade effect
+        // Scroll effects
         document.addEventListener('DOMContentLoaded', function() {
-            const scrollElements = document.querySelectorAll('.scroll-fade');
-
-            const elementInView = (el, dividend = 1) => {
-                const elementTop = el.getBoundingClientRect().top;
-                return (
-                    elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
-                );
+            // Navbar scroll effect
+            const navbar = document.querySelector('nav');
+            let scrolled = false;
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50 && !scrolled) {
+                    navbar.classList.add('shadow-xl');
+                    scrolled = true;
+                } else if (window.scrollY <= 50 && scrolled) {
+                    navbar.classList.remove('shadow-xl');
+                    scrolled = false;
+                }
+            });
+            
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
             };
-
-            const displayScrollElement = (element) => {
-                element.classList.add('visible');
-            };
-
-            const handleScrollAnimation = () => {
-                scrollElements.forEach((el) => {
-                    if (elementInView(el, 1.25)) {
-                        displayScrollElement(el);
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
                     }
                 });
-            };
-
-            window.addEventListener('scroll', () => {
-                handleScrollAnimation();
+            }, observerOptions);
+            
+            // Observe elements with animation classes
+            document.querySelectorAll('.animate-slide-up').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                observer.observe(el);
             });
         });
     </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
-</html> 
+</html>

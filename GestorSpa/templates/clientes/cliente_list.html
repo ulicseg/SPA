@@ -3,55 +3,202 @@
 {% block title %}Clientes - GestorSpa{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1 class="text-center mb-4">Nuestros Clientes</h1>
-        <p class="text-center text-muted">Gestiona la información de tus clientes</p>
-    </div>
-</div>
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8" data-aos="fade-down">
+            <h1 class="text-3xl md:text-4xl font-bold text-sage-800 mb-4">
+                <i class="fas fa-users mr-3 text-coral-600"></i>
+                Gestión de Clientes
+            </h1>
+            <p class="text-lg text-sage-600 max-w-2xl mx-auto">
+                Administra la información y el historial de todos tus clientes registrados
+            </p>
+        </div>
 
-<div class="row">
-    <div class="col-12 mb-4">
-        <a href="{% url 'clientes:cliente_create' %}" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i> Nuevo Cliente
-        </a>
-    </div>
-</div>
+        <!-- Action Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4" data-aos="fade-up">
+            <div class="flex items-center text-sage-600">
+                <i class="fas fa-info-circle mr-2"></i>
+                <span class="text-sm">Total de clientes: {{ clientes|length }}</span>
+            </div>
+            <a href="{% url 'clientes:cliente_create' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <i class="fas fa-user-plus mr-2"></i>
+                Nuevo Cliente
+            </a>
+        </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Fecha de Registro</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cliente in clientes %}
-                            <tr>
-                                <td>{{ cliente.usuario.get_full_name|default:cliente.usuario.username }}</td>
-                                <td>{{ cliente.telefono }}</td>
-                                <td>{{ cliente.created_at|date:"d/m/Y" }}</td>
-                                <td>
-                                    <a href="{% url 'clientes:cliente_detail' cliente.id %}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye"></i>
+        <!-- Clients Table Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100" data-aos="fade-up">
+            <!-- Table Header -->
+            <div class="gradient-coral-berry p-6">
+                <h2 class="text-xl font-semibold text-white flex items-center">
+                    <i class="fas fa-list mr-3"></i>
+                    Lista de Clientes Registrados
+                </h2>
+            </div>
+
+            <!-- Table Content -->
+            <div class="overflow-x-auto">
+                {% if clientes %}
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-sage-50 to-sand-50 border-b border-sage-200">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                <i class="fas fa-user mr-2 text-sage-600"></i>
+                                Cliente
+                            </th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                <i class="fas fa-phone mr-2 text-sage-600"></i>
+                                Teléfono
+                            </th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                <i class="fas fa-calendar-plus mr-2 text-sage-600"></i>
+                                Fecha de Registro
+                            </th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                <i class="fas fa-cogs mr-2 text-sage-600"></i>
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-sage-100">
+                        {% for cliente in clientes %}
+                        <tr class="hover:bg-gradient-to-r hover:from-sage-50 hover:to-sand-50 transition-all duration-200">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-12 w-12">
+                                        <div class="h-12 w-12 rounded-full bg-gradient-to-r from-coral-400 to-berry-400 flex items-center justify-center text-white font-semibold text-lg">
+                                            {{ cliente.usuario.first_name|first|default:cliente.usuario.username|first|upper }}
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-semibold text-sage-800">
+                                            {{ cliente.usuario.get_full_name|default:cliente.usuario.username }}
+                                        </div>
+                                        <div class="text-sm text-sage-600">
+                                            <i class="fas fa-envelope mr-1"></i>
+                                            {{ cliente.usuario.email }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center text-sage-700">
+                                    <i class="fas fa-phone-alt mr-2 text-sage-500"></i>
+                                    <span class="font-medium">{{ cliente.telefono|default:"No registrado" }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-sage-100 to-sand-100 text-sage-800 border border-sage-200">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        {{ cliente.created_at|date:"d/m/Y" }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center space-x-3">
+                                    <a href="{% url 'clientes:cliente_detail' cliente.id %}" 
+                                       class="inline-flex items-center justify-center w-10 h-10 gradient-forest-sage text-white rounded-lg focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                       title="Ver detalles del cliente">
+                                        <i class="fas fa-eye text-sm"></i>
                                     </a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center">No hay clientes registrados.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    
+                                    <!-- Botón adicional para historial de turnos -->
+                                    <a href="{% url 'turnos:turno_list' %}?cliente={{ cliente.id }}" 
+                                       class="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-r from-coral-500 to-berry-500 text-white rounded-lg hover:from-coral-600 hover:to-berry-600 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                       title="Ver turnos del cliente">
+                                        <i class="fas fa-calendar-alt text-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <!-- Empty State -->
+                <div class="text-center py-16">
+                    <div class="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-r from-sage-100 to-sand-100 mb-6">
+                        <i class="fas fa-users text-3xl text-sage-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-sage-800 mb-2">No hay clientes registrados</h3>
+                    <p class="text-sage-600 mb-6 max-w-md mx-auto">
+                        Aún no tienes clientes registrados en el sistema. Puedes crear el primer cliente haciendo clic en el botón de arriba.
+                    </p>
+                    <a href="{% url 'clientes:cliente_create' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Crear Primer Cliente
+                    </a>
                 </div>
+                {% endif %}
+            </div>
+
+            <!-- Table Footer with Statistics -->
+            {% if clientes %}
+            <div class="bg-gradient-to-r from-sage-50 to-sand-50 px-6 py-4 border-t border-sage-200">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center text-sm text-sage-600">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span>Mostrando {{ clientes|length }} cliente{{ clientes|length|pluralize:",s" }}</span>
+                    </div>
+                    <div class="flex items-center space-x-4 text-sm text-sage-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-check mr-2 text-forest-500"></i>
+                            <span>Activos: {{ clientes|length }}</span>
+                        </div>
+                        <!-- Aquí podrías agregar más estadísticas si las necesitas -->
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Quick Actions Card -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100 hover:shadow-xl transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-coral-100 to-berry-100 rounded-lg">
+                        <i class="fas fa-user-plus text-coral-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-sage-800 mb-2">Registrar Cliente</h3>
+                <p class="text-sage-600 text-sm mb-4">Añade un nuevo cliente al sistema con su información de contacto.</p>
+                <a href="{% url 'clientes:cliente_create' %}" 
+                   class="text-coral-600 hover:text-coral-700 font-medium text-sm transition-colors duration-200">
+                    Crear cliente →
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100 hover:shadow-xl transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-sage-100 to-forest-100 rounded-lg">
+                        <i class="fas fa-search text-sage-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-sage-800 mb-2">Buscar Cliente</h3>
+                <p class="text-sage-600 text-sm mb-4">Encuentra rápidamente un cliente específico por nombre o teléfono.</p>
+                <a href="#" onclick="document.querySelector('input[type=search]')?.focus()" 
+                   class="text-sage-600 hover:text-sage-700 font-medium text-sm transition-colors duration-200">
+                    Buscar →
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100 hover:shadow-xl transition-all duration-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-amber-100 to-orange-100 rounded-lg">
+                        <i class="fas fa-chart-bar text-amber-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-sage-800 mb-2">Estadísticas</h3>
+                <p class="text-sage-600 text-sm mb-4">Ver reportes y estadísticas detalladas de los clientes.</p>
+                <a href="#" 
+                   class="text-amber-600 hover:text-amber-700 font-medium text-sm transition-colors duration-200">
+                    Ver reportes →
+                </a>
             </div>
         </div>
     </div>

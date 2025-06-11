@@ -4,8 +4,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Servicio
 from .forms import ServicioForm
+from GestorSpa.apps.usuarios.permissions import AdministradorRequiredMixin
 
-class ServicioListView(LoginRequiredMixin, ListView):
+class ServicioListView(ListView):
     model = Servicio
     template_name = 'servicios/servicio_list.html'
     context_object_name = 'servicios'
@@ -16,7 +17,7 @@ class ServicioDetailView(DetailView):
     template_name = 'servicios/servicio_detail.html'
     context_object_name = 'servicio'
 
-class ServicioCreateView(LoginRequiredMixin, CreateView):
+class ServicioCreateView(AdministradorRequiredMixin, CreateView):
     model = Servicio
     form_class = ServicioForm
     template_name = 'servicios/servicio_form.html'
@@ -26,7 +27,7 @@ class ServicioCreateView(LoginRequiredMixin, CreateView):
         form.instance.intervalo = 60
         return super().form_valid(form)
 
-class ServicioUpdateView(LoginRequiredMixin, UpdateView):
+class ServicioUpdateView(AdministradorRequiredMixin, UpdateView):
     model = Servicio
     form_class = ServicioForm
     template_name = 'servicios/servicio_form.html'
@@ -36,7 +37,7 @@ class ServicioUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.intervalo = 60
         return super().form_valid(form)
 
-class ServicioDeleteView(LoginRequiredMixin, DeleteView):
+class ServicioDeleteView(AdministradorRequiredMixin, DeleteView):
     model = Servicio
     template_name = 'servicios/servicio_confirm_delete.html'
-    success_url = reverse_lazy('servicios:servicio_list') 
+    success_url = reverse_lazy('servicios:servicio_list')

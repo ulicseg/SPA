@@ -1,0 +1,352 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Nuestros Profesionales - Spa Sentirse Bien{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --spa-cream: #f8f6f0;
+    --spa-sage: #1B5E20;
+    --spa-sage-dark: #0A3D0A;
+    --spa-forest: #052505;
+    --spa-gold: #FFD700;
+    --spa-rose: #e8d5d0;
+    --spa-charcoal: #1c2825;
+    --spa-pearl: #f5f5f3;
+    --spa-mist: rgba(27, 94, 32, 0.06);
+  }
+
+  .font-luxury { font-family: 'Playfair Display', serif; }
+  .font-modern { font-family: 'Inter', sans-serif; }
+
+  .luxury-card {
+    background-color: rgba(248, 246, 240, 0.9);
+    border: 1px solid rgba(27, 94, 32, 0.1);
+    box-shadow: 0 10px 35px rgba(5, 37, 5, 0.08);
+    backdrop-filter: blur(8px);
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .luxury-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 15px 45px rgba(5, 37, 5, 0.15);
+    border-color: rgba(27, 94, 32, 0.3);
+  }
+
+  .professional-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .professional-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .professional-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .professional-image:hover img {
+    transform: scale(1.1);
+  }
+
+  .professional-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .speciality-badge {
+    background: linear-gradient(135deg, var(--spa-sage) 0%, var(--spa-forest) 100%);
+    color: var(--spa-pearl);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .experience-badge {
+    background-color: var(--spa-gold);
+    color: var(--spa-forest);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .search-filter-section {
+    background: linear-gradient(135deg, var(--spa-sage) 0%, var(--spa-forest) 100%);
+    color: var(--spa-pearl);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .filter-input {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .filter-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .filter-input:focus {
+    outline: none;
+    border-color: var(--spa-gold);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-filter {
+    background-color: var(--spa-gold);
+    color: var(--spa-forest);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-filter:hover {
+    background-color: var(--spa-pearl);
+    transform: translateY(-2px);
+  }
+
+  .btn-view {
+    background-color: var(--spa-sage);
+    color: var(--spa-pearl);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: auto;
+  }
+
+  .btn-view:hover {
+    background-color: var(--spa-sage-dark);
+    color: var(--spa-pearl);
+    transform: translateY(-2px);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="font-luxury text-4xl md:text-5xl font-semibold text-gray-800 mb-4">
+            Nuestros Profesionales
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto font-modern">
+            Conoce a nuestro equipo de expertos dedicados a tu bienestar y relajación
+        </p>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="search-filter-section">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div>
+                <label class="block font-modern font-semibold mb-2">Buscar por nombre</label>
+                <input type="text" 
+                       name="buscar" 
+                       value="{{ busqueda_actual }}"
+                       placeholder="Nombre del profesional..."
+                       class="w-full filter-input">
+            </div>
+            
+            <div>
+                <label class="block font-modern font-semibold mb-2">Filtrar por especialidad</label>
+                <select name="especialidad" class="w-full filter-input">
+                    <option value="">Todas las especialidades</option>
+                    {% for value, label in especialidades %}
+                        <option value="{{ value }}" {% if value == especialidad_actual %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <button type="submit" class="w-full btn-filter">
+                    <i class="fas fa-search mr-2"></i>
+                    Buscar
+                </button>
+            </div>
+        </form>
+        
+        {% if busqueda_actual or especialidad_actual %}
+        <div class="mt-4 flex items-center gap-4">
+            <span class="font-modern">Filtros activos:</span>
+            {% if busqueda_actual %}
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+                    Búsqueda: "{{ busqueda_actual }}"
+                </span>
+            {% endif %}            {% if especialidad_actual %}
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+                    {% for choice in especialidades %}
+                        {% if choice.0 == especialidad_actual %}
+                            {{ choice.1 }}
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            {% endif %}
+            <a href="{% url 'usuarios:profesional_lista' %}" class="text-white hover:text-yellow-300 underline text-sm">
+                Limpiar filtros
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Grid de Profesionales -->
+    {% if profesionales %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            {% for profesional in profesionales %}
+            <div class="luxury-card professional-card">
+                <!-- Imagen del Profesional -->
+                <div class="professional-image">
+                    {% if profesional.foto_profesional %}
+                        <img src="{{ profesional.foto_profesional.url }}" 
+                             alt="{{ profesional.nombre_completo }}"
+                             class="professional-photo">
+                    {% else %}
+                        <div class="w-full h-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                            <i class="fas fa-user-md text-4xl text-white"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Badge de Experiencia -->
+                    <div class="absolute top-4 right-4">
+                        <span class="experience-badge">
+                            {{ profesional.años_experiencia }} años
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Contenido -->
+                <div class="professional-content">
+                    <div class="mb-3">
+                        <span class="speciality-badge">{{ profesional.get_especialidad_display }}</span>
+                    </div>
+                    
+                    <h3 class="font-luxury text-xl font-semibold text-gray-800 mb-2">
+                        {{ profesional.nombre_completo }}
+                    </h3>
+                    
+                    {% if profesional.biografia %}
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4 font-modern">
+                            {{ profesional.biografia|truncatewords:20 }}
+                        </p>
+                    {% endif %}
+                    
+                    <!-- Información de Contacto -->
+                    <div class="space-y-2 mb-4">
+                        {% if profesional.telefono %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-phone mr-2 text-green-600"></i>
+                            <span class="font-modern">{{ profesional.telefono }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-clock mr-2 text-green-600"></i>
+                            <span class="font-modern">
+                                {{ profesional.hora_inicio_disponibilidad }} - {{ profesional.hora_fin_disponibilidad }}
+                            </span>
+                        </div>
+                        
+                        {% if profesional.servicios_que_ofrece.exists %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-spa mr-2 text-green-600"></i>
+                            <span class="font-modern">
+                                {{ profesional.servicios_que_ofrece.count }} servicio{{ profesional.servicios_que_ofrece.count|pluralize }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Botón Ver Más -->
+                    <a href="{% url 'usuarios:profesional_detalle' profesional.pk %}" 
+                       class="btn-view text-center block">
+                        <i class="fas fa-eye mr-2"></i>
+                        Ver Perfil Completo
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if is_paginated %}
+        <div class="flex justify-center items-center space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if busqueda_actual %}&buscar={{ busqueda_actual }}{% endif %}{% if especialidad_actual %}&especialidad={{ especialidad_actual }}{% endif %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-modern">
+                    Primera
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if busqueda_actual %}&buscar={{ busqueda_actual }}{% endif %}{% if especialidad_actual %}&especialidad={{ especialidad_actual }}{% endif %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-modern">
+                    ‹ Anterior
+                </a>
+            {% endif %}
+
+            <span class="px-4 py-2 font-modern text-gray-600">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if busqueda_actual %}&buscar={{ busqueda_actual }}{% endif %}{% if especialidad_actual %}&especialidad={{ especialidad_actual }}{% endif %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-modern">
+                    Siguiente ›
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if busqueda_actual %}&buscar={{ busqueda_actual }}{% endif %}{% if especialidad_actual %}&especialidad={{ especialidad_actual }}{% endif %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-modern">
+                    Última
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    {% else %}
+        <!-- Estado Vacío -->
+        <div class="text-center py-16">
+            <div class="mb-6">
+                <i class="fas fa-user-friends text-6xl text-gray-300"></i>
+            </div>
+            <h2 class="font-luxury text-2xl font-semibold text-gray-600 mb-4">
+                No se encontraron profesionales
+            </h2>
+            <p class="text-gray-500 mb-6 font-modern">
+                {% if busqueda_actual or especialidad_actual %}
+                    No hay profesionales que coincidan con los filtros seleccionados.
+                {% else %}
+                    Actualmente no hay profesionales registrados.
+                {% endif %}
+            </p>
+            {% if busqueda_actual or especialidad_actual %}
+                <a href="{% url 'usuarios:profesional_lista' %}" 
+                   class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-modern">
+                    Ver Todos los Profesionales
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

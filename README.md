@@ -1,8 +1,62 @@
-# GestorSpa
+# 🌸 GestorSpa - Sistema de Gestión Integral para Spa
 
-Sistema de gestión para spa que permite administrar servicios, turnos y clientes.
+Sistema de gestión completo para spa con sistema de roles avanzado, que permite administrar servicios, turnos, clientes y personal con diferentes niveles de acceso.
 
-## Requisitos Previos
+## ✨ Características Principales
+
+- 🔐 **Sistema de Roles Avanzado**: Cliente, Profesional y Administrador
+- 📅 **Gestión de Turnos**: Reserva y administración de citas
+- 💆‍♀️ **Gestión de Servicios**: CRUD completo de servicios del spa
+- 👥 **Gestión de Usuarios**: Panel de administración de clientes y personal
+- 📊 **Dashboards Personalizados**: Diferentes vistas según el rol del usuario
+- 🎨 **Interfaz Moderna**: Diseño responsive con Tailwind CSS
+- 📱 **Navegación Inteligente**: Menús adaptativos según permisos
+- 🔒 **Sistema de Permisos**: Protección de vistas y funcionalidades
+
+## 👥 Roles del Sistema
+
+### 🛍️ CLIENTE
+- Reservar y gestionar sus propios turnos
+- Ver historial de citas
+- Editar perfil personal
+- Dashboard con estadísticas personales
+
+### 💼 PROFESIONAL
+- Ver turnos asignados
+- Consultar información de servicios
+- Dashboard con agenda del día
+- Gestión de perfil
+
+### 👑 ADMINISTRADOR
+- Control total del sistema
+- Gestión completa de usuarios y roles
+- CRUD de servicios y turnos
+- Panel administrativo de Django
+- Dashboard con estadísticas generales
+
+## 🔐 Usuarios de Prueba
+
+Para probar el sistema, puedes usar estos usuarios predefinidos:
+
+### 👑 Administrador
+- **Usuario**: `ana_felicidad`
+- **Contraseña**: `admin123`
+- **Email**: `ana@spa.com`
+- **Acceso**: Control total del sistema
+
+### 💼 Profesional
+- **Usuario**: `maria_profesional`
+- **Contraseña**: `prof123`
+- **Email**: `maria@spa.com`
+- **Acceso**: Ver turnos asignados y servicios
+
+### 🛍️ Cliente
+- **Usuario**: `juan_cliente`
+- **Contraseña**: `cliente123`
+- **Email**: `juan@cliente.com`
+- **Acceso**: Reservar turnos y gestionar perfil
+
+## 📋 Requisitos Previos
 
 1. **Instalar Python**
    - Descargar Python 3.8 o superior desde [python.org](https://www.python.org/downloads/)
@@ -27,7 +81,9 @@ Sistema de gestión para spa que permite administrar servicios, turnos y cliente
      psql --version
      ```
 
-## Pasos para Instalar y Ejecutar el Proyecto
+## 🚀 Instalación Rápida
+
+### Opción 1: Con SQLite (Recomendado para desarrollo)
 
 1. **Clonar el Repositorio**
 ```bash
@@ -38,16 +94,39 @@ cd GestorSpa
 2. **Crear y Activar Entorno Virtual**
 ```bash
 # Windows
-python -m venv env
-env\Scripts\activate
+python -m venv entorno
+entorno\Scripts\activate
 
 # Linux/Mac
-python3 -m venv env
-source env/bin/activate
+python3 -m venv entorno
+source entorno/bin/activate
 ```
 
 3. **Instalar Dependencias**
 ```bash
+pip install -r requirements.txt
+```
+
+4. **Realizar Migraciones**
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+5. **Configurar Sistema de Roles y Usuarios de Prueba**
+```bash
+python manage.py setup_groups
+python manage.py crear_usuarios_ejemplo
+```
+
+6. **Ejecutar el Servidor**
+```bash
+python manage.py runserver
+```
+
+¡Listo! El sitio estará disponible en `http://127.0.0.1:8000/`
+
+### Opción 2: Con PostgreSQL (Para producción)
 pip install -r requirements.txt
 ```
 
@@ -143,62 +222,127 @@ El sitio estará disponible en `http://127.0.0.1:8000/`
 1. Acceder a `http://127.0.0.1:8000/admin`
 2. Ingresar con las credenciales del superusuario creado
 
-## Características Principales
+## 📱 Funcionalidades por Rol
 
-- Gestión de servicios del spa
-- Sistema de reserva de turnos
-- Panel de administración
-- Gestión de clientes
+### 🛍️ Dashboard Cliente
+- ✅ Resumen de turnos próximos
+- ✅ Historial de citas
+- ✅ Reserva rápida de turnos
+- ✅ Estadísticas personales
+- ✅ Edición de perfil
 
-## Estructura del Proyecto
+### 💼 Dashboard Profesional
+- ✅ Turnos asignados para hoy
+- ✅ Próximas citas programadas
+- ✅ Lista de servicios disponibles
+- ✅ Información de contacto de clientes
+- ✅ Edición de perfil
+
+### 👑 Dashboard Administrador
+- ✅ Estadísticas generales del spa
+- ✅ Gestión completa de usuarios
+- ✅ CRUD de servicios y turnos
+- ✅ Panel administrativo de Django
+- ✅ Control total del sistema
+
+## 🏗️ Estructura del Proyecto
 
 ```
 GestorSpa/
 ├── GestorSpa/
 │   ├── apps/
-│   │   ├── servicios/
-│   │   └── turnos/
+│   │   ├── servicios/          # Gestión de servicios
+│   │   ├── turnos/             # Sistema de reservas
+│   │   ├── usuarios/           # Sistema de roles y usuarios
+│   │   └── clientes/           # Gestión de clientes
 │   ├── configuraciones/
-│   │   └── settings.py
-│   └── templates/
-├── requirements.txt
-├── .env
-├── .gitignore
-├── manage.py
-└── README.md
+│   │   └── settings.py         # Configuración Django
+│   ├── templates/              # Templates HTML
+│   │   ├── auth/              # Login/Registro
+│   │   ├── base/              # Base templates
+│   │   ├── usuarios/          # Dashboards por rol
+│   │   ├── servicios/         # CRUD servicios
+│   │   └── turnos/            # Sistema de turnos
+│   ├── static/                # Archivos estáticos
+│   └── media/                 # Archivos subidos
+├── entorno/                   # Entorno virtual
+├── requirements.txt           # Dependencias
+├── .env                      # Variables de entorno
+├── .gitignore               # Archivos ignorados
+├── manage.py                # Comando Django
+├── README.md               # Documentación
+└── SISTEMA_ROLES_DOCUMENTACION.md  # Doc. detallada del sistema
 ```
 
-## Solución de Problemas Comunes
+## ❓ Solución de Problemas Comunes
 
-1. **Error de Pillow**
+### Error de Dependencias
 ```bash
-pip install Pillow
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-2. **Error de python-dotenv**
+### Error de Migraciones
 ```bash
-pip install python-dotenv
+python manage.py makemigrations
+python manage.py migrate --run-syncdb
 ```
 
-3. **Error de psycopg2**
+### Recrear Usuarios de Prueba
 ```bash
-pip install psycopg2
-# Si hay error, intentar:
-pip install psycopg2-binary
+python manage.py crear_usuarios_ejemplo
 ```
 
-4. **Error de conexión a PostgreSQL**
-- Verificar que PostgreSQL esté corriendo
-- Verificar credenciales en .env
-- Verificar que la base de datos exista
-
-## Notas Importantes
-
-- Asegúrate de no compartir tu `SECRET_KEY` ni información sensible
-- El archivo settings.py está ignorado en git por seguridad
-- Para producción, configura adecuadamente `DEBUG=False`
-- Mantén actualizado tu archivo requirements.txt:
+### Configurar Grupos y Permisos
 ```bash
-pip freeze > requirements.txt
+python manage.py setup_groups
 ```
+
+## 🔧 Comandos de Gestión Personalizados
+
+- `python manage.py setup_groups` - Configura grupos y permisos
+- `python manage.py crear_usuarios_ejemplo` - Crea usuarios de prueba
+- `python manage.py collectstatic` - Recopila archivos estáticos
+
+## 📚 Documentación Adicional
+
+Para información detallada sobre el sistema de roles, consulta: `SISTEMA_ROLES_DOCUMENTACION.md`
+
+## 🚀 Deploy en Producción
+
+### Configuraciones Importantes
+```python
+# En settings.py para producción
+DEBUG = False
+ALLOWED_HOSTS = ['tu-dominio.com', 'www.tu-dominio.com']
+```
+
+### Variables de Entorno de Producción
+```env
+DEBUG=False
+SECRET_KEY=tu_clave_secreta_muy_segura
+DB_NAME=gestorspa_prod
+DB_USER=usuario_prod
+DB_PASSWORD=contraseña_segura
+```
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+
+## 👨‍💻 Desarrollado por
+
+**GestorSpa Team** - Sistema completo de gestión para spa con roles avanzados
+
+---
+
+⭐ Si te gusta este proyecto, ¡no olvides darle una estrella en GitHub!
 

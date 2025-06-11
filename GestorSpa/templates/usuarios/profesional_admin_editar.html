@@ -1,0 +1,339 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Editar Profesional - {{ profesional.nombre_completo }} - GestorSpa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8" data-aos="fade-down">
+            <h1 class="text-3xl font-bold text-sage-800 mb-4">
+                <i class="fas fa-user-edit mr-3 text-coral-600"></i>
+                Editar Profesional
+            </h1>
+            <p class="text-lg text-sage-600">
+                Actualiza la información de {{ profesional.nombre_completo }}
+            </p>
+        </div>
+
+        <!-- Información del Usuario -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-sage-100" data-aos="fade-up">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-sage-800">
+                    <i class="fas fa-user mr-2 text-coral-600"></i>
+                    Información del Usuario
+                </h3>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if profesional.activo %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                    <i class="fas {% if profesional.activo %}fa-check-circle{% else %}fa-times-circle{% endif %} mr-1"></i>
+                    {% if profesional.activo %}Activo{% else %}Inactivo{% endif %}
+                </span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-sage-600">Usuario</label>
+                    <p class="text-sage-800 font-medium">{{ profesional.usuario.username }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-sage-600">Email</label>
+                    <p class="text-sage-800">{{ profesional.usuario.email }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-sage-600">Fecha de Registro</label>
+                    <p class="text-sage-800">{{ profesional.created_at|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de Edición -->
+        <div class="bg-white rounded-xl shadow-xl border border-sage-100 overflow-hidden" data-aos="fade-up">
+            <div class="bg-gradient-to-r from-coral-600 to-berry-600 px-6 py-4">
+                <h2 class="text-xl font-semibold text-white">
+                    <i class="fas fa-clipboard-list mr-2"></i>
+                    Información Profesional
+                </h2>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="p-6">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6" data-aos="shake">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                Por favor, corrige los siguientes errores:
+                            </h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc list-inside space-y-1">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ field|capfirst }}: {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="space-y-8">
+                    <!-- Información Personal -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 pb-2 border-b border-sage-200">
+                            <i class="fas fa-id-card mr-2 text-coral-600"></i>
+                            Información Personal
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.nombre_completo.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Nombre Completo *
+                                </label>
+                                {{ form.nombre_completo }}
+                            </div>
+                            <div>
+                                <label for="{{ form.telefono.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Teléfono *
+                                </label>
+                                {{ form.telefono }}
+                            </div>
+                            <div>
+                                <label for="{{ form.email_profesional.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Email Profesional
+                                </label>
+                                {{ form.email_profesional }}
+                                <p class="mt-1 text-sm text-sage-500">Email adicional para contacto profesional</p>
+                            </div>
+                            <div>
+                                <label for="{{ form.foto_profesional.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Foto Profesional
+                                </label>
+                                {{ form.foto_profesional }}
+                                {% if profesional.foto_profesional %}
+                                <div class="mt-2">
+                                    <img src="{{ profesional.foto_profesional.url }}" 
+                                         alt="{{ profesional.nombre_completo }}"
+                                         class="w-16 h-16 rounded-full object-cover border-2 border-sage-200">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información Profesional -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 pb-2 border-b border-sage-200">
+                            <i class="fas fa-briefcase mr-2 text-coral-600"></i>
+                            Información Profesional
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.especialidad.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Especialidad Principal *
+                                </label>
+                                {{ form.especialidad }}
+                            </div>
+                            <div>
+                                <label for="{{ form.años_experiencia.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Años de Experiencia
+                                </label>
+                                {{ form.años_experiencia }}
+                            </div>
+                            <div>
+                                <label for="{{ form.numero_licencia.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Número de Licencia
+                                </label>
+                                {{ form.numero_licencia }}
+                            </div>
+                            <div>
+                                <label for="{{ form.fecha_contratacion.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Fecha de Contratación
+                                </label>
+                                {{ form.fecha_contratacion }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disponibilidad -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 pb-2 border-b border-sage-200">
+                            <i class="fas fa-clock mr-2 text-coral-600"></i>
+                            Horarios de Disponibilidad
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="{{ form.hora_inicio_disponibilidad.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Hora de Inicio
+                                </label>
+                                {{ form.hora_inicio_disponibilidad }}
+                            </div>
+                            <div>
+                                <label for="{{ form.hora_fin_disponibilidad.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Hora de Fin
+                                </label>
+                                {{ form.hora_fin_disponibilidad }}
+                            </div>
+                            <div>
+                                <label for="{{ form.dias_disponibles.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Días Disponibles
+                                </label>
+                                {{ form.dias_disponibles }}
+                                <p class="mt-1 text-sm text-sage-500">Separe los días con comas: lunes,martes,miercoles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicios -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 pb-2 border-b border-sage-200">
+                            <i class="fas fa-spa mr-2 text-coral-600"></i>
+                            Servicios que Ofrece
+                        </h3>
+                        <div>
+                            <label for="{{ form.servicios_que_ofrece.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                Seleccionar Servicios
+                            </label>
+                            {{ form.servicios_que_ofrece }}
+                            <p class="mt-1 text-sm text-sage-500">Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples servicios</p>
+                        </div>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 pb-2 border-b border-sage-200">
+                            <i class="fas fa-info-circle mr-2 text-coral-600"></i>
+                            Información Adicional
+                        </h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label for="{{ form.certificaciones.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Certificaciones y Cursos
+                                </label>
+                                {{ form.certificaciones }}
+                                <p class="mt-1 text-sm text-sage-500">Lista de certificaciones, cursos y formación adicional</p>
+                            </div>
+                            <div>
+                                <label for="{{ form.biografia.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                                    Biografía Profesional
+                                </label>
+                                {{ form.biografia }}
+                                <p class="mt-1 text-sm text-sage-500">Descripción profesional que verán los clientes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 pb-2 border-b border-sage-200">
+                            <i class="fas fa-toggle-on mr-2 text-coral-600"></i>
+                            Estado del Profesional
+                        </h3>
+                        <div class="flex items-center">
+                            <label class="flex items-center">
+                                {{ form.activo }}
+                                <span class="ml-2 text-sm text-sage-700">Profesional activo (puede recibir asignaciones de turnos)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="flex items-center justify-between pt-8 mt-8 border-t border-sage-200">
+                    <a href="{% url 'usuarios:profesional_gestion' %}" 
+                       class="inline-flex items-center px-6 py-3 border border-sage-300 rounded-lg text-sage-700 bg-white hover:bg-sage-50 focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-medium">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Volver a Gestión
+                    </a>
+                    
+                    <div class="flex space-x-3">
+                        <a href="{% url 'usuarios:profesional_detalle' profesional.pk %}" 
+                           class="inline-flex items-center px-6 py-3 border border-coral-300 rounded-lg text-coral-700 bg-white hover:bg-coral-50 focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-medium">
+                            <i class="fas fa-eye mr-2"></i>
+                            Ver Detalles
+                        </a>
+                        
+                        <button type="submit" 
+                                class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-lg hover:from-coral-700 hover:to-berry-700 focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl">
+                            <i class="fas fa-save mr-2"></i>
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Estadísticas del Profesional -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-coral-500 to-berry-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-spa text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-sage-600">Servicios Asignados</h3>
+                        <p class="text-2xl font-bold text-sage-900">{{ profesional.servicios_que_ofrece.count }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-sage-500 to-sage-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-sage-600">Experiencia</h3>
+                        <p class="text-2xl font-bold text-sage-900">{{ profesional.años_experiencia }} años</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-sage-600">Horario</h3>
+                        <p class="text-sm font-bold text-sage-900">{{ profesional.hora_inicio_disponibilidad }} - {{ profesional.hora_fin_disponibilidad }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para los campos del formulario */
+input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="time"], 
+textarea, select {
+    @apply w-full px-4 py-3 border border-sage-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-coral-500 transition-all duration-200;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+select[multiple] {
+    min-height: 120px;
+}
+
+input[type="checkbox"] {
+    @apply w-4 h-4 text-coral-600 border-sage-300 rounded focus:ring-coral-500;
+}
+
+input[type="file"] {
+    @apply block w-full text-sm text-sage-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-coral-50 file:text-coral-700 hover:file:bg-coral-100;
+}
+</style>
+{% endblock %}

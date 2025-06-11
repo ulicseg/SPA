@@ -1,0 +1,253 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Cliente - GestorSpa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-forest-50">
+    <div class="container mx-auto px-6 py-8">
+        <!-- Header del Dashboard -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">            <div class="flex items-center space-x-3">
+                <div class="gradient-coral-berry p-3 rounded-xl shadow-lg">
+                    <i class="fas fa-user text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-playfair font-bold text-gray-800">Mi Dashboard</h1>
+                    <p class="text-gray-600 mt-1">Bienvenido a tu panel personal</p>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-full shadow-lg animate-pulse">
+                <span class="font-semibold">{{ perfil.get_rol_display }}</span>
+            </div>
+        </div>
+
+        <!-- Estadísticas personales -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Mis Turnos -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sage-100">
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl mb-4 shadow-lg">
+                        <i class="fas fa-calendar-check text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-4xl font-bold text-gray-800 mb-2">{{ total_mis_turnos }}</h3>
+                    <p class="text-gray-600 font-medium">Mis Turnos</p>
+                </div>
+            </div>
+
+            <!-- Servicios Disponibles -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sage-100">
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-xl mb-4 shadow-lg">
+                        <i class="fas fa-spa text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-4xl font-bold text-gray-800 mb-2">{{ servicios_disponibles.count }}</h3>
+                    <p class="text-gray-600 font-medium">Servicios Disponibles</p>
+                </div>
+            </div>
+
+            <!-- Hora Actual -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sage-100">
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-4 rounded-xl mb-4 shadow-lg">
+                        <i class="fas fa-clock text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-4xl font-bold text-gray-800 mb-2">{{ "now"|date:"H:i" }}</h3>
+                    <p class="text-gray-600 font-medium">Hora Actual</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-sage-100">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="bg-gradient-to-br from-coral-500 to-coral-600 p-3 rounded-xl shadow-lg">
+                    <i class="fas fa-bolt text-white text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-playfair font-bold text-gray-800">Acciones Rápidas</h2>
+            </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="{% url 'turnos:turno_reserva_unificada' %}" 
+                   class="bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="text-center">
+                        <i class="fas fa-plus text-2xl mb-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        <p class="font-semibold">Reservar Turno</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'turnos:turno_list' %}" 
+                   class="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="text-center">
+                        <i class="fas fa-list text-2xl mb-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        <p class="font-semibold">Mis Turnos</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'usuarios:profesional_lista' %}" 
+                   class="bg-gradient-to-br from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="text-center">
+                        <i class="fas fa-user-md text-2xl mb-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        <p class="font-semibold">Profesionales</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'usuarios:perfil_update' %}" 
+                   class="bg-gradient-to-br from-forest-500 to-sage-600 hover:from-forest-600 hover:to-sage-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="text-center">
+                        <i class="fas fa-user-edit text-2xl mb-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        <p class="font-semibold">Editar Perfil</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sección adicional para clientes -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-sage-100">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="bg-gradient-to-br from-sage-500 to-sage-600 p-3 rounded-xl shadow-lg">
+                    <i class="fas fa-info-circle text-white text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-playfair font-bold text-gray-800">Información del Spa</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="{% url 'turnos:calendario_disponibilidad' %}" 
+                   class="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="text-center">
+                        <i class="fas fa-calendar text-2xl mb-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        <p class="font-semibold">Ver Disponibilidad</p>
+                        <p class="text-sm opacity-90 mt-1">Horarios disponibles</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'servicios:servicio_list' %}" 
+                   class="bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="text-center">
+                        <i class="fas fa-spa text-2xl mb-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        <p class="font-semibold">Todos los Servicios</p>
+                        <p class="text-sm opacity-90 mt-1">Catálogo completo</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'usuarios:profesional_lista' %}" 
+                   class="bg-gradient-to-br from-sage-500 to-sage-600 hover:from-sage-600 hover:to-sage-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="text-center">
+                        <i class="fas fa-users text-2xl mb-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        <p class="font-semibold">Nuestro Equipo</p>
+                        <p class="text-sm opacity-90 mt-1">Conoce a los profesionales</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Mis próximos turnos -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border border-sage-100">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-lg">
+                            <i class="fas fa-calendar-alt text-white text-lg"></i>
+                        </div>
+                        <h2 class="text-xl font-playfair font-bold text-gray-800">Mis Próximos Turnos</h2>
+                    </div>
+                    {% if mis_turnos %}                        <a href="{% url 'turnos:turno_list' %}" 
+                           class="gradient-forest-sage text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium text-sm">
+                            Ver todos
+                        </a>
+                    {% endif %}
+                </div>
+                
+                {% if mis_turnos %}
+                    <div class="space-y-4">
+                        {% for turno in mis_turnos %}
+                        <div class="bg-gradient-to-r from-sage-50 to-forest-50 p-6 rounded-xl border border-sage-200 hover:shadow-lg transition-all duration-300">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ turno.servicio.nombre }}</h3>
+                                    <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 text-sm text-gray-600">
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-calendar text-sage-600"></i>
+                                            <span>{{ turno.fecha|date:"d/m/Y" }}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-clock text-sage-600"></i>
+                                            <span>{{ turno.hora_inicio|time:"H:i" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    {% if turno.estado == 'pendiente' %}
+                                        <span class="bg-amber-100 text-amber-800 px-3 py-2 rounded-full text-sm font-medium shadow-sm">{{ turno.get_estado_display }}</span>
+                                    {% elif turno.estado == 'confirmado' %}
+                                        <span class="bg-emerald-100 text-emerald-800 px-3 py-2 rounded-full text-sm font-medium shadow-sm">{{ turno.get_estado_display }}</span>
+                                    {% elif turno.estado == 'cancelado' %}
+                                        <span class="bg-red-100 text-red-800 px-3 py-2 rounded-full text-sm font-medium shadow-sm">{{ turno.get_estado_display }}</span>
+                                    {% elif turno.estado == 'completado' %}
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-2 rounded-full text-sm font-medium shadow-sm">{{ turno.get_estado_display }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <i class="fas fa-calendar-times text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No tienes turnos programados</h3>
+                        <p class="text-gray-600 mb-6">¡Reserva tu primer turno y disfruta de nuestros servicios!</p>
+                        <a href="{% url 'turnos:turno_reserva_unificada' %}" 
+                           class="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium">
+                            <i class="fas fa-plus mr-2"></i>Reservar mi primer turno
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Servicios destacados -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border border-sage-100">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-xl shadow-lg">
+                        <i class="fas fa-spa text-white text-lg"></i>
+                    </div>
+                    <h2 class="text-xl font-playfair font-bold text-gray-800">Servicios Disponibles</h2>
+                </div>
+                
+                {% if servicios_disponibles %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        {% for servicio in servicios_disponibles %}
+                        <div class="bg-gradient-to-br from-white to-sage-50 border border-sage-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group">
+                            <div class="text-center">
+                                <div class="bg-gradient-to-br from-coral-500 to-berry-500 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <i class="{{ servicio.icono }} text-white text-xl"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 mb-2">{{ servicio.nombre }}</h3>
+                                <p class="text-sm text-gray-600 mb-2">{{ servicio.duracion }} min</p>
+                                <p class="text-xl font-bold text-coral-600 mb-4">${{ servicio.precio }}</p>                                <a href="{% url 'turnos:turno_reserva_unificada' %}?servicio={{ servicio.id }}" 
+                                   class="gradient-forest-sage text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                                    Reservar
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center">
+                        <a href="{% url 'servicios:servicio_list' %}" 
+                           class="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium">
+                            Ver todos los servicios
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <i class="fas fa-spa text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No hay servicios disponibles</h3>
+                        <p class="text-gray-600">Los servicios aparecerán aquí cuando estén disponibles.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

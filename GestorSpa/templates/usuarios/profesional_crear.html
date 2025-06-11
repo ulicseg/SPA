@@ -1,0 +1,200 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Crear Profesional - GestorSpa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8" data-aos="fade-down">
+            <h1 class="text-3xl font-bold text-sage-800 mb-4">
+                <i class="fas fa-user-plus mr-3 text-coral-600"></i>
+                Crear Nuevo Profesional
+            </h1>
+            <p class="text-lg text-sage-600">
+                Agrega un nuevo miembro al equipo de profesionales del spa
+            </p>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-xl shadow-xl border border-sage-100 overflow-hidden" data-aos="fade-up">
+            <div class="bg-gradient-to-r from-coral-600 to-berry-600 px-6 py-4">
+                <h2 class="text-xl font-semibold text-white">
+                    <i class="fas fa-clipboard-list mr-2"></i>
+                    Información Básica del Usuario
+                </h2>
+            </div>
+
+            <form method="post" class="p-6 space-y-6">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4" data-aos="shake">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                Por favor, corrige los siguientes errores:
+                            </h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc list-inside space-y-1">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ field|capfirst }}: {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nombre de usuario -->
+                    <div>
+                        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                            <i class="fas fa-user mr-1"></i>
+                            Nombre de Usuario *
+                        </label>
+                        <input type="text" 
+                               name="{{ form.username.name }}" 
+                               id="{{ form.username.id_for_label }}"
+                               value="{{ form.username.value|default:'' }}"
+                               required
+                               class="w-full px-4 py-3 border border-sage-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-coral-500 transition-all duration-200"
+                               placeholder="usuario_profesional">
+                        <p class="mt-1 text-sm text-sage-500">Será usado para el inicio de sesión</p>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                            <i class="fas fa-envelope mr-1"></i>
+                            Email *
+                        </label>
+                        <input type="email" 
+                               name="{{ form.email.name }}" 
+                               id="{{ form.email.id_for_label }}"
+                               value="{{ form.email.value|default:'' }}"
+                               required
+                               class="w-full px-4 py-3 border border-sage-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-coral-500 transition-all duration-200"
+                               placeholder="profesional@spa.com">
+                        <p class="mt-1 text-sm text-sage-500">Email de contacto profesional</p>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                            <i class="fas fa-id-card mr-1"></i>
+                            Nombre *
+                        </label>
+                        <input type="text" 
+                               name="{{ form.first_name.name }}" 
+                               id="{{ form.first_name.id_for_label }}"
+                               value="{{ form.first_name.value|default:'' }}"
+                               required
+                               class="w-full px-4 py-3 border border-sage-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-coral-500 transition-all duration-200"
+                               placeholder="Ana">
+                    </div>
+
+                    <!-- Apellido -->
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-sage-700 mb-2">
+                            <i class="fas fa-id-card mr-1"></i>
+                            Apellido *
+                        </label>
+                        <input type="text" 
+                               name="{{ form.last_name.name }}" 
+                               id="{{ form.last_name.id_for_label }}"
+                               value="{{ form.last_name.value|default:'' }}"
+                               required
+                               class="w-full px-4 py-3 border border-sage-300 rounded-lg focus:ring-2 focus:ring-coral-500 focus:border-coral-500 transition-all duration-200"
+                               placeholder="García">
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                <div class="bg-gradient-to-r from-sage-50 to-sand-50 rounded-lg p-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-sage-500 mt-1"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-sage-800">Información importante:</h4>
+                            <ul class="mt-2 text-sm text-sage-600 space-y-1">
+                                <li>• Se creará automáticamente un perfil profesional básico</li>
+                                <li>• El usuario recibirá rol de "profesional" en el sistema</li>
+                                <li>• Después de crear el usuario, podrás completar su información profesional</li>
+                                <li>• Se generará una contraseña temporal que deberá cambiar en el primer acceso</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="flex items-center justify-between pt-6 border-t border-sage-200">
+                    <a href="{% url 'usuarios:profesional_gestion' %}" 
+                       class="inline-flex items-center px-6 py-3 border border-sage-300 rounded-lg text-sage-700 bg-white hover:bg-sage-50 focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-medium">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Cancelar
+                    </a>
+                    
+                    <button type="submit" 
+                            class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-lg hover:from-coral-700 hover:to-berry-700 focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl">
+                        <i class="fas fa-save mr-2"></i>
+                        Crear Profesional
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Próximos pasos -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6 border border-sage-100" data-aos="fade-up" data-aos-delay="200">
+            <h3 class="text-lg font-semibold text-sage-800 mb-4">
+                <i class="fas fa-route mr-2 text-coral-600"></i>
+                Próximos Pasos
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-gradient-to-r from-coral-500 to-berry-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            1
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-semibold text-sage-800">Completar Perfil</h4>
+                        <p class="text-sm text-sage-600">Añadir especialidad, experiencia y foto profesional</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-gradient-to-r from-sage-500 to-sage-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            2
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-semibold text-sage-800">Asignar Servicios</h4>
+                        <p class="text-sm text-sage-600">Configurar qué servicios puede ofrecer</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            3
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-semibold text-sage-800">Configurar Horarios</h4>
+                        <p class="text-sm text-sage-600">Establecer disponibilidad y horarios de trabajo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

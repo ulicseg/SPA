@@ -3,107 +3,132 @@
 
 {% block title %}Servicios - GestorSpa{% endblock %}
 
-{% block extra_css %}
-<style>
-    .btn-primary {
-        background-color: #79927d;
-        border-color: #79927d;
-    }
-    .btn-primary:hover {
-        background-color: #5c7161;
-        border-color: #5c7161;
-    }
-    .btn-outline-primary {
-        color: #79927d;
-        border-color: #79927d;
-    }
-    .btn-outline-primary:hover {
-        background-color: #79927d;
-        border-color: #79927d;
-    }
-    .bg-primary {
-        background-color: #79927d !important;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="container py-5">
-    <div class="row mb-4 align-items-center">
-        <div class="col-md-8">
-            <h1 class="display-4 mb-0" data-aos="fade-right">Nuestros Servicios</h1>
-            <p class="lead text-muted mt-2" data-aos="fade-right" data-aos-delay="100">Descubre nuestra variedad de tratamientos</p>
-        </div>
-        {% if user.is_staff %}
-        <div class="col-md-4 text-md-end" data-aos="fade-left">
-            <a href="{% url 'servicios:servicio_create' %}" class="btn btn-primary">
-                <i class="fas fa-plus-circle me-2"></i>Nuevo Servicio
-            </a>
-        </div>
-        {% endif %}
-    </div>
-
-    {% if messages %}
-    <div class="row mb-4">
-        <div class="col">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<!-- Page Header -->
+<header class="gradient-forest-sage text-white relative overflow-hidden">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+    <div class="absolute -bottom-10 -left-10 w-60 h-60 bg-white/5 rounded-full blur-2xl"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col lg:flex-row justify-between items-center">
+            <div class="text-center lg:text-left mb-6 lg:mb-0">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-4 backdrop-blur-sm">
+                    <i class="fas fa-spa text-2xl"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-2">Nuestros Servicios</h1>
+                <p class="text-white/80 text-lg">Descubre nuestra variedad de tratamientos</p>
             </div>
-            {% endfor %}
+            {% if user.is_staff %}
+            <div class="flex space-x-4">
+                <a href="{% url 'servicios:servicio_create' %}" 
+                   class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 focus:outline-none focus:ring-4 focus:ring-white/20 transition-all duration-200 font-semibold">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Nuevo Servicio
+                </a>
+            </div>
+            {% endif %}
         </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    {% if messages %}
+    <div class="mb-8">
+        {% for message in messages %}
+        <div class="bg-sage/20 border border-sage/30 text-forest px-6 py-4 rounded-2xl mb-4">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-3"></i>
+                <span>{{ message }}</span>
+            </div>
+        </div>
+        {% endfor %}
     </div>
     {% endif %}
 
     {% if object_list %}
-    <div class="row g-4">
-        {% for servicio in object_list %}
-        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{% cycle 100 200 300 %}">
-            <div class="card h-100 border-0 shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for servicio in object_list %}        <div class="bg-white rounded-3xl shadow-lg border border-sage/20 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+            <!-- Imagen del Servicio -->
+            <div class="relative h-48 gradient-forest-sage">
                 {% if servicio.imagen %}
-                <img src="{{ servicio.imagen.url }}" class="card-img-top" alt="{{ servicio.nombre }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ servicio.imagen.url }}" 
+                     class="w-full h-full object-cover" 
+                     alt="{{ servicio.nombre }}">
                 {% else %}
-                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <i class="fas fa-spa fa-3x text-muted"></i>
+                <div class="w-full h-full flex items-center justify-center">
+                    <i class="fas fa-spa text-4xl text-white/70"></i>
                 </div>
                 {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ servicio.nombre }}</h5>
-                    <p class="card-text text-muted">{{ servicio.descripcion|truncatewords:20 }}</p>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-primary">{{ servicio.duracion }} minutos</span>
-                        <span class="h5 mb-0">${{ servicio.precio }}</span>
+                <div class="absolute inset-0 bg-black/20"></div>
+            </div>
+            
+            <!-- Contenido de la Tarjeta -->
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ servicio.nombre }}</h3>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ servicio.descripcion|truncatewords:20 }}</p>
+                
+                <!-- Información del Servicio -->
+                <div class="flex items-center justify-between mb-6">                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 gradient-forest-sage rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-white text-xs"></i>
+                        </div>
+                        <span class="text-sm font-medium text-forest">{{ servicio.duracion }} min</span>
                     </div>
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'servicios:servicio_detail' servicio.id %}" class="btn btn-primary flex-grow-1">
-                            Ver detalles
-                        </a>
-                        {% if user.is_staff %}
-                        <a href="{% url 'servicios:servicio_update' servicio.id %}" class="btn btn-outline-primary">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="{% url 'servicios:servicio_delete' servicio.id %}" class="btn btn-outline-danger">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                        {% endif %}
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 gradient-coral-berry rounded-lg flex items-center justify-center">
+                            <i class="fas fa-tag text-white text-xs"></i>
+                        </div>
+                        <span class="text-lg font-bold text-forest">${{ servicio.precio }}</span>
                     </div>
+                </div>
+                
+                <!-- Botones de Acción -->
+                <div class="space-y-3">                    <a href="{% url 'servicios:servicio_detail' servicio.id %}" 
+                       class="w-full inline-flex items-center justify-center px-6 py-3 gradient-forest-sage text-white rounded-xl hover:gradient-coral-berry focus:outline-none focus:ring-4 focus:ring-sage/20 transition-all duration-200 font-semibold">
+                        <i class="fas fa-eye mr-2"></i>
+                        Ver Detalles
+                    </a>
+                    
+                    {% if user.is_staff %}
+                    <div class="flex space-x-2">                        <a href="{% url 'servicios:servicio_update' servicio.id %}" 
+                           class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-sage/30 text-sage rounded-xl hover:bg-sage/10 focus:outline-none focus:ring-4 focus:ring-sage/20 transition-all duration-200 font-medium">
+                            <i class="fas fa-edit mr-2"></i>
+                            Editar
+                        </a>
+                        <a href="{% url 'servicios:servicio_delete' servicio.id %}" 
+                           class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-berry/30 text-berry rounded-xl hover:bg-berry/10 focus:outline-none focus:ring-4 focus:ring-berry/20 transition-all duration-200 font-medium">
+                            <i class="fas fa-trash mr-2"></i>
+                            Eliminar
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-5" data-aos="fade-up">
-        <i class="fas fa-spa fa-3x text-muted mb-3"></i>
-        <h3>No hay servicios registrados</h3>
-        {% if user.is_staff %}
-        <p class="text-muted">Comienza agregando algunos servicios para tus clientes.</p>
-        <a href="{% url 'servicios:servicio_create' %}" class="btn btn-primary mt-3">
-            <i class="fas fa-plus-circle me-2"></i>Agregar Servicio
-        </a>
-        {% endif %}
+    <!-- Estado Vacío -->
+    <div class="text-center py-16">
+        <div class="max-w-md mx-auto">            <div class="w-24 h-24 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-spa text-4xl text-sage"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-forest mb-2">No hay servicios registrados</h3>
+            {% if user.is_staff %}
+            <p class="text-forest/70 mb-6">Comienza agregando algunos servicios para tus clientes.</p>
+            <a href="{% url 'servicios:servicio_create' %}" 
+               class="inline-flex items-center px-6 py-3 gradient-forest-sage text-white rounded-xl hover:gradient-coral-berry focus:outline-none focus:ring-4 focus:ring-sage/20 transition-all duration-200 font-semibold">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Agregar Servicio
+            </a>
+            {% else %}
+            <p class="text-gray-600">Próximamente tendremos servicios disponibles.</p>
+            {% endif %}
+        </div>
     </div>
     {% endif %}
-</div>
-{% endblock %} 
+</main>
+{% endblock %}

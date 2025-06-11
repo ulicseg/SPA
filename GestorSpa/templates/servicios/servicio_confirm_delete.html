@@ -4,53 +4,151 @@
 {% block title %}Eliminar Servicio - GestorSpa{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
-                        <h2 class="card-title h4 mb-3">¿Estás seguro de que deseas eliminar este servicio?</h2>
-                        <p class="text-muted">Esta acción no se puede deshacer.</p>
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Warning Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-red-200" data-aos="fade-up">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-red-500 to-rose-600 p-6">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-white/20 mb-4">
+                        <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
                     </div>
-
-                    <div class="service-details mb-4">
-                        <h5 class="mb-3">Detalles del Servicio</h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Nombre:</strong> {{ object.nombre }}</p>
-                                <p><strong>Duración:</strong> {{ object.duracion }} minutos</p>
-                                <p><strong>Precio:</strong> ${{ object.precio }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Horario:</strong> {{ object.hora_inicio|time:"H:i" }} - {{ object.hora_fin|time:"H:i" }}</p>
-                                <p><strong>Intervalo:</strong> {{ object.intervalo }} minutos</p>
-                                <p><strong>Estado:</strong> 
-                                    {% if object.activo %}
-                                        <span class="badge bg-success">Activo</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">Inactivo</span>
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="d-flex justify-content-center gap-3">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash me-2"></i>Sí, eliminar
-                            </button>
-                            <a href="{% url 'servicios:servicio_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-2"></i>Cancelar
-                            </a>
-                        </div>
-                    </form>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white mb-2">
+                        Confirmar Eliminación
+                    </h1>
+                    <p class="text-red-100">Esta acción es permanente y no se puede deshacer</p>
                 </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 lg:p-8">
+                <!-- Warning Message -->
+                <div class="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-400 rounded-xl p-6 mb-8">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-600 text-xl mr-4"></i>
+                        <div>
+                            <h3 class="text-lg font-semibold text-red-800 mb-2">
+                                ¿Estás seguro de que deseas eliminar este servicio?
+                            </h3>
+                            <p class="text-red-700">
+                                Una vez eliminado, el servicio no podrá ser recuperado y se perderán todos los datos asociados.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Details -->
+                <div class="bg-gradient-to-r from-sage-50 to-sand-50 rounded-xl p-6 mb-8 border border-sage-100">
+                    <h3 class="text-lg font-semibold text-sage-800 mb-6 flex items-center">
+                        <i class="fas fa-spa mr-3 text-coral-600"></i>
+                        Detalles del Servicio a Eliminar
+                    </h3>
+
+                    <!-- Service Information Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column -->
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-tag w-6 text-sage-600 mr-3"></i>
+                                <div>
+                                    <span class="text-sm text-sage-600">Nombre:</span>
+                                    <p class="font-semibold text-sage-800">{{ object.nombre }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock w-6 text-sage-600 mr-3"></i>
+                                <div>
+                                    <span class="text-sm text-sage-600">Duración:</span>
+                                    <p class="font-semibold text-sage-800">{{ object.duracion }} minutos</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-dollar-sign w-6 text-sage-600 mr-3"></i>
+                                <div>
+                                    <span class="text-sm text-sage-600">Precio:</span>
+                                    <p class="font-semibold text-sage-800">${{ object.precio }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-4">
+                            {% if object.descripcion %}
+                            <div class="flex items-start">
+                                <i class="fas fa-align-left w-6 text-sage-600 mr-3 mt-1"></i>
+                                <div>
+                                    <span class="text-sm text-sage-600">Descripción:</span>
+                                    <p class="font-semibold text-sage-800">{{ object.descripcion|truncatewords:15 }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="flex items-center">
+                                <i class="fas fa-toggle-on w-6 text-sage-600 mr-3"></i>
+                                <div>
+                                    <span class="text-sm text-sage-600">Estado:</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ml-2
+                                        {% if object.activo %}
+                                        bg-emerald-100 text-emerald-800 border border-emerald-200
+                                        {% else %}
+                                        bg-red-100 text-red-800 border border-red-200
+                                        {% endif %}">
+                                        <i class="fas {% if object.activo %}fa-check-circle{% else %}fa-times-circle{% endif %} mr-2"></i>
+                                        {% if object.activo %}Activo{% else %}Inactivo{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Image Preview -->
+                    {% if object.imagen %}
+                    <div class="mt-6 pt-6 border-t border-sage-200">
+                        <div class="flex items-center mb-3">
+                            <i class="fas fa-image w-6 text-sage-600 mr-3"></i>
+                            <span class="text-sm text-sage-600">Imagen del servicio:</span>
+                        </div>
+                        <img src="{{ object.imagen.url }}" alt="{{ object.nombre }}" 
+                             class="w-32 h-32 object-cover rounded-xl shadow-lg border border-sage-200">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Confirmation Form -->
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Impact Warning -->
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-amber-600 mr-3 mt-1"></i>
+                            <div class="text-sm text-amber-800">
+                                <p class="font-semibold mb-1">Impacto de la eliminación:</p>
+                                <ul class="list-disc list-inside space-y-1 text-amber-700">
+                                    <li>Se eliminarán todas las reservas futuras asociadas a este servicio</li>
+                                    <li>El historial de servicios previos se mantendrá por motivos de auditoría</li>
+                                    <li>Esta acción no se puede deshacer</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-sage-200">
+                        <button type="submit" 
+                                class="flex-1 inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-xl hover:from-red-700 hover:to-rose-700 focus:outline-none focus:ring-4 focus:ring-red-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            <i class="fas fa-trash mr-3"></i>
+                            Sí, eliminar servicio
+                        </button>
+                        <a href="{% url 'servicios:servicio_list' %}" 
+                           class="flex-1 inline-flex items-center justify-center px-8 py-4 bg-white border-2 border-sage-300 text-sage-700 rounded-xl hover:bg-sage-50 focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            <i class="fas fa-times mr-3"></i>
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

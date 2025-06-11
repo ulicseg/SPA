@@ -1,0 +1,405 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil Profesional - Spa Sentirse Bien{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --spa-cream: #f8f6f0;
+    --spa-sage: #1B5E20;
+    --spa-sage-dark: #0A3D0A;
+    --spa-forest: #052505;
+    --spa-gold: #FFD700;
+    --spa-gold-dark: #B7950B;
+    --spa-rose: #e8d5d0;
+    --spa-charcoal: #1c2825;
+    --spa-pearl: #f5f5f3;
+    --spa-mist: rgba(27, 94, 32, 0.06);
+  }
+
+  .font-luxury { font-family: 'Playfair Display', serif; }
+  .font-modern { font-family: 'Inter', sans-serif; }
+
+  .luxury-card {
+    background-color: rgba(248, 246, 240, 0.9);
+    border: 1px solid rgba(27, 94, 32, 0.1);
+    box-shadow: 0 10px 35px rgba(5, 37, 5, 0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+
+  .form-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(27, 94, 32, 0.1);
+    box-shadow: 0 4px 15px rgba(5, 37, 5, 0.05);
+  }
+
+  .form-section h3 {
+    color: var(--spa-forest);
+    border-bottom: 2px solid var(--spa-sage);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-control, .form-select {
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: var(--spa-sage);
+    box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+    outline: none;
+  }
+
+  .btn-sage {
+    background-color: var(--spa-sage);
+    color: var(--spa-pearl);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-sage:hover {
+    background-color: var(--spa-sage-dark);
+    color: var(--spa-pearl);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: var(--spa-sage);
+    border: 2px solid var(--spa-sage);
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-outline:hover {
+    background-color: var(--spa-sage);
+    color: var(--spa-pearl);
+    transform: translateY(-2px);
+  }
+
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .checkbox-item:hover {
+    background-color: var(--spa-mist);
+    border-color: var(--spa-sage);
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    margin-right: 0.5rem;
+    transform: scale(1.2);
+    accent-color: var(--spa-sage);
+  }
+
+  .error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .help-text {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .page-header {
+    background: linear-gradient(135deg, var(--spa-sage) 0%, var(--spa-forest) 100%);
+    color: var(--spa-pearl);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="font-luxury text-3xl font-semibold mb-2">
+            <i class="fas fa-edit mr-3"></i>
+            Editar Perfil Profesional
+        </h1>
+        <p class="font-modern opacity-90">
+            Mantén tu información actualizada para brindar el mejor servicio
+        </p>
+    </div>
+
+    <!-- Formulario -->
+    <form method="post" enctype="multipart/form-data" class="luxury-card">
+        {% csrf_token %}
+        
+        <!-- Información Personal -->
+        <div class="form-section">
+            <h3 class="font-luxury text-xl font-semibold flex items-center">
+                <i class="fas fa-user mr-3 text-green-700"></i>
+                Información Personal
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.first_name.label }}</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="error-message">{{ form.first_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="error-message">{{ form.last_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.nombre_completo.label }}</label>
+                    {{ form.nombre_completo }}
+                    {% if form.nombre_completo.errors %}
+                        <div class="error-message">{{ form.nombre_completo.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.foto_profesional.label }}</label>
+                    {{ form.foto_profesional }}
+                    {% if form.foto_profesional.errors %}
+                        <div class="error-message">{{ form.foto_profesional.errors.0 }}</div>
+                    {% endif %}
+                    <div class="help-text">Formatos permitidos: JPG, PNG. Tamaño máximo: 5MB</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información Profesional -->
+        <div class="form-section">
+            <h3 class="font-luxury text-xl font-semibold flex items-center">
+                <i class="fas fa-user-md mr-3 text-green-700"></i>
+                Información Profesional
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.especialidad.label }}</label>
+                    {{ form.especialidad }}
+                    {% if form.especialidad.errors %}
+                        <div class="error-message">{{ form.especialidad.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.años_experiencia.label }}</label>
+                    {{ form.años_experiencia }}
+                    {% if form.años_experiencia.errors %}
+                        <div class="error-message">{{ form.años_experiencia.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.numero_licencia.label }}</label>
+                    {{ form.numero_licencia }}
+                    {% if form.numero_licencia.errors %}
+                        <div class="error-message">{{ form.numero_licencia.errors.0 }}</div>
+                    {% endif %}
+                    <div class="help-text">Opcional: Número de licencia profesional</div>
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.certificaciones.label }}</label>
+                    {{ form.certificaciones }}
+                    {% if form.certificaciones.errors %}
+                        <div class="error-message">{{ form.certificaciones.errors.0 }}</div>
+                    {% endif %}
+                    <div class="help-text">Lista tus certificaciones, cursos y especializaciones</div>
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.biografia.label }}</label>
+                    {{ form.biografia }}
+                    {% if form.biografia.errors %}
+                        <div class="error-message">{{ form.biografia.errors.0 }}</div>
+                    {% endif %}
+                    <div class="help-text">Describe tu experiencia profesional y filosofía de trabajo</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de Contacto -->
+        <div class="form-section">
+            <h3 class="font-luxury text-xl font-semibold flex items-center">
+                <i class="fas fa-phone mr-3 text-green-700"></i>
+                Información de Contacto
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.telefono.label }}</label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <div class="error-message">{{ form.telefono.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.email_profesional.label }}</label>
+                    {{ form.email_profesional }}
+                    {% if form.email_profesional.errors %}
+                        <div class="error-message">{{ form.email_profesional.errors.0 }}</div>
+                    {% endif %}
+                    <div class="help-text">Opcional: Email específico para uso profesional</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disponibilidad -->
+        <div class="form-section">
+            <h3 class="font-luxury text-xl font-semibold flex items-center">
+                <i class="fas fa-clock mr-3 text-green-700"></i>
+                Disponibilidad
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.hora_inicio_disponibilidad.label }}</label>
+                    {{ form.hora_inicio_disponibilidad }}
+                    {% if form.hora_inicio_disponibilidad.errors %}
+                        <div class="error-message">{{ form.hora_inicio_disponibilidad.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.hora_fin_disponibilidad.label }}</label>
+                    {{ form.hora_fin_disponibilidad }}
+                    {% if form.hora_fin_disponibilidad.errors %}
+                        <div class="error-message">{{ form.hora_fin_disponibilidad.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div>
+                <label class="block font-modern font-semibold text-gray-700 mb-2">{{ form.dias_trabajo.label }}</label>
+                <div class="checkbox-group">
+                    {% for choice in form.dias_trabajo %}
+                        <div class="checkbox-item">
+                            {{ choice.tag }}
+                            <label for="{{ choice.id_for_label }}" class="font-modern">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.dias_trabajo.errors %}
+                    <div class="error-message">{{ form.dias_trabajo.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Servicios -->
+        <div class="form-section">
+            <h3 class="font-luxury text-xl font-semibold flex items-center">
+                <i class="fas fa-spa mr-3 text-green-700"></i>
+                Servicios que Ofreces
+            </h3>
+            
+            <div class="checkbox-group">
+                {% for choice in form.servicios_que_ofrece %}
+                    <div class="checkbox-item">
+                        {{ choice.tag }}
+                        <label for="{{ choice.id_for_label }}" class="font-modern">{{ choice.choice_label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if form.servicios_que_ofrece.errors %}
+                <div class="error-message">{{ form.servicios_que_ofrece.errors.0 }}</div>
+            {% endif %}
+            <div class="help-text mt-2">Selecciona los servicios que puedes ofrecer</div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-end pt-6 border-t border-gray-200">
+            <a href="{% url 'usuarios:perfil_profesional' %}" class="btn-outline text-center">
+                <i class="fas fa-times mr-2"></i>
+                Cancelar
+            </a>
+            <button type="submit" class="btn-sage">
+                <i class="fas fa-save mr-2"></i>
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-completar nombre completo
+    const firstName = document.querySelector('[name="first_name"]');
+    const lastName = document.querySelector('[name="last_name"]');
+    const fullName = document.querySelector('[name="nombre_completo"]');
+    
+    function updateFullName() {
+        if (firstName && lastName && fullName) {
+            const first = firstName.value.trim();
+            const last = lastName.value.trim();
+            if (first || last) {
+                fullName.value = `${first} ${last}`.trim();
+            }
+        }
+    }
+    
+    if (firstName) firstName.addEventListener('input', updateFullName);
+    if (lastName) lastName.addEventListener('input', updateFullName);
+    
+    // Validación de horarios
+    const horaInicio = document.querySelector('[name="hora_inicio_disponibilidad"]');
+    const horaFin = document.querySelector('[name="hora_fin_disponibilidad"]');
+    
+    function validarHorarios() {
+        if (horaInicio && horaFin && horaInicio.value && horaFin.value) {
+            if (horaInicio.value >= horaFin.value) {
+                horaFin.setCustomValidity('La hora de fin debe ser posterior a la hora de inicio');
+            } else {
+                horaFin.setCustomValidity('');
+            }
+        }
+    }
+    
+    if (horaInicio) horaInicio.addEventListener('change', validarHorarios);
+    if (horaFin) horaFin.addEventListener('change', validarHorarios);
+});
+</script>
+{% endblock %}

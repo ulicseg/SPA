@@ -1,317 +1,482 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Inicio - GestorSpa{% endblock %}
+{% block title %}Inicio - Spa Sentirse Bien{% endblock %}
 
-{% block extra_css %}
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-    /* Estilos generales */
-    :root {
-        --card-spacing: 2rem;
-        --card-radius: 15px;
-        --transition-speed: 0.3s;
-    }
+  /* Variables CSS para paleta de spa de lujo - Mejorado para mejor contraste */
+  :root {
+    --spa-cream: #f8f6f0;
+    --spa-sage: #1B5E20;
+    --spa-sage-dark: #0A3D0A;
+    --spa-forest: #052505;
+    --spa-gold: #FFD700;
+    --spa-gold-dark: #B7950B;
+    --spa-rose: #e8d5d0;
+    --spa-charcoal: #1c2825;
+    --spa-pearl: #f5f5f3;
+    --spa-mist: rgba(27, 94, 32, 0.06);
+    --text-dark: #052505;
+    --text-light: #f5f5f3;
+    --text-medium: #1B5E20;
+  }
 
-    /* Hero Section */
-    .hero-section {
-        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                    url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=100');
-        background-size: cover;
-        background-position: center;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        color: white;
-        margin-top: -76px;
-    }
+  /* Tipografías de lujo */
+  .font-luxury { font-family: 'Playfair Display', serif; }
+  .font-modern { font-family: 'Inter', sans-serif; }
 
-    /* Servicios Section */
-    .services-section {
-        padding: 40px 0;
-        background: linear-gradient(180deg, 
-            #ffffff 0%,
-            rgba(214, 220, 214, 0.3) 15%,
-            rgba(214, 220, 214, 0.3) 85%,
-            #ffffff 100%
-        );
-        position: relative;
-        overflow: hidden;
-    }
+  /* Gradientes elegantes */
+  .gradient-spa-luxury {
+    background: linear-gradient(135deg, var(--spa-sage) 0%, var(--spa-forest) 100%);
+  }
+  .gradient-spa-pearl {
+    background: linear-gradient(135deg, var(--spa-pearl) 0%, var(--spa-cream) 100%);
+  }
+  .gradient-spa-mist {
+    background: linear-gradient(135deg, rgba(248, 246, 240, 0.95) 0%, rgba(156, 175, 158, 0.05) 100%);
+  }
+  .gradient-spa-rose {
+    background: linear-gradient(135deg, var(--spa-rose) 0%, var(--spa-cream) 100%);
+  }
+  .gradient-spa-gold {
+    background: linear-gradient(135deg, var(--spa-gold) 0%, #f4e397 100%);
+  }
 
-    .services-section::before,
-    .services-section::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 120px;
-        pointer-events: none;
-    }
+  /* Animaciones suaves y elegantes */
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 
-    .services-section::before {
-        top: 0;
-        background: linear-gradient(180deg, 
-            rgba(255, 255, 255, 1) 0%,
-            rgba(255, 255, 255, 0) 100%
-        );
+  /* Animaciones del Hero con timing más elegante */
+  @keyframes luxuryFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
     }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 
-    .services-section::after {
-        bottom: 0;
-        background: linear-gradient(0deg, 
-            rgba(255, 255, 255, 1) 0%,
-            rgba(255, 255, 255, 0) 100%
-        );
-    }
+  @keyframes floatingElements {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+  }
 
-    .services-title {
-        font-size: 1.75rem;
-        color: #4A665A;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        font-weight: 300;
-        position: relative;
-    }
+  .hero-content-animation {
+    animation: luxuryFadeIn 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+    opacity: 0;
+  }
+  .hero-buttons-animation {
+    animation: luxuryFadeIn 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+    opacity: 0;
+  }
+  .scroll-indicator-animation {
+    animation: luxuryFadeIn 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.3s forwards;
+    opacity: 0;
+  }
+  /* Efectos de hover más sofisticados para las cards */
+  .luxury-card {
+    background: linear-gradient(145deg, rgba(248, 246, 240, 0.95), rgba(245, 245, 243, 0.9));
+    border: 1px solid rgba(27, 94, 32, 0.15);
+    box-shadow: 
+      0 8px 32px rgba(5, 37, 5, 0.08),
+      0 1px 4px rgba(27, 94, 32, 0.12),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .luxury-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.6), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .luxury-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 
+      0 20px 60px rgba(5, 37, 5, 0.18),
+      0 8px 24px rgba(27, 94, 32, 0.25),
+      inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 215, 0, 0.4);
+  }
+  
+  .luxury-card:hover::before {
+    opacity: 1;
+  }
+  
+  /* Efecto de brillo en hover */
+  .service-shine {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+  }
+  
+  .luxury-card:hover .service-shine {
+    transform: rotate(45deg) translate(100%, 100%);
+    opacity: 1;
+  }
+  
+  /* Mejoras para el contenido de las cards */
+  .service-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .service-badge {
+    background: linear-gradient(135deg, var(--spa-gold), #f4e397);
+    color: var(--spa-forest);
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .service-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem 1rem 0 0;
+  }
+  
+  .service-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(5, 37, 5, 0.8) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  
+  .luxury-card:hover .service-image-overlay {
+    opacity: 1;
+  }
+  
+  /* Animación de entrada para las cards */
+  .service-card-enter {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .service-card-enter.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 
-    .services-subtitle {
-        font-size: 0.9rem;
-        color: #7B8B84;
-        text-align: center;
-        margin-bottom: 2rem;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        position: relative;
-    }
+  /* Elementos flotantes decorativos */
+  .floating-element {
+    animation: floatingElements 6s ease-in-out infinite;
+  }
 
-    .services-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
-        padding: 0 1.5rem;
-        max-width: 1200px;
-        margin: 0 auto;
-        position: relative;
-    }
+  /* Efectos de cristal y blur */
+  .glass-effect {
+    background: rgba(245, 245, 243, 0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(245, 245, 243, 0.25);
+  }
 
-    .service-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(214, 220, 214, 0.5);
-        overflow: hidden;
-        transition: all var(--transition-speed);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 4px 15px rgba(74, 102, 90, 0.05);
-    }
+  /* Overlay sutil para imágenes */
+  .spa-image-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(156, 175, 158, 0.2) 0%, rgba(61, 90, 62, 0.3) 100%);
+    border-radius: inherit;
+  }
 
-    .service-card:hover {
-        transform: translateY(-3px);
-        border: 1px solid rgba(74, 102, 90, 0.2);
-        box-shadow: 0 8px 20px rgba(74, 102, 90, 0.08);
-    }
+  /* Patrones decorativos */
+  .spa-pattern {
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(156, 175, 158, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(232, 213, 208, 0.05) 0%, transparent 50%);
+  }
 
-    .service-image {
-        width: 100%;
-        height: 120px;
-        object-fit: cover;
-        border-bottom: 1px solid rgba(214, 220, 214, 0.5);
-    }
+  /* FUERZA LOS COLORES ESPECÍFICOS */
+  .force-spa-forest,
+  .force-spa-forest * {
+    color: var(--spa-forest) !important;
+  }
+  
+  .force-spa-pearl,
+  .force-spa-pearl * {
+    color: var(--spa-pearl) !important;
+  }
+  
+  .force-spa-sage,
+  .force-spa-sage * {
+    color: var(--spa-sage) !important;
+  }
+  
+  .force-spa-charcoal,
+  .force-spa-charcoal * {
+    color: var(--spa-charcoal) !important;
+  }
 
-    .service-icon {
-        height: 120px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        background: linear-gradient(135deg, 
-            rgba(214, 220, 214, 0.2),
-            rgba(214, 220, 214, 0.1)
-        );
-        color: #4A665A;
-        border-bottom: 1px solid rgba(214, 220, 214, 0.5);
-    }
+  /* Botones específicos */
+  .btn-forest {
+    background-color: var(--spa-forest) !important;
+    color: var(--spa-pearl) !important;
+    border-color: var(--spa-forest) !important;
+  }
+  
+  .btn-pearl {
+    background-color: var(--spa-pearl) !important;
+    color: var(--spa-forest) !important;
+    border-color: var(--spa-forest) !important;
+  }
 
-    .service-content {
-        padding: 0.75rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(214, 220, 214, 0.1) 100%
-        );
-    }
-
-    .service-content h3 {
-        color: #4A665A;
-        font-size: 1rem;
-        margin-bottom: 0.4rem;
-        font-weight: 500;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .service-description {
-        color: #7B8B84;
-        margin-bottom: 0.75rem;
-        line-height: 1.3;
-        flex-grow: 1;
-        font-size: 0.85rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .service-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.4rem 0.75rem;
-        background: linear-gradient(135deg,
-            rgba(214, 220, 214, 0.2),
-            rgba(214, 220, 214, 0.1)
-        );
-        border-radius: 12px;
-        margin-bottom: 0.5rem;
-        font-size: 0.8rem;
-        border: 1px solid rgba(214, 220, 214, 0.5);
-    }
-
-    .duration, .price {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-        color: #4A665A;
-        font-weight: 500;
-    }
-
-    .duration i, .price i {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        color: #4A665A;
-    }
-
-    .btn-forest {
-        background: linear-gradient(135deg,
-            #4A665A 0%,
-            #5B7A6C 100%
-        );
-        color: white;
-        padding: 0.4rem 0.75rem;
-        border-radius: 12px;
-        text-align: center;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all var(--transition-speed);
-        border: none;
-        display: block;
-        font-size: 0.8rem;
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-    }
-
-    .btn-forest:hover {
-        background: linear-gradient(135deg,
-            #5B7A6C 0%,
-            #4A665A 100%
-        );
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(74, 102, 90, 0.2);
-    }
-
-    /* Responsive */
-    @media (max-width: 1200px) {
-        .services-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.75rem;
-            padding: 0 1rem;
-        }
-    }
-
-    @media (max-width: 992px) {
-        .services-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .services-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        
-        .services-section {
-            padding: 30px 0;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .services-grid {
-            grid-template-columns: repeat(1, 1fr);
-            max-width: 280px;
-        }
-    }
+  .btn-sage {
+    background-color: var(--spa-sage) !important;
+    color: var(--spa-pearl) !important;
+    border-color: var(--spa-sage) !important;
+  }
+  /* Mejoras para la visibilidad del precio */
+  .price-tag {
+    background: linear-gradient(135deg, var(--spa-sage) 0%, var(--spa-forest) 100%);
+    transform: rotate(-3deg);
+    transition: transform 0.3s ease;
+  }
+  .price-tag:hover {
+    transform: rotate(0deg);
+  }
+    /* Utilidad para truncar texto */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Mejoras adicionales para las cards */
+  .service-info-grid {
+    transition: all 0.3s ease;
+  }
+  
+  .luxury-card:hover .service-info-grid {
+    transform: translateY(-2px);
+  }
+  
+  /* Efectos de micro-interacciones */
+  .micro-hover {
+    transition: all 0.2s ease;
+  }
+  
+  .micro-hover:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Gradiente animado para badges */
+  .animated-gradient {
+    background: linear-gradient(-45deg, var(--spa-gold), #f4e397, var(--spa-gold), #e6d06a);
+    background-size: 400% 400%;
+    animation: gradientShift 3s ease infinite;
+  }
+  
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Efectos de resplandor */
+  .glow-on-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .glow-on-hover:hover {
+    box-shadow: 
+      0 0 20px rgba(255, 215, 0, 0.3),
+      0 8px 32px rgba(5, 37, 5, 0.15);
+  }
 </style>
-{% endblock %}
+{% endblock %} <!-- Cierra el bloque extra_head -->
 
-{% block content %}
+{% block content %} <!-- Abre el bloque content -->
 <!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
-        <div class="hero-content" data-aos="fade-up">
-            <h1 class="hero-title" style="font-weight: 500; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
-                Bienvenido a Spa "Sentirse bien"
+<section class="relative h-screen flex items-center justify-center overflow-hidden">
+    <!-- Fondo elegante con patrón -->
+    <div class="absolute inset-0 gradient-spa-luxury"></div>
+    
+    <!-- Imagen de fondo -->
+    <div class="absolute inset-0 opacity-40">
+        <img src="{% static 'images/spa_hero.jpg' %}" 
+             alt="Spa Background" 
+             class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60"></div>
+    </div>
+    
+    <!-- Elementos decorativos flotantes -->
+    <div class="absolute top-20 left-10 w-32 h-32 gradient-spa-rose rounded-full opacity-20 floating-element"></div>
+    <div class="absolute bottom-20 right-10 w-24 h-24 gradient-spa-gold rounded-full opacity-25 floating-element" style="animation-delay: -2s;"></div>
+    <div class="absolute top-1/2 left-20 w-16 h-16 gradient-spa-pearl rounded-full opacity-30 floating-element" style="animation-delay: -4s;"></div>
+    
+    <!-- Content -->
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto hero-content-animation">
+        <div class="mb-8">
+            <!-- Logo/Icon elegante -->
+            <div class="inline-block p-4 glass-effect rounded-2xl shadow-2xl mb-6">
+                <i class="fas fa-spa text-3xl text-spa-pearl"></i>
+            </div>
+            
+            <!-- Título principal con tipografía de lujo -->
+            <h1 class="font-luxury text-4xl md:text-6xl font-semibold mb-6 leading-tight force-spa-pearl">
+                <span class="block font-normal">Spa Sentirse Bien</span>
+                <span class="block text-lg md:text-xl font-modern font-medium mt-3">
+                    Tu Santuario de Serenidad y Renovación
+                </span>
             </h1>
-            <p class="hero-subtitle" style="font-weight: 400; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
-                Tu espacio de bienestar y relajación
-            </p>
-            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-primary btn-lg">
-                Reserva tu sesión
+        </div>
+        
+        <!-- Descripción elegante -->
+        <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed font-modern font-semibold force-spa-pearl">
+            Sumérgete en una experiencia transformadora donde cada detalle ha sido cuidadosamente diseñado para tu bienestar absoluto.
+        </p>
+        
+        <!-- Botones con diseño premium -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center hero-buttons-animation">
+            <a href="{% url 'turnos:turno_reserva_unificada' %}" 
+               class="inline-flex items-center px-8 py-4 bg-spa-pearl text-spa-forest font-modern font-bold text-base rounded-full hover:scale-105 transition-all duration-500 shadow-2xl hover:shadow-3xl hover:bg-spa-gold border-2 border-spa-forest">
+                <i class="fas fa-calendar-plus mr-3 text-spa-forest"></i>
+                Reserva tu Experiencia
             </a>
+            <a href="#servicios" 
+               class="inline-flex items-center px-8 py-4 bg-spa-forest text-spa-pearl font-modern font-medium text-base rounded-full hover:bg-spa-sage-dark transition-all duration-500 shadow-xl border-2 border-spa-pearl">
+                <i class="fas fa-chevron-down mr-3 text-spa-pearl"></i>
+                Descubre Más
+            </a>
+        </div>
+    </div>
+    
+    <!-- Scroll Indicator mejorado -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator-animation">
+        <div class="w-6 h-10 glass-effect rounded-full flex justify-center items-center">
+            <div class="w-1 h-3 bg-spa-pearl rounded-full animate-pulse"></div>
         </div>
     </div>
 </section>
 
 <!-- Servicios Section -->
-<section class="services-section">
-    <div class="container">
-        <h2 class="services-title">Nuestros Servicios Exclusivos</h2>
-        <p class="services-subtitle">Descubre nuestra selección de tratamientos diseñados para tu bienestar y relajación</p>
-        
-        <div class="services-grid">
+<section id="servicios" class="py-20 bg-white spa-pattern relative overflow-hidden reveal-on-scroll">
+    <div class="container mx-auto px-6">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <div class="inline-block p-3 bg-spa-sage rounded-xl shadow-lg mb-6">
+                <i class="fas fa-gem text-white text-xl"></i>
+            </div>
+            <h2 class="font-luxury text-3xl md:text-4xl font-normal text-spa-charcoal mb-4">
+                Experiencias de Bienestar Exclusivas
+            </h2>
+            <div class="w-24 h-1 bg-spa-gold mx-auto mb-6 rounded-full"></div>
+            <p class="text-spa-forest text-lg max-w-2xl mx-auto leading-relaxed font-modern font-light">
+                Cada tratamiento es una sinfonía de técnicas ancestrales y tecnología moderna, diseñada para despertar tu belleza natural.
+            </p>
+        </div>
+          <!-- Services Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {% for servicio in servicios %}
-            <div class="servicio-item">
-                <div class="service-card">
+            <div class="group luxury-card service-card-enter" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'100'|floatformat:'0' }}">
+                <!-- Efecto de brillo -->
+                <div class="service-shine"></div>
+                
+                <!-- Service Image/Icon -->
+                <div class="service-image-container relative h-56">
                     {% if servicio.imagen %}
-                        <img src="{{ servicio.imagen.url }}" alt="{{ servicio.nombre }}" class="service-image">
+                        <img src="{{ servicio.imagen.url }}" 
+                             alt="{{ servicio.nombre }}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 saturate-110">
                     {% else %}
-                        <div class="service-icon">
-                            <i class="{{ servicio.icono }}"></i>
+                        <div class="h-full gradient-spa-luxury flex items-center justify-center relative">
+                            <div class="absolute inset-0 bg-gradient-to-br from-spa-sage via-spa-forest to-spa-sage-dark"></div>
+                            <i class="{{ servicio.icono|default:'fas fa-spa' }} text-5xl text-spa-pearl relative z-10 drop-shadow-lg"></i>
                         </div>
                     {% endif %}
-                    <div class="service-content">
-                        <h3>{{ servicio.nombre }}</h3>
-                        <p class="service-description">{{ servicio.descripcion }}</p>
-                        <div class="service-info">
-                            <span class="duration">
-                                <i class="fas fa-clock"></i>
-                                {{ servicio.duracion }} min
-                            </span>
-                            <span class="price">
-                                <i class="fas fa-tag"></i>
-                                ${{ servicio.precio }}
-                            </span>
-                        </div>
-                        <a href="{% url 'turnos:turno_reserva_unificada' %}?servicio={{ servicio.id }}" class="btn btn-forest">
-                            Reservar ahora
-                        </a>
+                    
+                    <!-- Overlay elegante -->
+                    <div class="service-image-overlay"></div>
+                      <!-- Precio mejorado -->
+                    <div class="absolute top-4 right-4 bg-gradient-to-r from-spa-gold to-yellow-400 text-spa-forest px-3 py-2 rounded-full shadow-lg transform group-hover:scale-105 transition-all duration-300 glow-on-hover">
+                        <span class="text-sm font-modern font-bold">${{ servicio.precio }}</span>
                     </div>
+                      <!-- Badge de calidad -->
+                    <div class="absolute top-4 left-4 animated-gradient service-badge micro-hover">
+                        <i class="fas fa-crown mr-1"></i>
+                        Premium
+                    </div>
+                </div>
+                
+                <!-- Service Content -->
+                <div class="service-content p-6">
+                    <!-- Título con mejor tipografía -->
+                    <div class="mb-4">
+                        <h3 class="font-luxury text-xl font-semibold text-spa-forest mb-2 group-hover:text-spa-sage transition-colors duration-300 leading-tight">
+                            {{ servicio.nombre }}
+                        </h3>
+                        <div class="w-12 h-0.5 bg-gradient-to-r from-spa-gold to-transparent group-hover:w-full transition-all duration-500"></div>
+                    </div>
+                    
+                    <!-- Descripción mejorada -->
+                    <p class="text-spa-forest/80 text-sm leading-relaxed mb-5 font-modern line-clamp-3">
+                        {{ servicio.descripcion }}
+                    </p>
+                      <!-- Service Info con mejor diseño -->
+                    <div class="service-info-grid grid grid-cols-2 gap-3 mb-6">
+                        <div class="flex items-center justify-center p-3 bg-gradient-to-r from-spa-mist to-transparent rounded-lg border border-spa-sage/10 group-hover:border-spa-sage/20 transition-colors duration-300">
+                            <div class="text-center">
+                                <i class="fas fa-clock text-spa-sage mb-1 text-sm"></i>
+                                <div class="text-xs font-modern font-semibold text-spa-forest">{{ servicio.duracion }} min</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center p-3 bg-gradient-to-l from-spa-mist to-transparent rounded-lg border border-spa-sage/10 group-hover:border-spa-sage/20 transition-colors duration-300">
+                            <div class="text-center">
+                                <i class="fas fa-star text-spa-gold mb-1 text-sm"></i>
+                                <div class="text-xs font-modern font-semibold text-spa-forest">5.0 Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Button mejorado -->
+                    <a href="{% url 'turnos:turno_reserva_unificada' %}?servicio={{ servicio.id }}"
+                       class="group/btn relative block w-full text-center px-6 py-4 bg-gradient-to-r from-spa-sage to-spa-forest font-modern font-bold text-sm rounded-xl shadow-lg transition-all duration-500 hover:shadow-xl transform hover:-translate-y-1 text-spa-pearl overflow-hidden">
+                        <!-- Efecto de hover en el botón -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-spa-forest to-spa-sage-dark opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                        <div class="relative z-10 flex items-center justify-center">
+                            <i class="fas fa-calendar-plus mr-2 text-spa-pearl group-hover/btn:scale-110 transition-transform duration-300"></i>
+                            <span>Reservar Experiencia</span>
+                        </div>
+                    </a>
                 </div>
             </div>
             {% endfor %}
@@ -320,35 +485,63 @@
 </section>
 
 <!-- Features Section -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 mb-4" data-aos="fade-right">
-                <img src="{% static 'images/12.jpg' %}" 
-                     class="img-fluid rounded-3 shadow" alt="Masaje relajante en spa">
+<section class="py-20 bg-white relative overflow-hidden reveal-on-scroll">
+    <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+            <!-- Content -->
+            <div class="order-2 md:order-1 reveal-on-scroll">
+                <div class="inline-block p-3 gradient-spa-rose rounded-xl shadow-lg mb-6">
+                    <i class="fas fa-crown text-spa-charcoal text-xl"></i>
+                </div>
+                <h2 class="font-luxury text-3xl md:text-4xl font-normal text-spa-charcoal mb-8">
+                    La Excelencia en Cada <span class="text-spa-sage">Detalle</span>
+                </h2>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-spa-mist transition-colors duration-300 group">
+                        <div class="flex-shrink-0 w-12 h-12 gradient-spa-luxury rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-user-md text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-modern font-semibold text-lg text-spa-charcoal mb-2">Terapeutas Expertos</h4>
+                            <p class="text-spa-charcoal/80 leading-relaxed font-modern">Profesionales con certificaciones internacionales y años de experiencia en bienestar holístico.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-spa-mist transition-colors duration-300 group">
+                        <div class="flex-shrink-0 w-12 h-12 gradient-spa-gold rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-leaf text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-modern font-semibold text-lg text-spa-charcoal mb-2">Ambiente Sereno</h4>
+                            <p class="text-spa-charcoal/80 leading-relaxed font-modern">Espacios diseñados arquitectónicamente para promover la paz interior y la relajación profunda.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-spa-mist transition-colors duration-300 group">
+                        <div class="flex-shrink-0 w-12 h-12 gradient-spa-rose rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-gem text-spa-charcoal text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-modern font-semibold text-lg text-spa-charcoal mb-2">Productos Selectos</h4>
+                            <p class="text-spa-charcoal/80 leading-relaxed font-modern">Cosméticos orgánicos y aceites esenciales de las mejores casas europeas especializadas.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6" data-aos="fade-left">
-                <h2 class="mb-4">¿Por qué elegirnos?</h2>
-                <div class="mb-4">
-                    <h4 class="elegant-text">
-                        <i class="fa-solid fa-check" style="color: var(--color-forest)"></i> 
-                        Profesionales expertos
-                    </h4>
-                    <p>Nuestro equipo está altamente capacitado para brindarte la mejor experiencia.</p>
-                </div>
-                <div class="mb-4">
-                    <h4 class="elegant-text">
-                        <i class="fa-solid fa-check" style="color: var(--color-forest)"></i> 
-                        Ambiente relajante
-                    </h4>
-                    <p>Instalaciones diseñadas para tu máxima comodidad y tranquilidad.</p>
-                </div>
-                <div class="mb-4">
-                    <h4 class="elegant-text">
-                        <i class="fa-solid fa-check" style="color: var(--color-forest)"></i> 
-                        Productos premium
-                    </h4>
-                    <p>Utilizamos productos de la más alta calidad para tu cuidado.</p>
+            
+            <!-- Image -->
+            <div class="order-1 md:order-2 reveal-on-scroll">
+                <div class="relative">
+                    <!-- Elementos decorativos -->
+                    <div class="absolute -inset-4 gradient-spa-mist rounded-2xl transform rotate-2 opacity-30"></div>
+                    <div class="absolute -bottom-6 -right-6 w-32 h-32 gradient-spa-rose rounded-2xl opacity-20"></div>
+                    <div class="absolute -top-6 -left-6 w-24 h-24 gradient-spa-gold rounded-full opacity-25"></div>                    <!-- Imagen principal -->
+                    <div class="relative spa-image-overlay rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="{% static 'images/spa_massage.jpg' %}" 
+                             alt="Masaje relajante en un ambiente sereno" 
+                             class="w-full h-96 object-cover hover:scale-105 transition-transform duration-700">
+                    </div>
                 </div>
             </div>
         </div>
@@ -356,21 +549,132 @@
 </section>
 
 <!-- CTA Section -->
-<section class="py-5" style="background-color: var(--color-sage-light)">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8 mb-3 mb-md-0">
-                <h2 class="mb-0" style="color: var(--color-forest);">
-                    ¿Listo para una experiencia de bienestar única?
-                </h2>
+<section class="py-20 gradient-spa-luxury relative overflow-hidden reveal-on-scroll">
+    <!-- Patrón de fondo sutil -->
+    <div class="absolute inset-0 opacity-30">
+        <div class="absolute inset-0 spa-pattern"></div>
+        <img src="{% static 'images/spa_ambience.jpg' %}" 
+             alt="Ambiente sereno de spa" 
+             class="w-full h-full object-cover opacity-25">
+    </div>
+    
+    <!-- Elementos decorativos -->
+    <div class="absolute top-10 left-20 w-20 h-20 gradient-spa-gold rounded-full opacity-20 floating-element"></div>
+    <div class="absolute bottom-20 right-10 w-16 h-16 gradient-spa-rose rounded-full opacity-25 floating-element" style="animation-delay: -3s;"></div>
+    
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-block p-4 glass-effect rounded-2xl shadow-2xl mb-8">
+                <i class="fas fa-calendar-check text-3xl text-spa-gold-dark"></i>
             </div>
-            <div class="col-md-4 text-md-end">
-                <a href="{% url 'turnos:turno_reserva_unificada' %}" 
-                   class="btn btn-forest btn-lg">
-                    Reserva ahora
+            
+            <h2 class="font-luxury text-3xl md:text-5xl font-normal mb-6 leading-tight force-spa-pearl">
+                <span class="block">Tu Momento de</span>
+                <span class="block">Transformación Te Espera</span>
+            </h2>
+            
+            <p class="text-lg mb-10 max-w-2xl mx-auto font-modern font-medium leading-relaxed force-spa-pearl">
+                Permítenos crear una experiencia única que nutra tu cuerpo, calme tu mente y renueve tu espíritu.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'turnos:turno_reserva_unificada' %}"
+                   class="inline-flex items-center px-10 py-4 bg-spa-pearl font-modern font-bold text-lg rounded-full hover:scale-105 transition-all duration-500 shadow-2xl hover:shadow-3xl hover:bg-spa-gold text-spa-forest">
+                    <i class="fas fa-spa mr-3 text-spa-forest"></i>
+                    Comenzar Mi Viaje
+                </a>
+                <a href="tel:+5491123456789" 
+                   class="inline-flex items-center px-10 py-4 bg-spa-forest font-modern font-medium text-lg rounded-full hover:bg-spa-sage-dark transition-all duration-500 shadow-xl border-2 border-spa-pearl text-spa-pearl">
+                    <i class="fas fa-phone mr-3 text-spa-pearl"></i>
+                    Consultar Ahora
                 </a>
             </div>
         </div>
     </div>
 </section>
-{% endblock %} 
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const revealElements = document.querySelectorAll('.reveal-on-scroll');
+    const serviceCards = document.querySelectorAll('.service-card-enter');
+
+    function reveal() {
+        const windowHeight = window.innerHeight;
+        revealElements.forEach((el, index) => {
+            const elementTop = el.getBoundingClientRect().top;
+            if (elementTop < windowHeight - 80) { 
+                // Añadir un pequeño delay basado en el índice para animaciones escalonadas
+                setTimeout(() => {
+                    el.classList.add('revealed');
+                }, index * 100);
+            }
+        });
+        
+        // Animación especial para las cards de servicios
+        serviceCards.forEach((card, index) => {
+            const cardTop = card.getBoundingClientRect().top;
+            if (cardTop < windowHeight - 100) {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 150); // Delay escalonado más pronunciado
+            }
+        });
+    }
+
+    // Throttle function para optimizar el rendimiento
+    let ticking = false;
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(reveal);
+            ticking = true;
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        requestTick();
+        ticking = false;
+    });
+    
+    // Llamada inicial
+    reveal();
+    
+    // Efectos adicionales para mejorar la interactividad
+    serviceCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            // Efecto de elevación suave en las cards vecinas
+            const allCards = Array.from(serviceCards);
+            const currentIndex = allCards.indexOf(this);
+            
+            allCards.forEach((otherCard, index) => {
+                if (Math.abs(index - currentIndex) === 1) {
+                    otherCard.style.transform = 'translateY(-4px) scale(1.01)';
+                    otherCard.style.transition = 'all 0.3s ease';
+                }
+            });
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            // Restaurar posición de las cards vecinas
+            serviceCards.forEach(otherCard => {
+                otherCard.style.transform = '';
+                otherCard.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            });
+        });
+    });
+    
+    // Efecto de paralaje sutil en el scroll
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.floating-element');
+        
+        parallaxElements.forEach((element, index) => {
+            const speed = 0.5 + (index * 0.1);
+            element.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% endblock %}

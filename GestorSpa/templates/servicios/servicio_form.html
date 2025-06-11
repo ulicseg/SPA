@@ -5,100 +5,7 @@
 
 {% block extra_css %}
 <style>
-    .form-container {
-        max-width: 100%;
-        min-height: calc(100vh - 56px);
-        margin: 0;
-        padding: 1rem;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-    }
-    
-    .form-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        width: 100%;
-        max-width: 700px;
-        height: auto;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid rgba(121, 146, 125, 0.1);
-    }
-    
-    .form-header {
-        background: linear-gradient(135deg, #79927d 0%, #5c7161 100%);
-        padding: 0.8rem 1.2rem;
-        color: white;
-        border-radius: 12px 12px 0 0;
-    }
-    
-    .form-body {
-        padding: 1.2rem;
-        overflow-y: auto;
-        flex: 1;
-    }
-    
-    .form-control {
-        border-radius: 8px;
-        padding: 0.4rem 0.8rem;
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-        height: auto;
-    }
-    
-    .form-control:focus {
-        border-color: #79927d;
-        box-shadow: 0 0 0 0.15rem rgba(121, 146, 125, 0.15);
-    }
-    
-    .form-label {
-        font-weight: 500;
-        color: #495057;
-        margin-bottom: 0.2rem;
-        font-size: 0.85rem;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #79927d 0%, #5c7161 100%);
-        border: none;
-        border-radius: 8px;
-        padding: 0.4rem 1rem;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(121, 146, 125, 0.2);
-    }
-    
-    .btn-outline-secondary {
-        border-radius: 8px;
-        padding: 0.4rem 1rem;
-        font-weight: 500;
-        font-size: 0.9rem;
-        border: 1px solid #ced4da;
-    }
-    
-    .form-check-input:checked {
-        background-color: #79927d;
-        border-color: #79927d;
-    }
-    
-    .icon-preview {
-        font-size: 1.3rem;
-        color: #79927d;
-        margin-bottom: 0.2rem;
-    }
-    
     .icon-option {
-        cursor: pointer;
-        padding: 0.4rem;
         border: 1px solid #e9ecef;
         border-radius: 4px;
         transition: all 0.3s ease;
@@ -206,148 +113,257 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header bg-forest text-white">
-                    <h3 class="mb-0">{% if object %}Editar{% else %}Crear{% endif %} Servicio</h3>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data" novalidate>
-                        {% csrf_token %}
-                        
-                        {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {% for error in form.non_field_errors %}
-                                {{ error }}
-                            {% endfor %}
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8 text-center" data-aos="fade-down">
+            <h1 class="text-3xl md:text-4xl font-bold text-sage-800 mb-2">
+                <i class="fas fa-spa mr-3 text-coral-600"></i>
+                {% if object %}Editar{% else %}Crear{% endif %} Servicio
+            </h1>
+            <p class="text-sage-600">Gestiona los servicios de tu spa de manera profesional</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100" data-aos="fade-up">
+            <!-- Card Header -->
+            <div class="gradient-coral-berry p-6">
+                <h2 class="text-xl font-semibold text-white flex items-center">
+                    <i class="fas fa-concierge-bell mr-3"></i>
+                    Información del Servicio
+                </h2>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6 lg:p-8">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+                            <div class="text-red-800">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Basic Information Section -->
+                    <div class="bg-gradient-to-r from-sage-50 to-sand-50 rounded-xl p-6 mb-8 border border-sage-100">
+                        <h3 class="text-lg font-semibold text-sage-800 mb-6 flex items-center">
+                            <i class="fas fa-info-circle mr-3 text-coral-600"></i>
+                            Información Básica
+                        </h3>
+
+                        <!-- Service Name -->
+                        <div class="mb-6">
+                            <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-semibold text-sage-700 mb-2">
+                                <i class="fas fa-tag mr-2 text-sage-600"></i>
+                                Nombre del servicio
+                            </label>
+                            <input type="text" name="{{ form.nombre.name }}" 
+                                   class="w-full px-4 py-3 border border-sage-200 rounded-xl focus:ring-4 focus:ring-coral-200 focus:border-coral-400 transition-all duration-200 bg-white"
+                                   value="{{ form.nombre.value|default:'' }}" 
+                                   placeholder="Ej: Masaje Relajante, Facial Anti-edad..."
+                                   id="{{ form.nombre.id_for_label }}">
+                            {% if form.nombre.errors %}
+                            <div class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                {% for error in form.nombre.errors %}{{ error }}{% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-6">
+                            <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-semibold text-sage-700 mb-2">
+                                <i class="fas fa-align-left mr-2 text-sage-600"></i>
+                                Descripción
+                            </label>
+                            <textarea name="{{ form.descripcion.name }}" rows="4"
+                                      class="w-full px-4 py-3 border border-sage-200 rounded-xl focus:ring-4 focus:ring-coral-200 focus:border-coral-400 transition-all duration-200 bg-white resize-none"
+                                      placeholder="Describe detalladamente el servicio, beneficios y características..."
+                                      id="{{ form.descripcion.id_for_label }}">{{ form.descripcion.value|default:'' }}</textarea>
+                            {% if form.descripcion.errors %}
+                            <div class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                {% for error in form.descripcion.errors %}{{ error }}{% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Duration and Price -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.duracion.id_for_label }}" class="block text-sm font-semibold text-sage-700 mb-2">
+                                    <i class="fas fa-clock mr-2 text-sage-600"></i>
+                                    Duración (minutos)
+                                </label>
+                                <input type="number" name="{{ form.duracion.name }}" 
+                                       class="w-full px-4 py-3 border border-sage-200 rounded-xl focus:ring-4 focus:ring-coral-200 focus:border-coral-400 transition-all duration-200 bg-white"
+                                       value="{{ form.duracion.value|default:'' }}" 
+                                       placeholder="60"
+                                       min="15" max="300"
+                                       id="{{ form.duracion.id_for_label }}">
+                                {% if form.duracion.errors %}
+                                <div class="mt-2 text-sm text-red-600 flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    {% for error in form.duracion.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.precio.id_for_label }}" class="block text-sm font-semibold text-sage-700 mb-2">
+                                    <i class="fas fa-dollar-sign mr-2 text-sage-600"></i>
+                                    Precio
+                                </label>
+                                <input type="number" name="{{ form.precio.name }}" step="0.01"
+                                       class="w-full px-4 py-3 border border-sage-200 rounded-xl focus:ring-4 focus:ring-coral-200 focus:border-coral-400 transition-all duration-200 bg-white"
+                                       value="{{ form.precio.value|default:'' }}" 
+                                       placeholder="0.00"
+                                       min="0"
+                                       id="{{ form.precio.id_for_label }}">
+                                {% if form.precio.errors %}
+                                <div class="mt-2 text-sm text-red-600 flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    {% for error in form.precio.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Elements Section -->
+                    <div class="bg-gradient-to-r from-coral-50 to-berry-50 rounded-xl p-6 mb-8 border border-coral-100">
+                        <h3 class="text-lg font-semibold text-sage-800 mb-6 flex items-center">
+                            <i class="fas fa-palette mr-3 text-berry-600"></i>
+                            Elementos Visuales
+                        </h3>
+
+                        <!-- Service Image -->
+                        <div class="mb-6">
+                            <label for="{{ form.imagen.id_for_label }}" class="block text-sm font-semibold text-sage-700 mb-2">
+                                <i class="fas fa-image mr-2 text-sage-600"></i>
+                                Imagen del servicio
+                            </label>
+                            <div class="border-2 border-dashed border-sage-300 rounded-xl p-6 text-center hover:border-coral-400 transition-colors duration-200">
+                                <input type="file" name="{{ form.imagen.name }}" accept="image/*"
+                                       class="hidden" id="{{ form.imagen.id_for_label }}"
+                                       onchange="previewImage(this)">
+                                <label for="{{ form.imagen.id_for_label }}" class="cursor-pointer">
+                                    <div class="text-sage-600 mb-2">
+                                        <i class="fas fa-cloud-upload-alt text-3xl"></i>
+                                    </div>
+                                    <p class="text-sm text-sage-600">Haz clic para subir una imagen</p>
+                                    <p class="text-xs text-sage-500 mt-1">PNG, JPG hasta 5MB</p>
+                                </label>
+                            </div>
+                            {% if object and object.imagen %}
+                            <div class="mt-4 flex justify-center">
+                                <img src="{{ object.imagen.url }}" alt="{{ object.nombre }}" 
+                                     class="max-h-48 rounded-xl shadow-lg border border-sage-200">
+                            </div>
+                            {% endif %}
+                            {% if form.imagen.errors %}
+                            <div class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                {% for error in form.imagen.errors %}{{ error }}{% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Service Icon -->
+                        <div class="mb-6">
+                            <label for="{{ form.icono.id_for_label }}" class="block text-sm font-semibold text-sage-700 mb-2">
+                                <i class="fas fa-icons mr-2 text-sage-600"></i>
+                                Ícono del servicio
+                            </label>
+                            <input type="text" name="{{ form.icono.name }}" 
+                                   class="w-full px-4 py-3 border border-sage-200 rounded-xl focus:ring-4 focus:ring-coral-200 focus:border-coral-400 transition-all duration-200 bg-white"
+                                   value="{{ form.icono.value|default:'' }}" 
+                                   placeholder="Ej: fas fa-spa, fas fa-leaf, fas fa-heart..."
+                                   id="{{ form.icono.id_for_label }}">
+                            <div class="mt-2 text-xs text-sage-600">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Usa clases de FontAwesome. Ejemplo: fas fa-spa
+                            </div>
+                            {% if form.icono.errors %}
+                            <div class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                {% for error in form.icono.errors %}{{ error }}{% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Status Section -->
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 mb-8 border border-amber-200">
+                        <h3 class="text-lg font-semibold text-sage-800 mb-6 flex items-center">
+                            <i class="fas fa-toggle-on mr-3 text-amber-600"></i>
+                            Estado del Servicio
+                        </h3>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" name="{{ form.activo.name }}" 
+                                   class="w-5 h-5 text-coral-600 bg-sage-100 border-sage-300 rounded focus:ring-coral-500 focus:ring-2"
+                                   id="{{ form.activo.id_for_label }}"
+                                   {% if form.activo.value %}checked{% endif %}>
+                            <label for="{{ form.activo.id_for_label }}" class="ml-3 text-sm font-medium text-sage-700">
+                                <i class="fas fa-check-circle mr-2 text-sage-600"></i>
+                                Servicio activo y disponible para reservas
+                            </label>
+                        </div>
+                        {% if form.activo.errors %}
+                        <div class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            {% for error in form.activo.errors %}{{ error }}{% endfor %}
                         </div>
                         {% endif %}
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre del servicio</label>
-                            {{ form.nombre }}
-                            {% if form.nombre.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.nombre.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="{{ form.descripcion.id_for_label }}" class="form-label">Descripción</label>
-                            {{ form.descripcion }}
-                            {% if form.descripcion.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.descripcion.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.duracion.id_for_label }}" class="form-label">Duración (minutos)</label>
-                                {{ form.duracion }}
-                                {% if form.duracion.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.duracion.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.precio.id_for_label }}" class="form-label">Precio</label>
-                                {{ form.precio }}
-                                {% if form.precio.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.precio.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="{{ form.imagen.id_for_label }}" class="form-label">Imagen del servicio</label>
-                            {{ form.imagen }}
-                            {% if form.imagen.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.imagen.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                            {% if object and object.imagen %}
-                            <div class="mt-2">
-                                <img src="{{ object.imagen.url }}" alt="{{ object.nombre }}" class="img-thumbnail" style="max-height: 200px;">
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="{{ form.icono.id_for_label }}" class="form-label">Ícono</label>
-                            {{ form.icono }}
-                            {% if form.icono.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.icono.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            {{ form.activo }}
-                            <label class="form-check-label" for="{{ form.activo.id_for_label }}">Activo</label>
-                            {% if form.activo.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.activo.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-forest">
-                                <i class="fas fa-save me-1"></i>Guardar
-                            </button>
-                            <a href="{% url 'servicios:servicio_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-1"></i>Cancelar
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-sage-200">
+                        <button type="submit" 
+                                class="flex-1 inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            <i class="fas fa-save mr-2"></i>
+                            {% if object %}Actualizar Servicio{% else %}Crear Servicio{% endif %}
+                        </button>
+                        <a href="{% url 'servicios:servicio_list' %}" 
+                           class="flex-1 sm:flex-initial inline-flex items-center justify-center px-8 py-4 bg-white border-2 border-sage-300 text-sage-700 rounded-xl hover:bg-sage-50 focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const inputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
-        inputs.forEach(input => {
-            input.classList.add('form-control');
-        });
-
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        fileInputs.forEach(input => {
-            input.classList.add('form-control');
-        });
-
-        const switches = document.querySelectorAll('input[type="checkbox"]');
-        switches.forEach(input => {
-            input.classList.add('form-check-input');
-        });
-    });
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Create or update preview image
+            let preview = document.getElementById('image-preview');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.id = 'image-preview';
+                preview.className = 'mt-4 flex justify-center';
+                input.closest('.border-dashed').after(preview);
+            }
+            preview.innerHTML = `
+                <img src="${e.target.result}" alt="Vista previa" 
+                     class="max-h-48 rounded-xl shadow-lg border border-sage-200">
+            `;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 </script>
 {% endblock %} 

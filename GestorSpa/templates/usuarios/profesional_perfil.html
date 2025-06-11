@@ -1,0 +1,339 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil Profesional - Spa Sentirse Bien{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>  :root {
+    --coral-primary: #FF6B6B;
+    --coral-light: #FFE0E0;
+    --coral-dark: #E85555;
+    --berry-primary: #8B4B9C;
+    --berry-light: #E8D5ED;
+    --berry-dark: #6D3A7A;
+    --sage-primary: #7FB069;
+    --sage-light: #E8F5E8;
+    --sage-dark: #5A8A47;
+    --cream-primary: #FFF8F0;
+    --cream-secondary: #F8F6F0;
+    --charcoal: #2D3748;
+    --pearl: #F7FAFC;
+    --mist: rgba(139, 75, 156, 0.05);
+  }
+
+  .font-luxury { font-family: 'Playfair Display', serif !important; }
+  .font-modern { font-family: 'Inter', sans-serif !important; }
+  .luxury-card {
+    background-color: rgba(255, 248, 240, 0.95) !important;
+    border: 1px solid rgba(255, 107, 107, 0.1) !important;
+    box-shadow: 0 10px 35px rgba(139, 75, 156, 0.08) !important;
+    backdrop-filter: blur(8px) !important;
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    border-radius: 1rem !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  .luxury-card::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, var(--coral-primary), var(--berry-primary), var(--sage-primary)) !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+  }
+
+  .luxury-card:hover {
+    transform: translateY(-8px) scale(1.01) !important;
+    box-shadow: 0 15px 45px rgba(139, 75, 156, 0.15) !important;
+    border-color: rgba(255, 107, 107, 0.3) !important;
+  }
+  
+  .luxury-card:hover::before {
+    opacity: 1 !important;
+  }
+  .stat-card {
+    background: linear-gradient(135deg, var(--berry-primary) 0%, var(--berry-dark) 100%) !important;
+    color: var(--pearl) !important;
+    border-radius: 1rem !important;
+    padding: 1.5rem !important;
+    text-align: center !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 10px 20px rgba(139, 75, 156, 0.15) !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  
+  .stat-card::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -50% !important;
+    left: -50% !important;
+    width: 200% !important;
+    height: 200% !important;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 50%) !important;
+    opacity: 0 !important;
+    transition: opacity 0.5s !important;
+  }
+
+  .stat-card:hover {
+    transform: scale(1.05) translateY(-5px) !important;
+    box-shadow: 0 15px 30px rgba(139, 75, 156, 0.25) !important;
+  }
+  
+  .stat-card:hover::after {
+    opacity: 1 !important;
+  }
+
+  .profile-header {
+    background: linear-gradient(135deg, var(--berry-primary) 0%, var(--berry-dark) 100%) !important;
+    color: var(--pearl) !important;
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+    margin-bottom: 2rem !important;
+    box-shadow: 0 10px 30px rgba(139, 75, 156, 0.2) !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  
+  .profile-header::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E") !important;
+    z-index: 0 !important;
+  }
+
+  .btn-sage {
+    background-color: var(--spa-sage);
+    color: var(--spa-pearl);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-sage:hover {
+    background-color: var(--spa-sage-dark);
+    color: var(--spa-pearl);
+    transform: translateY(-2px);
+  }
+
+  .availability-badge {
+    background-color: var(--spa-gold);
+    color: var(--spa-forest);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .service-tag {
+    background-color: var(--spa-mist);
+    color: var(--spa-forest);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--spa-sage);
+    margin: 0.25rem;
+    display: inline-block;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-8">
+    <!-- Header del Perfil -->
+    <div class="profile-header">
+        <div class="flex flex-col md:flex-row items-center gap-6">
+            <div class="flex-shrink-0">
+                {% if profesional.foto_profesional %}
+                    <img src="{{ profesional.foto_profesional.url }}" 
+                         alt="{{ profesional.nombre_completo }}"
+                         class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg">
+                {% else %}
+                    <div class="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-user-md text-3xl text-white"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="flex-grow text-center md:text-left">
+                <h1 class="font-luxury text-3xl font-semibold mb-2">{{ profesional.nombre_completo }}</h1>
+                <p class="text-lg opacity-90 mb-2">{{ profesional.get_especialidad_display }}</p>
+                <div class="flex flex-wrap justify-center md:justify-start gap-2">
+                    <span class="availability-badge">
+                        <i class="fas fa-clock mr-1"></i>
+                        {{ profesional.hora_inicio_disponibilidad }} - {{ profesional.hora_fin_disponibilidad }}
+                    </span>
+                    <span class="availability-badge">
+                        <i class="fas fa-calendar mr-1"></i>
+                        {{ profesional.años_experiencia }} años de experiencia
+                    </span>
+                </div>
+            </div>
+            <div class="flex-shrink-0">
+                <a href="{% url 'usuarios:profesional_editar' %}" class="btn-sage">
+                    <i class="fas fa-edit mr-2"></i>
+                    Editar Perfil
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="stat-card">
+            <div class="text-3xl font-bold mb-2">{{ turnos_hoy }}</div>
+            <div class="text-sm opacity-90">Turnos Hoy</div>
+            <i class="fas fa-calendar-day text-2xl mt-2 opacity-70"></i>
+        </div>
+        <div class="stat-card">
+            <div class="text-3xl font-bold mb-2">{{ turnos_semana }}</div>
+            <div class="text-sm opacity-90">Esta Semana</div>
+            <i class="fas fa-calendar-week text-2xl mt-2 opacity-70"></i>
+        </div>
+        <div class="stat-card">
+            <div class="text-3xl font-bold mb-2">{{ servicios_ofrecidos }}</div>
+            <div class="text-sm opacity-90">Servicios Ofrecidos</div>
+            <i class="fas fa-spa text-2xl mt-2 opacity-70"></i>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Información Profesional -->
+        <div class="luxury-card p-6">
+            <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-6">
+                <i class="fas fa-user-tie mr-3 text-green-700"></i>
+                Información Profesional
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="font-modern font-semibold text-gray-700">Especialidad Principal:</label>
+                    <p class="text-gray-600">{{ profesional.get_especialidad_display }}</p>
+                </div>
+                
+                {% if profesional.numero_licencia %}
+                <div>
+                    <label class="font-modern font-semibold text-gray-700">Número de Licencia:</label>
+                    <p class="text-gray-600">{{ profesional.numero_licencia }}</p>
+                </div>
+                {% endif %}
+                
+                <div>
+                    <label class="font-modern font-semibold text-gray-700">Años de Experiencia:</label>
+                    <p class="text-gray-600">{{ profesional.años_experiencia }} años</p>
+                </div>
+                
+                {% if profesional.telefono %}
+                <div>
+                    <label class="font-modern font-semibold text-gray-700">Teléfono:</label>
+                    <p class="text-gray-600">{{ profesional.telefono }}</p>
+                </div>
+                {% endif %}
+                
+                {% if profesional.email_profesional %}
+                <div>
+                    <label class="font-modern font-semibold text-gray-700">Email Profesional:</label>
+                    <p class="text-gray-600">{{ profesional.email_profesional }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Disponibilidad -->
+        <div class="luxury-card p-6">
+            <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-6">
+                <i class="fas fa-clock mr-3 text-green-700"></i>
+                Disponibilidad
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="font-modern font-semibold text-gray-700">Horario de Trabajo:</label>
+                    <p class="text-gray-600">
+                        {{ profesional.hora_inicio_disponibilidad }} - {{ profesional.hora_fin_disponibilidad }}
+                    </p>
+                </div>
+                
+                <div>
+                    <label class="font-modern font-semibold text-gray-700">Días Disponibles:</label>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        {% for dia in profesional.get_dias_disponibles_list %}
+                            <span class="availability-badge">{{ dia|capfirst }}</span>
+                        {% empty %}
+                            <span class="text-gray-500">No hay días configurados</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Servicios -->
+        <div class="luxury-card p-6">
+            <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-6">
+                <i class="fas fa-spa mr-3 text-green-700"></i>
+                Servicios que Ofreces
+            </h2>
+            
+            {% if profesional.servicios_que_ofrece.exists %}
+                <div class="space-y-3">
+                    {% for servicio in profesional.servicios_que_ofrece.all %}
+                        <div class="service-tag">
+                            <i class="{{ servicio.icono }} mr-2"></i>
+                            {{ servicio.nombre }}
+                            <span class="text-sm opacity-75">({{ servicio.duracion }} min)</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500">No hay servicios asignados. 
+                   <a href="{% url 'usuarios:profesional_editar' %}" class="text-green-700 hover:underline">
+                       Configura tus servicios
+                   </a>
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Biografía -->
+        <div class="luxury-card p-6">
+            <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-6">
+                <i class="fas fa-user mr-3 text-green-700"></i>
+                Biografía Profesional
+            </h2>
+            
+            {% if profesional.biografia %}
+                <p class="text-gray-600 leading-relaxed">{{ profesional.biografia|linebreaks }}</p>
+            {% else %}
+                <p class="text-gray-500">No hay biografía disponible. 
+                   <a href="{% url 'usuarios:profesional_editar' %}" class="text-green-700 hover:underline">
+                       Añade tu biografía
+                   </a>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Certificaciones -->
+    {% if profesional.certificaciones %}
+    <div class="luxury-card p-6 mt-8">
+        <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-6">
+            <i class="fas fa-certificate mr-3 text-green-700"></i>
+            Certificaciones y Cursos
+        </h2>
+        <div class="text-gray-600 leading-relaxed">
+            {{ profesional.certificaciones|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

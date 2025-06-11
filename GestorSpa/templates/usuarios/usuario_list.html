@@ -1,0 +1,182 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Usuarios - GestorSpa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-sand/10">
+    <div class="container mx-auto px-6 py-8">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
+            <div class="flex items-center space-x-3">
+                <div class="gradient-forest-sage p-3 rounded-xl shadow-lg">
+                    <i class="fas fa-users-cog text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-playfair font-bold text-forest">Gestión de Usuarios</h1>
+                    <p class="text-forest/70 mt-1">Administra roles y permisos de usuarios</p>
+                </div>
+            </div>
+            <div class="gradient-coral-berry text-white px-4 py-2 rounded-full shadow-lg">
+                <span class="font-semibold">Total: {{ total_usuarios }}</span>
+            </div>
+        </div>        <!-- Estadísticas de roles -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <!-- Clientes -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sage/20">
+                <div class="text-center">
+                    <div class="gradient-forest-sage rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-user text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-forest mb-2">{{ clientes_count }}</h3>
+                    <p class="text-forest/70 font-medium">Clientes</p>
+                </div>
+            </div>
+
+            <!-- Profesionales -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sage/20">
+                <div class="text-center">
+                    <div class="gradient-coral-berry rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-user-md text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-forest mb-2">{{ profesionales_count }}</h3>
+                    <p class="text-forest/70 font-medium">Profesionales</p>
+                </div>
+            </div>
+
+            <!-- Administradores -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sage/20">
+                <div class="text-center">
+                    <div class="gradient-sand-coral rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-user-shield text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-forest mb-2">{{ administradores_count }}</h3>
+                    <p class="text-forest/70 font-medium">Administradores</p>
+                </div>
+            </div>
+
+            <!-- Total -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sage/20">
+                <div class="text-center">
+                    <div class="gradient-forest-sage rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-users text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-forest mb-2">{{ total_usuarios }}</h3>
+                    <p class="text-forest/70 font-medium">Total Usuarios</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de usuarios -->        <div class="bg-white rounded-2xl shadow-lg p-8 border border-sage/20">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="gradient-forest-sage p-3 rounded-xl shadow-lg">
+                    <i class="fas fa-list text-white text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-playfair font-bold text-forest">Lista de Usuarios</h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-4 px-4 font-semibold text-gray-700">Usuario</th>
+                            <th class="text-left py-4 px-4 font-semibold text-gray-700">Nombre Completo</th>
+                            <th class="text-left py-4 px-4 font-semibold text-gray-700">Email</th>
+                            <th class="text-left py-4 px-4 font-semibold text-gray-700">Rol</th>
+                            <th class="text-left py-4 px-4 font-semibold text-gray-700">Teléfono</th>
+                            <th class="text-left py-4 px-4 font-semibold text-gray-700">Estado</th>
+                            <th class="text-left py-4 px-4 font-semibold text-gray-700">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr class="border-b border-gray-100 hover:bg-sage/10 transition-colors duration-200">
+                            <td class="py-4 px-4">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-semibold text-gray-800">{{ usuario.username }}</span>
+                                    {% if usuario.is_superuser %}
+                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Super</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-gray-700">{{ usuario.get_full_name|default:"-" }}</td>
+                            <td class="py-4 px-4 text-gray-700">{{ usuario.email|default:"-" }}</td>
+                            <td class="py-4 px-4">
+                                {% if usuario.perfil %}
+                                    {% if usuario.perfil.rol == 'cliente' %}
+                                        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-medium">{{ usuario.perfil.get_rol_display }}</span>
+                                    {% elif usuario.perfil.rol == 'profesional' %}
+                                        <span class="bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm font-medium">{{ usuario.perfil.get_rol_display }}</span>
+                                    {% elif usuario.perfil.rol == 'administrador' %}
+                                        <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">{{ usuario.perfil.get_rol_display }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">Sin perfil</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-4 px-4 text-gray-700">{{ usuario.perfil.telefono|default:"-" }}</td>
+                            <td class="py-4 px-4">
+                                {% if usuario.is_active %}
+                                    <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-medium">Activo</span>
+                                {% else %}
+                                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-4 px-4">
+                                {% if usuario.perfil %}                                    <a href="{% url 'usuarios:asignar_rol' usuario.perfil.pk %}" 
+                                       class="gradient-forest-sage hover:gradient-coral-berry text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                                        <i class="fas fa-user-cog mr-1"></i> Cambiar Rol
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mb-4">
+                                        <i class="fas fa-users text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <p class="text-gray-600 text-lg">No hay usuarios registrados.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            {% if is_paginated %}
+            <div class="flex justify-center mt-8">
+                <nav class="flex items-center space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1" 
+                           class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors duration-200">
+                            &laquo; Primera
+                        </a>
+                        <a href="?page={{ page_obj.previous_page_number }}" 
+                           class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors duration-200">
+                            Anterior
+                        </a>
+                    {% endif %}                    <span class="gradient-forest-sage text-white px-4 py-2 rounded-lg font-medium">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" 
+                           class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors duration-200">
+                            Siguiente
+                        </a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}" 
+                           class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors duration-200">
+                            Última &raquo;
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

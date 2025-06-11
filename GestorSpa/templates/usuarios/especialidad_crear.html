@@ -1,0 +1,169 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Crear Especialidad Secundaria - GestorSpa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-sand/10">
+    <div class="container mx-auto px-6 py-8">
+        <!-- Header -->
+        <div class="flex items-center space-x-4 mb-8">
+            <a href="{% url 'usuarios:especialidad_gestion' %}" 
+               class="bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-lg transition-colors duration-200">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-3xl font-playfair font-bold text-gray-800">Crear Especialidad Secundaria</h1>
+                <p class="text-gray-600 mt-1">Asignar una especialidad adicional a un profesional</p>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-8 border border-sage/20">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Profesional Principal -->
+                    <div>
+                        <label for="{{ form.profesional_principal.id_for_label }}" 
+                               class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1"></i> Profesional Principal *
+                        </label>
+                        <select id="{{ form.profesional_principal.id_for_label }}" 
+                                name="{{ form.profesional_principal.name }}" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-200">
+                            <option value="">Seleccionar profesional...</option>
+                            {% for profesional in profesionales %}
+                                <option value="{{ profesional.id }}" 
+                                        {% if form.profesional_principal.value == profesional.id %}selected{% endif %}>
+                                    {{ profesional.nombre_completo }} - {{ profesional.get_especialidad_display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.profesional_principal.errors %}
+                            <div class="text-red-600 text-sm mt-1">
+                                {{ form.profesional_principal.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <p class="text-sm text-gray-500 mt-1">
+                            El profesional que tendrá la especialidad adicional
+                        </p>
+                    </div>
+
+                    <!-- Profesional Especialidad -->
+                    <div>
+                        <label for="{{ form.profesional_especialidad.id_for_label }}" 
+                               class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-star mr-1"></i> Especialidad a Adquirir *
+                        </label>
+                        <select id="{{ form.profesional_especialidad.id_for_label }}" 
+                                name="{{ form.profesional_especialidad.name }}" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-200">
+                            <option value="">Seleccionar especialidad...</option>
+                            {% for profesional in profesionales %}
+                                <option value="{{ profesional.id }}" 
+                                        {% if form.profesional_especialidad.value == profesional.id %}selected{% endif %}>
+                                    {{ profesional.get_especialidad_display }} ({{ profesional.nombre_completo }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.profesional_especialidad.errors %}
+                            <div class="text-red-600 text-sm mt-1">
+                                {{ form.profesional_especialidad.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <p class="text-sm text-gray-500 mt-1">
+                            La especialidad que el profesional principal adquirirá como secundaria
+                        </p>
+                    </div>
+
+                    <!-- Nivel de Competencia -->
+                    <div>
+                        <label for="{{ form.nivel_competencia.id_for_label }}" 
+                               class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-level-up-alt mr-1"></i> Nivel de Competencia *
+                        </label>
+                        <select id="{{ form.nivel_competencia.id_for_label }}" 
+                                name="{{ form.nivel_competencia.name }}" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-200">
+                            <option value="">Seleccionar nivel...</option>
+                            <option value="basico" {% if form.nivel_competencia.value == 'basico' %}selected{% endif %}>
+                                <i class="fas fa-star"></i> Básico
+                            </option>
+                            <option value="intermedio" {% if form.nivel_competencia.value == 'intermedio' %}selected{% endif %}>
+                                <i class="fas fa-star"></i> Intermedio
+                            </option>
+                            <option value="avanzado" {% if form.nivel_competencia.value == 'avanzado' %}selected{% endif %}>
+                                <i class="fas fa-star"></i> Avanzado
+                            </option>
+                            <option value="experto" {% if form.nivel_competencia.value == 'experto' %}selected{% endif %}>
+                                <i class="fas fa-crown"></i> Experto
+                            </option>
+                        </select>
+                        {% if form.nivel_competencia.errors %}
+                            <div class="text-red-600 text-sm mt-1">
+                                {{ form.nivel_competencia.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <p class="text-sm text-gray-500 mt-1">
+                            El nivel de dominio que tiene el profesional en esta especialidad secundaria
+                        </p>
+                    </div>
+
+                    <!-- Información adicional -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-blue-900 mb-2">Información importante:</h4>
+                                <ul class="text-sm text-blue-800 space-y-1">
+                                    <li>• El profesional principal tendrá la especialidad del segundo profesional como especialidad adicional</li>
+                                    <li>• Un profesional no puede tener una especialidad secundaria de sí mismo</li>
+                                    <li>• El nivel de competencia indica el dominio en esa especialidad secundaria</li>
+                                    <li>• Esta información será visible en el perfil del profesional</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex items-center justify-end space-x-4 pt-6">
+                        <a href="{% url 'usuarios:especialidad_gestion' %}" 
+                           class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" 
+                                class="gradient-forest-sage text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium">
+                            <i class="fas fa-save mr-2"></i>
+                            Crear Especialidad
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Validación del formulario para evitar seleccionar el mismo profesional
+document.addEventListener('DOMContentLoaded', function() {
+    const principalSelect = document.getElementById('{{ form.profesional_principal.id_for_label }}');
+    const especialidadSelect = document.getElementById('{{ form.profesional_especialidad.id_for_label }}');
+    
+    function validateSelection() {
+        if (principalSelect.value && especialidadSelect.value && principalSelect.value === especialidadSelect.value) {
+            alert('Un profesional no puede tener una especialidad secundaria de sí mismo.');
+            especialidadSelect.value = '';
+        }
+    }
+    
+    principalSelect.addEventListener('change', validateSelection);
+    especialidadSelect.addEventListener('change', validateSelection);
+});
+</script>
+{% endblock %}

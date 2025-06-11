@@ -3,40 +3,115 @@
 {% block title %}Iniciar Sesión - GestorSpa{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="text-center mb-4">Acceso Administrativo</h2>
-                    
-                    {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <p>Usuario o contraseña incorrectos. Por favor, inténtelo de nuevo.</p>
-                    </div>
-                    {% endif %}
+<div class="min-h-screen bg-gradient-to-br from-sand/20 via-white to-sage/10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">        <!-- Header -->
+        <div class="text-center animate-fade-in">
+            <div class="mx-auto h-16 w-16 gradient-forest-sage rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <i class="fas fa-spa text-white text-2xl"></i>
+            </div>
+            <h2 class="font-secondary text-3xl font-bold text-forest">
+                Acceso Administrativo
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Inicia sesión en tu cuenta para gestionar el spa
+            </p>
+        </div>
 
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Usuario</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-                        </div>
-                    </form>
-                    
-                    <div class="text-center mt-3">
-                        <small class="text-muted">Este es un acceso exclusivo para administradores del sistema.</small>
-                    </div>
+        <!-- Form Card -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-sage/20 p-8 animate-scale-in" style="animation-delay: 0.2s;">
+            <!-- Error Messages -->
+            {% if form.errors %}
+            <div class="mb-6 p-4 bg-berry/10 border border-berry/20 rounded-lg animate-slide-up">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-berry mr-3"></i>
+                    <p class="text-berry font-medium">Usuario o contraseña incorrectos. Por favor, inténtelo de nuevo.</p>
                 </div>
             </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Username Field -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-forest mb-2">
+                        <i class="fas fa-user mr-2 text-sage"></i>
+                        Usuario
+                    </label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           required
+                           class="w-full px-4 py-3 border border-sage/30 rounded-lg bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-forest/20 focus:border-forest transition-all duration-300 placeholder-gray-400"
+                           placeholder="Ingresa tu nombre de usuario">
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-forest mb-2">
+                        <i class="fas fa-lock mr-2 text-sage"></i>
+                        Contraseña
+                    </label>
+                    <div class="relative">
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               required
+                               class="w-full px-4 py-3 border border-sage/30 rounded-lg bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-forest/20 focus:border-forest transition-all duration-300 placeholder-gray-400 pr-10"
+                               placeholder="Ingresa tu contraseña">
+                        <button type="button" 
+                                onclick="togglePassword()"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-sage hover:text-forest transition-colors duration-300">
+                            <i id="passwordToggle" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>                <!-- Submit Button -->
+                <div>
+                    <button type="submit" 
+                            class="w-full flex justify-center items-center px-4 py-3 gradient-forest-sage text-white font-semibold rounded-lg hover:gradient-coral-berry focus:outline-none focus:ring-2 focus:ring-forest/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Iniciar Sesión
+                    </button>
+                </div>
+            </form>
+
+            <!-- Footer Note -->
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-500 bg-sand/20 rounded-lg p-3 border border-sand/30">
+                    <i class="fas fa-shield-alt mr-2 text-coral"></i>
+                    Este es un acceso exclusivo para administradores del sistema
+                </p>
+            </div>
+        </div>
+
+        <!-- Additional Links -->
+        <div class="text-center space-y-2 animate-fade-in" style="animation-delay: 0.4s;">
+            <p class="text-sm text-gray-600">
+                ¿Eres cliente? 
+                <a href="{% url 'home' %}" class="text-forest hover:text-sage font-medium transition-colors duration-300">
+                    Volver al inicio
+                </a>
+            </p>
         </div>
     </div>
 </div>
-{% endblock %} 
+
+<!-- JavaScript for password toggle -->
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const toggleIcon = document.getElementById('passwordToggle');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}

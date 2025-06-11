@@ -3,227 +3,112 @@
 
 {% block title %}Horarios Disponibles - GestorSpa{% endblock %}
 
-{% block extra_css %}
-<style>
-    .horarios-container {
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        padding: 20px;
-        margin-bottom: 30px;
-    }
-    
-    .horarios-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    
-    .horarios-title {
-        font-size: 1.5rem;
-        font-weight: 500;
-        color: var(--color-primary);
-        margin: 0;
-    }
-    
-    .back-btn {
-        background-color: var(--color-primary);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 8px 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
-    
-    .back-btn:hover {
-        background-color: var(--color-gold);
-        transform: translateY(-2px);
-        color: white;
-    }
-    
-    .service-info {
-        background-color: rgba(70, 106, 68, 0.05);
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-    
-    .service-name {
-        font-size: 1.2rem;
-        font-weight: 500;
-        color: var(--color-primary);
-        margin-bottom: 10px;
-    }
-    
-    .service-details {
-        display: flex;
-        gap: 20px;
-        color: #6c757d;
-    }
-    
-    .service-detail {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    
-    .time-slots {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-        margin-top: 20px;
-    }
-    
-    .time-slot {
-        background-color: white;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 15px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .time-slot:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .time-slot.available {
-        border-color: #28a745;
-        background-color: rgba(40, 167, 69, 0.1);
-    }
-    
-    .time-slot.available:hover {
-        background-color: #28a745;
-        color: white;
-    }
-    
-    .time-slot.available:hover .duration,
-    .time-slot.available:hover .status {
-        color: white;
-    }
-    
-    .time-slot.unavailable {
-        border-color: #dc3545;
-        background-color: rgba(220, 53, 69, 0.1);
-        opacity: 0.8;
-        cursor: not-allowed;
-    }
-    
-    .time-slot.unavailable:hover {
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .time {
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin-bottom: 5px;
-        color: #333;
-    }
-    
-    .duration {
-        font-size: 0.9rem;
-        color: #6c757d;
-    }
-    
-    .status {
-        font-size: 0.8rem;
-        margin-top: 5px;
-    }
-    
-    .status.available {
-        color: #28a745;
-    }
-    
-    .status.unavailable {
-        color: #dc3545;
-    }
-    
-    .no-slots {
-        text-align: center;
-        padding: 30px;
-        color: #6c757d;
-    }
-    
-    .no-slots i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        color: #adb5bd;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="container py-5">
-    <div class="horarios-container">
-        <div class="horarios-header">
-            <h2 class="horarios-title">
-                <i class="fas fa-clock me-2"></i>
-                Horarios Disponibles
-            </h2>
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100 mb-8">            <div class="gradient-coral-berry p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+                    <h1 class="text-2xl font-bold text-white flex items-center">
+                        <i class="fas fa-clock mr-3"></i>
+                        Horarios Disponibles
+                    </h1>
+                    
+                    <a href="{% url 'turnos:calendario_disponibilidad' %}{% if servicio_seleccionado %}?servicio={{ servicio_seleccionado.id }}{% endif %}" 
+                       class="inline-flex items-center px-4 py-2 bg-white text-coral-600 rounded-xl hover:bg-coral-50 focus:outline-none focus:ring-4 focus:ring-white/25 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Volver al calendario
+                    </a>
+                </div>
+            </div>
             
-            <a href="{% url 'turnos:calendario_disponibilidad' %}{% if servicio_seleccionado %}?servicio={{ servicio_seleccionado.id }}{% endif %}" class="back-btn">
-                <i class="fas fa-arrow-left me-2"></i>Volver al calendario
-            </a>
-        </div>
-        
-        <div class="service-info">
-            <div class="service-name">{{ servicio_seleccionado.nombre }}</div>
-            <div class="service-details">
-                <div class="service-detail">
-                    <i class="fas fa-clock"></i>
-                    <span>{{ servicio_seleccionado.duracion }} minutos</span>
-                </div>
-                <div class="service-detail">
-                    <i class="fas fa-tag"></i>
-                    <span>${{ servicio_seleccionado.precio }}</span>
-                </div>
-                <div class="service-detail">
-                    <i class="fas fa-calendar"></i>
-                    <span>{{ fecha|date:"l d 'de' F 'de' Y" }}</span>
+            <!-- Service Info -->
+            <div class="p-6 bg-gradient-to-r from-sage-50 to-coral-50">
+                <div class="text-center">
+                    <h2 class="text-xl font-bold text-sage-900 mb-4">{{ servicio_seleccionado.nombre }}</h2>
+                    <div class="flex flex-wrap justify-center gap-6 text-sm">
+                        <div class="flex items-center text-sage-700">
+                            <div class="w-8 h-8 bg-coral-100 rounded-lg flex items-center justify-center mr-2">
+                                <i class="fas fa-clock text-coral-600"></i>
+                            </div>
+                            <span class="font-medium">{{ servicio_seleccionado.duracion }} minutos</span>
+                        </div>
+                        <div class="flex items-center text-sage-700">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center mr-2">
+                                <i class="fas fa-tag text-emerald-600"></i>
+                            </div>
+                            <span class="font-medium">${{ servicio_seleccionado.precio }}</span>
+                        </div>
+                        <div class="flex items-center text-sage-700">
+                            <div class="w-8 h-8 bg-berry-100 rounded-lg flex items-center justify-center mr-2">
+                                <i class="fas fa-calendar text-berry-600"></i>
+                            </div>
+                            <span class="font-medium">{{ fecha|date:"l d 'de' F 'de' Y" }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         
+        <!-- Time Slots -->
         {% if horarios_disponibles %}
-            <div class="time-slots">
-                {% for horario in horarios_disponibles %}
-                    <div class="time-slot {% if horario.disponible %}available{% else %}unavailable{% endif %}"
-                         {% if horario.disponible %}
-                         onclick="window.location.href='{% url 'turnos:crear' %}?fecha={{ fecha|date:'Y-m-d' }}&hora={{ horario.hora|time:'H:i' }}&servicio={{ servicio_seleccionado.id }}'"
-                         {% endif %}>
-                        <div class="time">{{ horario.hora|time:"H:i" }}</div>
-                        <div class="duration">{{ servicio_seleccionado.duracion }} min</div>
-                        <div class="status {% if horario.disponible %}available{% else %}unavailable{% endif %}">
-                            {% if horario.disponible %}
-                                <i class="fas fa-check-circle me-1"></i>Disponible
-                            {% else %}
-                                <i class="fas fa-times-circle me-1"></i>Ocupado
-                            {% endif %}
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {% for horario in horarios_disponibles %}                    {% if horario.disponible %}
+                        <div class="bg-white rounded-xl shadow-md border-2 border-emerald-200 p-4 text-center cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-emerald-400 hover:bg-emerald-50 hover:-translate-y-1 group horario-disponible"
+                             data-url="{% url 'turnos:crear' %}?fecha={{ fecha|date:'Y-m-d' }}&hora={{ horario.hora|time:'H:i' }}&servicio={{ servicio_seleccionado.id }}"
+                            <div class="text-2xl font-bold text-sage-900 mb-1 group-hover:text-emerald-700">
+                                {{ horario.hora|time:"H:i" }}
+                            </div>
+                            <div class="text-sm text-sage-600 mb-2 group-hover:text-emerald-600">
+                                {{ servicio_seleccionado.duracion }} min
+                            </div>
+                            <div class="inline-flex items-center px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium group-hover:bg-emerald-200">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Disponible
+                            </div>
                         </div>
-                    </div>
+                    {% else %}
+                        <div class="bg-gray-100 rounded-xl shadow-md border-2 border-red-200 p-4 text-center opacity-60 cursor-not-allowed">
+                            <div class="text-2xl font-bold text-gray-500 mb-1">
+                                {{ horario.hora|time:"H:i" }}
+                            </div>
+                            <div class="text-sm text-gray-400 mb-2">
+                                {{ servicio_seleccionado.duracion }} min
+                            </div>
+                            <div class="inline-flex items-center px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                                <i class="fas fa-times-circle mr-1"></i>
+                                Ocupado
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% else %}
-            <div class="no-slots">
-                <i class="fas fa-calendar-times"></i>
-                <h3>No hay horarios disponibles</h3>
-                <p>Lo sentimos, no hay horarios disponibles para este día y servicio.</p>
+            <div class="bg-white rounded-2xl shadow-xl p-12 text-center border border-sage-100">
+                <div class="mb-6">
+                    <i class="fas fa-calendar-times text-6xl text-sage-300"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-sage-900 mb-4">No hay horarios disponibles</h3>
+                <p class="text-sage-600 mb-8 max-w-md mx-auto">
+                    Lo sentimos, no hay horarios disponibles para este día y servicio. Por favor, seleccione otra fecha.
+                </p>
+                <a href="{% url 'turnos:calendario_disponibilidad' %}{% if servicio_seleccionado %}?servicio={{ servicio_seleccionado.id }}{% endif %}" 
+                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl">
+                    <i class="fas fa-calendar-alt mr-2"></i>
+                    Seleccionar otra fecha
+                </a>
             </div>
-        {% endif %}
-    </div>
+        {% endif %}    </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Código JavaScript adicional si es necesario
+    // Manejar clicks en horarios disponibles
+    document.querySelectorAll('.horario-disponible').forEach(function(element) {
+        element.addEventListener('click', function() {
+            window.location.href = this.getAttribute('data-url');
+        });
+    });
 });
 </script>
-{% endblock %} 
+{% endblock %}

@@ -3,103 +3,261 @@
 {% block title %}{{ cliente.usuario.get_full_name|default:cliente.usuario.username }} - GestorSpa{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="fas fa-user-circle fa-5x text-primary"></i>
-                </div>
-                <h4 class="card-title">{{ cliente.usuario.get_full_name|default:cliente.usuario.username }}</h4>
-                <p class="text-muted">{{ cliente.usuario.email }}</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Información de Contacto</h5>
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <h6 class="mb-0">Teléfono</h6>
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{% url 'clientes:cliente_list' %}" class="inline-flex items-center text-sm font-medium text-sage-700 hover:text-coral-600 transition-colors duration-200">
+                        <i class="fas fa-users mr-2"></i>
+                        Clientes
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-sage-400 mx-2"></i>
+                        <span class="ml-1 text-sm font-medium text-sage-500">Detalle de Cliente</span>
                     </div>
-                    <div class="col-sm-9 text-secondary">
-                        {{ cliente.telefono }}
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <h6 class="mb-0">Dirección</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                        {{ cliente.direccion|default:"No especificada" }}
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <h6 class="mb-0">Fecha de Nacimiento</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                        {{ cliente.fecha_nacimiento|date:"d/m/Y"|default:"No especificada" }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <h6 class="mb-0">Notas</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                        {{ cliente.notas|default:"Sin notas" }}
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Historial de Turnos</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Servicio</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for turno in cliente.turnos.all %}
-                            <tr>
-                                <td>{{ turno.fecha|date:"d/m/Y" }} {{ turno.hora_inicio|time:"H:i" }}</td>
-                                <td>{{ turno.servicio.nombre }}</td>
-                                <td>
-                                    <span class="badge bg-{{ turno.estado|yesno:'success,warning' }}">
-                                        {{ turno.get_estado_display }}
-                                    </span>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="3" class="text-center">No hay turnos registrados.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                </li>
+            </ol>
+        </nav>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <a href="{% url 'clientes:cliente_list' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Volver a Clientes
-        </a>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Perfil del Cliente -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100">                    <div class="gradient-coral-berry p-8 text-center">
+                        <div class="mb-4">
+                            {% if cliente.foto %}
+                                <img class="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-lg object-cover" 
+                                     src="{{ cliente.foto.url }}" 
+                                     alt="{{ cliente.usuario.get_full_name|default:cliente.usuario.username }}">
+                            {% else %}
+                                <div class="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-lg bg-gradient-to-br from-sage-400 to-sage-600 flex items-center justify-center">
+                                    <span class="text-2xl font-bold text-white">
+                                        {{ cliente.usuario.get_full_name|default:cliente.usuario.username|first|upper }}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h2 class="text-2xl font-bold text-white mb-1">
+                            {{ cliente.usuario.get_full_name|default:cliente.usuario.username }}
+                        </h2>
+                        <p class="text-coral-100 text-sm">
+                            <i class="fas fa-envelope mr-1"></i>
+                            {{ cliente.usuario.email }}
+                        </p>
+                    </div>
+                    
+                    <!-- Estados del Cliente -->
+                    <div class="p-6">
+                        <div class="text-center">
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Cliente Activo
+                            </div>
+                        </div>
+                        
+                        <!-- Estadísticas Rápidas -->
+                        <div class="mt-6 grid grid-cols-2 gap-4">
+                            <div class="text-center p-3 bg-sage-50 rounded-xl">
+                                <div class="text-lg font-bold text-sage-900">{{ cliente.turnos.count }}</div>
+                                <div class="text-xs text-sage-600">Turnos Totales</div>
+                            </div>
+                            <div class="text-center p-3 bg-coral-50 rounded-xl">
+                                <div class="text-lg font-bold text-coral-900">{{ cliente.turnos.filter.count }}</div>
+                                <div class="text-xs text-coral-600">Este Mes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Información Detallada -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Información de Contacto -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100">
+                    <div class="bg-gradient-to-r from-sage-600 to-sage-700 p-6">
+                        <h3 class="text-xl font-bold text-white flex items-center">
+                            <i class="fas fa-address-book mr-3"></i>
+                            Información de Contacto
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-10 h-10 bg-coral-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-phone text-coral-600"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <dt class="text-sm font-medium text-sage-700">Teléfono</dt>
+                                    <dd class="text-sm text-sage-900 font-semibold">{{ cliente.telefono|default:"No especificado" }}</dd>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-10 h-10 bg-sage-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-calendar text-sage-600"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <dt class="text-sm font-medium text-sage-700">Fecha de Nacimiento</dt>
+                                    <dd class="text-sm text-sage-900 font-semibold">
+                                        {% if cliente.fecha_nacimiento %}
+                                            {{ cliente.fecha_nacimiento|date:"d/m/Y" }}
+                                            <span class="text-xs text-sage-500 ml-1">
+                                                ({{ cliente.fecha_nacimiento|age }} años)
+                                            </span>
+                                        {% else %}
+                                            No especificada
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-berry-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-berry-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Dirección</dt>
+                                <dd class="text-sm text-sage-900">{{ cliente.direccion|default:"No especificada" }}</dd>
+                            </div>
+                        </div>
+                        
+                        {% if cliente.notas %}
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-sand-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-sticky-note text-sand-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Notas</dt>
+                                <dd class="text-sm text-sage-900 bg-sage-50 p-4 rounded-xl">{{ cliente.notas }}</dd>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Historial de Turnos -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100">
+                    <div class="bg-gradient-to-r from-coral-600 to-berry-600 p-6">
+                        <h3 class="text-xl font-bold text-white flex items-center">
+                            <i class="fas fa-history mr-3"></i>
+                            Historial de Turnos
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        {% if cliente.turnos.all %}
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-sage-200">
+                                <thead class="bg-sage-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-sage-500 uppercase tracking-wider">
+                                            Fecha y Hora
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-sage-500 uppercase tracking-wider">
+                                            Servicio
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-sage-500 uppercase tracking-wider">
+                                            Profesional
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-sage-500 uppercase tracking-wider">
+                                            Estado
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-sage-500 uppercase tracking-wider">
+                                            Acciones
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-sage-200">
+                                    {% for turno in cliente.turnos.all %}
+                                    <tr class="hover:bg-sage-50 transition-colors duration-200">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-sage-900">
+                                                {{ turno.fecha|date:"d/m/Y" }}
+                                            </div>
+                                            <div class="text-sm text-sage-500">
+                                                {{ turno.hora_inicio|time:"H:i" }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-sage-900">{{ turno.servicio.nombre }}</div>
+                                            <div class="text-sm text-sage-500">${{ turno.servicio.precio }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-sage-900">
+                                                {% if turno.profesional %}
+                                                    {{ turno.profesional.usuario.get_full_name }}
+                                                {% else %}
+                                                    <span class="text-sage-400">Sin asignar</span>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {% if turno.estado %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            {% else %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                                    <i class="fas fa-clock mr-1"></i>
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="{% url 'turnos:turno_detail' turno.pk %}" 
+                                               class="inline-flex items-center px-3 py-1 bg-sage-100 hover:bg-sage-200 text-sage-700 rounded-lg transition-colors duration-200">
+                                                <i class="fas fa-eye mr-1"></i>
+                                                Ver
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12">
+                            <i class="fas fa-calendar-times text-4xl text-sage-300 mb-4"></i>
+                            <h3 class="text-lg font-medium text-sage-900 mb-2">Sin turnos registrados</h3>
+                            <p class="text-sage-500 mb-6">Este cliente aún no tiene turnos en el sistema.</p>
+                            <a href="{% url 'turnos:turno_create' %}?cliente={{ cliente.pk }}" 
+                               class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <i class="fas fa-plus mr-2"></i>
+                                Crear Primer Turno
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="mt-8 flex flex-wrap gap-4 justify-center">
+            <a href="{% url 'clientes:cliente_list' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-white text-sage-700 border-2 border-sage-300 rounded-xl hover:bg-sage-50 hover:border-sage-400 focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Volver a Clientes
+            </a>
+            
+            {% if user.is_staff or user.profesional_profile %}
+            <a href="{% url 'clientes:cliente_edit' cliente.pk %}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-sage-600 to-sage-700 text-white rounded-xl hover:from-sage-700 hover:to-sage-800 focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <i class="fas fa-edit mr-2"></i>
+                Editar Cliente
+            </a>
+            
+            <a href="{% url 'turnos:turno_create' %}?cliente={{ cliente.pk }}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <i class="fas fa-calendar-plus mr-2"></i>
+                Nuevo Turno
+            </a>
+            {% endif %}
+        </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

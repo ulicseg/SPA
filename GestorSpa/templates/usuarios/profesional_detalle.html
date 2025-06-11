@@ -1,0 +1,358 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ profesional.nombre_completo }} - Spa Sentirse Bien{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --spa-cream: #f8f6f0;
+    --spa-sage: #1B5E20;
+    --spa-sage-dark: #0A3D0A;
+    --spa-forest: #052505;
+    --spa-gold: #FFD700;
+    --spa-rose: #e8d5d0;
+    --spa-charcoal: #1c2825;
+    --spa-pearl: #f5f5f3;
+    --spa-mist: rgba(27, 94, 32, 0.06);
+  }
+
+  .font-luxury { font-family: 'Playfair Display', serif; }
+  .font-modern { font-family: 'Inter', sans-serif; }
+
+  .luxury-card {
+    background-color: rgba(248, 246, 240, 0.9);
+    border: 1px solid rgba(27, 94, 32, 0.1);
+    box-shadow: 0 10px 35px rgba(5, 37, 5, 0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+
+  .profile-header {
+    background: linear-gradient(135deg, var(--spa-sage) 0%, var(--spa-forest) 100%);
+    color: var(--spa-pearl);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .speciality-badge {
+    background-color: var(--spa-gold);
+    color: var(--spa-forest);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+  }
+
+  .service-card {
+    background: white;
+    border: 1px solid rgba(27, 94, 32, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(5, 37, 5, 0.1);
+    border-color: var(--spa-sage);
+  }
+
+  .day-badge {
+    background-color: var(--spa-mist);
+    color: var(--spa-forest);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    margin: 0.25rem;
+    display: inline-block;
+    border: 1px solid var(--spa-sage);
+  }
+
+  .btn-reserve {
+    background: linear-gradient(135deg, var(--spa-sage) 0%, var(--spa-forest) 100%);
+    color: var(--spa-pearl);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-reserve:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+    color: var(--spa-pearl);
+  }
+
+  .btn-back {
+    background-color: transparent;
+    color: var(--spa-sage);
+    border: 2px solid var(--spa-sage);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-back:hover {
+    background-color: var(--spa-sage);
+    color: var(--spa-pearl);
+    transform: translateY(-2px);
+  }
+
+  .contact-info {
+    background: var(--spa-mist);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(27, 94, 32, 0.1);
+  }
+
+  .experience-highlight {
+    background: linear-gradient(135deg, var(--spa-gold) 0%, #f4e397 100%);
+    color: var(--spa-forest);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-8">
+    <!-- Botón de Regreso -->
+    <div class="mb-6">
+        <a href="{% url 'usuarios:profesional_lista' %}" class="btn-back">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Volver a Profesionales
+        </a>
+    </div>
+
+    <!-- Header del Perfil -->
+    <div class="profile-header">
+        <div class="flex flex-col lg:flex-row items-center gap-8">
+            <!-- Foto del Profesional -->
+            <div class="flex-shrink-0">
+                {% if profesional.foto_profesional %}
+                    <img src="{{ profesional.foto_profesional.url }}" 
+                         alt="{{ profesional.nombre_completo }}"
+                         class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl">
+                {% else %}
+                    <div class="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center border-4 border-white">
+                        <i class="fas fa-user-md text-4xl text-white"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Información Principal -->
+            <div class="flex-grow text-center lg:text-left">
+                <h1 class="font-luxury text-4xl font-semibold mb-3">{{ profesional.nombre_completo }}</h1>
+                <div class="mb-4">
+                    <span class="speciality-badge">{{ profesional.get_especialidad_display }}</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="flex items-center justify-center lg:justify-start">
+                        <i class="fas fa-clock mr-2"></i>
+                        <span>{{ profesional.hora_inicio_disponibilidad }} - {{ profesional.hora_fin_disponibilidad }}</span>
+                    </div>
+                    <div class="flex items-center justify-center lg:justify-start">
+                        <i class="fas fa-star mr-2"></i>
+                        <span>{{ profesional.años_experiencia }} años de experiencia</span>
+                    </div>
+                    {% if profesional.telefono %}
+                    <div class="flex items-center justify-center lg:justify-start">
+                        <i class="fas fa-phone mr-2"></i>
+                        <span>{{ profesional.telefono }}</span>
+                    </div>
+                    {% endif %}
+                    {% if profesional.email_profesional %}
+                    <div class="flex items-center justify-center lg:justify-start">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <span>{{ profesional.email_profesional }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Botón de Reserva -->
+            <div class="flex-shrink-0">
+                <a href="{% url 'turnos:turno_reserva_unificada' %}?profesional={{ profesional.id }}" 
+                   class="btn-reserve">
+                    <i class="fas fa-calendar-plus mr-2"></i>
+                    Reservar Turno
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Columna Principal -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Biografía -->
+            {% if profesional.biografia %}
+            <div class="luxury-card">
+                <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-user mr-3 text-green-700"></i>
+                    Sobre {{ profesional.nombre_completo|truncatewords:1 }}
+                </h2>
+                <div class="text-gray-600 leading-relaxed font-modern">
+                    {{ profesional.biografia|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Certificaciones -->
+            {% if profesional.certificaciones %}
+            <div class="luxury-card">
+                <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-certificate mr-3 text-green-700"></i>
+                    Certificaciones y Formación
+                </h2>
+                <div class="text-gray-600 leading-relaxed font-modern">
+                    {{ profesional.certificaciones|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Servicios que Ofrece -->
+            {% if servicios %}
+            <div class="luxury-card">
+                <h2 class="font-luxury text-2xl font-semibold text-gray-800 mb-6">
+                    <i class="fas fa-spa mr-3 text-green-700"></i>
+                    Servicios Especializados
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for servicio in servicios %}
+                    <div class="service-card">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <i class="{{ servicio.icono }} text-2xl text-green-600"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-semibold text-gray-800 mb-2">{{ servicio.nombre }}</h3>
+                                <p class="text-sm text-gray-600 mb-3">{{ servicio.descripcion|truncatewords:15 }}</p>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        {{ servicio.duracion }} min
+                                    </span>
+                                    <span class="font-semibold text-green-700">
+                                        ${{ servicio.precio }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Información de Contacto -->
+            <div class="contact-info">
+                <h3 class="font-luxury text-xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-address-card mr-2 text-green-700"></i>
+                    Información de Contacto
+                </h3>
+                <div class="space-y-3">
+                    {% if profesional.telefono %}
+                    <div class="flex items-center">
+                        <i class="fas fa-phone w-5 text-green-600 mr-3"></i>
+                        <span class="font-modern text-gray-700">{{ profesional.telefono }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if profesional.email_profesional %}
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope w-5 text-green-600 mr-3"></i>
+                        <a href="mailto:{{ profesional.email_profesional }}" 
+                           class="font-modern text-green-700 hover:underline">
+                            {{ profesional.email_profesional }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex items-center">
+                        <i class="fas fa-clock w-5 text-green-600 mr-3"></i>
+                        <span class="font-modern text-gray-700">
+                            {{ profesional.hora_inicio_disponibilidad }} - {{ profesional.hora_fin_disponibilidad }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experiencia -->
+            <div class="experience-highlight">
+                <div class="text-3xl font-bold mb-2">{{ profesional.años_experiencia }}</div>
+                <div class="text-sm">Años de Experiencia</div>
+            </div>
+
+            <!-- Disponibilidad -->
+            <div class="luxury-card">
+                <h3 class="font-luxury text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-calendar mr-2 text-green-700"></i>
+                    Días Disponibles
+                </h3>
+                {% if dias_disponibles %}
+                    <div class="flex flex-wrap gap-2">
+                        {% for dia in dias_disponibles %}
+                            <span class="day-badge">{{ dia|capfirst }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-sm">No hay días configurados</p>
+                {% endif %}
+            </div>
+
+            <!-- Información Profesional -->
+            <div class="luxury-card">
+                <h3 class="font-luxury text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-info-circle mr-2 text-green-700"></i>
+                    Información Profesional
+                </h3>
+                <div class="space-y-3 text-sm">
+                    <div>
+                        <span class="font-semibold text-gray-700">Especialidad:</span>
+                        <div class="text-gray-600">{{ profesional.get_especialidad_display }}</div>
+                    </div>
+                    
+                    {% if profesional.numero_licencia %}
+                    <div>
+                        <span class="font-semibold text-gray-700">Licencia:</span>
+                        <div class="text-gray-600">{{ profesional.numero_licencia }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if profesional.fecha_contratacion %}
+                    <div>
+                        <span class="font-semibold text-gray-700">Con nosotros desde:</span>
+                        <div class="text-gray-600">{{ profesional.fecha_contratacion|date:"F Y" }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="text-center">
+                <a href="{% url 'turnos:turno_reserva_unificada' %}?profesional={{ profesional.id }}" 
+                   class="btn-reserve w-full block">
+                    <i class="fas fa-calendar-check mr-2"></i>
+                    Reservar con {{ profesional.nombre_completo|truncatewords:1 }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,148 +3,134 @@
 
 {% block title %}Confirmación de Reserva - GestorSpa{% endblock %}
 
-{% block extra_css %}
-<style>
-    .confirmacion-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 20px;
-    }
-
-    .confirmacion-card {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 30px;
-        text-align: center;
-    }
-
-    .confirmacion-icon {
-        font-size: 4rem;
-        color: var(--color-forest);
-        margin-bottom: 20px;
-    }
-
-    .confirmacion-titulo {
-        color: var(--color-forest);
-        margin-bottom: 20px;
-        font-size: 2rem;
-    }
-
-    .confirmacion-detalles {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 20px 0;
-        text-align: left;
-    }
-
-    .confirmacion-detalle {
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-    }
-
-    .confirmacion-detalle i {
-        color: var(--color-forest);
-        margin-right: 10px;
-        width: 20px;
-    }
-
-    .btn-volver {
-        background: var(--color-forest);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 12px 25px;
-        font-size: 1rem;
-        transition: all 0.2s;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 20px;
-        margin-right: 10px;
-    }
-
-    .btn-volver:hover {
-        background: var(--color-sage);
-        transform: translateY(-2px);
-        color: white;
-    }
-
-    .btn-descargar {
-        background: #28a745;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 12px 25px;
-        font-size: 1rem;
-        transition: all 0.2s;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 20px;
-    }
-
-    .btn-descargar:hover {
-        background: #218838;
-        transform: translateY(-2px);
-        color: white;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="confirmacion-container">
-    <div class="confirmacion-card">
-        <div class="confirmacion-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <h2 class="confirmacion-titulo">¡Reserva Confirmada!</h2>
-        <p class="lead">Su turno ha sido reservado exitosamente.</p>
-        
-        <div class="confirmacion-detalles">
-            <div class="confirmacion-detalle">
-                <i class="fas fa-user"></i>
-                <strong>Cliente:</strong> {{ turno.nombre }}
+<div class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sage-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Confirmation Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-emerald-200">
+            <!-- Success Header -->
+            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-8 text-center">
+                <div class="mb-4">
+                    <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto backdrop-blur-sm">
+                        <i class="fas fa-check-circle text-4xl text-white"></i>
+                    </div>
+                </div>
+                <h1 class="text-3xl font-bold text-white mb-2">¡Reserva Confirmada!</h1>
+                <p class="text-emerald-100 text-lg">Su turno ha sido reservado exitosamente</p>
             </div>
-            <div class="confirmacion-detalle">
-                <i class="fas fa-spa"></i>
-                <strong>Servicio:</strong> {{ turno.servicio.nombre }}
+
+            <!-- Reservation Details -->
+            <div class="p-8">
+                <div class="bg-gradient-to-r from-sage-50 to-emerald-50 rounded-xl p-6 mb-6">
+                    <h2 class="text-xl font-bold text-sage-900 mb-6 text-center">Detalles de su Reserva</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-coral-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-user text-coral-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Cliente</dt>
+                                <dd class="text-lg font-semibold text-sage-900">{{ turno.nombre }}</dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-berry-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-spa text-berry-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Servicio</dt>
+                                <dd class="text-lg font-semibold text-sage-900">{{ turno.servicio.nombre }}</dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-emerald-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Fecha</dt>
+                                <dd class="text-lg font-semibold text-sage-900">{{ turno.fecha|date:"d/m/Y" }}</dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-sand-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-clock text-sand-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Hora</dt>
+                                <dd class="text-lg font-semibold text-sage-900">{{ turno.hora_inicio }}</dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-envelope text-blue-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Email</dt>
+                                <dd class="text-lg font-semibold text-sage-900">{{ turno.email }}</dd>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-phone text-indigo-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <dt class="text-sm font-medium text-sage-700">Teléfono</dt>
+                                <dd class="text-lg font-semibold text-sage-900">{{ turno.telefono }}</dd>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if turno.notas %}
+                    <div class="mt-6 flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-sticky-note text-amber-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <dt class="text-sm font-medium text-sage-700">Notas</dt>
+                            <dd class="text-base text-sage-900 bg-white p-4 rounded-lg shadow-sm">{{ turno.notas }}</dd>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Important Notice -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-amber-600 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-amber-800 font-semibold mb-2">Información importante</h3>
+                            <p class="text-amber-700 text-sm leading-relaxed">
+                                Si necesita modificar o cancelar su turno, por favor contáctenos con al menos 24 horas de anticipación. 
+                                Puede comunicarse al teléfono <strong>+54 3624567890</strong> o al email <strong>info@gestorspa.com</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{% url 'home' %}" 
+                       class="inline-flex items-center justify-center px-8 py-3 bg-white text-sage-700 border-2 border-sage-300 rounded-xl hover:bg-sage-50 hover:border-sage-400 focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
+                        <i class="fas fa-home mr-2"></i>
+                        Volver al Inicio
+                    </a>
+                    
+                    <a href="{% url 'turnos:turno_pdf' turno.pk %}" 
+                       class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-file-pdf mr-2"></i>
+                        Descargar Comprobante
+                    </a>
+                </div>
             </div>
-            <div class="confirmacion-detalle">
-                <i class="fas fa-calendar-alt"></i>
-                <strong>Fecha:</strong> {{ turno.fecha|date:"d/m/Y" }}
-            </div>
-            <div class="confirmacion-detalle">
-                <i class="fas fa-clock"></i>
-                <strong>Hora:</strong> {{ turno.hora_inicio }}
-            </div>
-            <div class="confirmacion-detalle">
-                <i class="fas fa-envelope"></i>
-                <strong>Email:</strong> {{ turno.email }}
-            </div>
-            <div class="confirmacion-detalle">
-                <i class="fas fa-phone"></i>
-                <strong>Teléfono:</strong> {{ turno.telefono }}
-            </div>
-            {% if turno.notas %}
-            <div class="confirmacion-detalle">
-                <i class="fas fa-sticky-note"></i>
-                <strong>Notas:</strong> {{ turno.notas }}
-            </div>
-            {% endif %}
-        </div>
-        
-        <p>Si necesita modificar o cancelar su turno, por favor contáctenos con al menos 24 horas de anticipación a este correo o numero: +54 3624567890,
-            info@gestorspa.com</p>
-        
-        <div class="mt-4">
-            <a href="{% url 'home' %}" class="btn-volver">
-                <i class="fas fa-home me-2"></i>Volver al Inicio
-            </a>
-            <a href="{% url 'turnos:turno_pdf' turno.pk %}" class="btn-descargar">
-                <i class="fas fa-file-pdf me-2"></i>Descargar Comprobante
-            </a>
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

@@ -4,60 +4,161 @@
 {% block title %}{{ object.nombre }} - GestorSpa{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <nav aria-label="breadcrumb" data-aos="fade-right">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'servicios:servicio_list' %}" class="text-decoration-none">Servicios</a></li>
-            <li class="breadcrumb-item active">{{ object.nombre }}</li>
-        </ol>
-    </nav>
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <!-- Breadcrumb -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8" data-aos="fade-right">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{% url 'servicios:servicio_list' %}" class="inline-flex items-center text-sm font-medium text-sage-700 hover:text-coral-600 transition-colors duration-200">
+                        <i class="fas fa-spa mr-2"></i>
+                        Servicios
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-sage-400 mx-2"></i>
+                        <span class="ml-1 text-sm font-medium text-sage-500 md:ml-2">{{ object.nombre }}</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
 
-    <div class="row g-4">
-        <div class="col-lg-6" data-aos="fade-right">
-            {% if object.imagen %}
-            <img src="{{ object.imagen.url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ object.nombre }}">
-            {% else %}
-            <div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="height: 400px;">
-                <i class="fas fa-spa fa-5x text-muted"></i>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <!-- Service Image -->
+            <div class="space-y-6" data-aos="fade-right">
+                <div class="relative group">
+                    {% if object.imagen %}
+                    <img src="{{ object.imagen.url }}" 
+                         class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-300"
+                         alt="{{ object.nombre }}">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-2xl"></div>
+                    {% else %}
+                    <div class="w-full h-96 lg:h-[500px] bg-gradient-to-br from-sage-100 to-sand-100 rounded-2xl shadow-xl flex items-center justify-center border border-sage-200">
+                        <div class="text-center">
+                            <i class="fas fa-spa text-6xl text-sage-400 mb-4"></i>
+                            <p class="text-sage-500 font-medium">Imagen no disponible</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            {% endif %}
-        </div>
-        <div class="col-lg-6" data-aos="fade-left">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <h1 class="display-5 mb-4">{{ object.nombre }}</h1>
-                    
-                    <div class="d-flex gap-3 mb-4">
-                        <span class="badge bg-primary d-flex align-items-center">
-                            <i class="far fa-clock me-2"></i>
-                            {{ object.duracion }} minutos
-                        </span>
-                        <span class="badge {% if object.activo %}bg-success{% else %}bg-danger{% endif %} d-flex align-items-center">
-                            <i class="fas {% if object.activo %}fa-check-circle{% else %}fa-times-circle{% endif %} me-2"></i>
-                            {% if object.activo %}Activo{% else %}Inactivo{% endif %}
-                        </span>
+
+            <!-- Service Details -->
+            <div class="space-y-6" data-aos="fade-left">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100">
+                    <!-- Header -->                    <div class="gradient-coral-berry p-6">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-2xl lg:text-3xl font-bold text-white">
+                                {% if object.icono %}
+                                <i class="{{ object.icono }} mr-3"></i>
+                                {% endif %}
+                                {{ object.nombre }}
+                            </h1>
+                        </div>
                     </div>
 
-                    <h3 class="h2 mb-3">${{ object.precio }}</h3>
-                    
-                    <p class="lead mb-4">{{ object.descripcion }}</p>
+                    <!-- Content -->
+                    <div class="p-6 lg:p-8">
+                        <!-- Badges -->
+                        <div class="flex flex-wrap gap-3 mb-6">
+                            <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-coral-100 to-berry-100 text-coral-800 rounded-full text-sm font-semibold border border-coral-200">
+                                <i class="far fa-clock mr-2"></i>
+                                {{ object.duracion }} minutos
+                            </span>
+                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
+                                {% if object.activo %}
+                                bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 border border-emerald-200
+                                {% else %}
+                                bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200
+                                {% endif %}">
+                                <i class="fas {% if object.activo %}fa-check-circle{% else %}fa-times-circle{% endif %} mr-2"></i>
+                                {% if object.activo %}Disponible{% else %}No disponible{% endif %}
+                            </span>
+                        </div>
 
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'turnos:turno_create' %}?servicio={{ object.id }}" class="btn btn-primary btn-lg flex-grow-1">
-                            <i class="fas fa-calendar-plus me-2"></i>Reservar ahora
-                        </a>
-                        {% if user.is_staff %}
-                        <a href="{% url 'servicios:servicio_update' object.id %}" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="{% url 'servicios:servicio_delete' object.id %}" class="btn btn-outline-danger btn-lg">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                        {% endif %}
+                        <!-- Price -->
+                        <div class="mb-6">
+                            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sage-600 font-medium">Precio del servicio:</span>
+                                    <span class="text-3xl font-bold text-amber-600">
+                                        ${{ object.precio }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-sage-800 mb-4 flex items-center">
+                                <i class="fas fa-info-circle mr-3 text-coral-600"></i>
+                                Descripción del Servicio
+                            </h3>
+                            <div class="bg-gradient-to-r from-sage-50 to-sand-50 rounded-xl p-6 border border-sage-100">
+                                <p class="text-sage-700 leading-relaxed">{{ object.descripcion }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="space-y-4">
+                            {% if object.activo %}
+                            <a href="{% url 'turnos:turno_create' %}?servicio={{ object.id }}" 
+                               class="w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg">
+                                <i class="fas fa-calendar-plus mr-3"></i>
+                                Reservar este Servicio
+                            </a>
+                            {% else %}
+                            <div class="w-full inline-flex items-center justify-center px-8 py-4 bg-gray-300 text-gray-600 rounded-xl cursor-not-allowed text-lg font-semibold">
+                                <i class="fas fa-times-circle mr-3"></i>
+                                Servicio no disponible
+                            </div>
+                            {% endif %}
+
+                            {% if user.is_staff %}
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <a href="{% url 'servicios:servicio_update' object.id %}" 
+                                   class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-white border-2 border-sage-300 text-sage-700 rounded-xl hover:bg-sage-50 focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    <i class="fas fa-edit mr-2"></i>
+                                    Editar
+                                </a>
+                                <a href="{% url 'servicios:servicio_delete' object.id %}" 
+                                   class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-white border-2 border-red-500 text-red-600 rounded-xl hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    Eliminar
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information Card -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-sage-100">
+                    <h3 class="text-lg font-semibold text-sage-800 mb-4 flex items-center">
+                        <i class="fas fa-lightbulb mr-3 text-amber-500"></i>
+                        Información Adicional
+                    </h3>
+                    <div class="space-y-3 text-sm text-sage-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-clock w-5 mr-3 text-sage-500"></i>
+                            <span>Duración estimada: <strong>{{ object.duracion }} minutos</strong></span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-check w-5 mr-3 text-sage-500"></i>
+                            <span>Disponible para reserva online</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-shield-alt w-5 mr-3 text-sage-500"></i>
+                            <span>Protocolo de seguridad e higiene certificado</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

@@ -4,70 +4,140 @@
 {% block title %}Detalle del Turno - GestorSpa{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <nav aria-label="breadcrumb" data-aos="fade-right">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'turnos:turno_list' %}" class="text-decoration-none">Turnos</a></li>
-            <li class="breadcrumb-item active">Detalle del Turno</li>
-        </ol>
-    </nav>
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <!-- Breadcrumb -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-right">
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{% url 'turnos:turno_list' %}" class="inline-flex items-center text-sm font-medium text-sage-700 hover:text-coral-600 transition-colors duration-200">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        Turnos
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-sage-400 mx-2"></i>
+                        <span class="ml-1 text-sm font-medium text-sage-500 md:ml-2">Detalle del Turno</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8" data-aos="fade-up">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h1 class="display-6 mb-0">Detalle de la Reserva</h1>
-                        <span class="badge {% if object.estado == 'pendiente' %}bg-success
-                                          {% elif object.estado == 'confirmado' %}bg-success
-                                          {% elif object.estado == 'cancelado' %}bg-danger
-                                          {% elif object.estado == 'completado' %}bg-info
-                                          {% endif %} p-2">
-                            {{ object.estado }}
-                        </span>
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-sage-100" data-aos="fade-up">
+            <!-- Header -->            <div class="gradient-coral-berry p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">
+                        <i class="fas fa-calendar-check mr-3"></i>
+                        Detalle de la Reserva
+                    </h1>
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
+                        {% if object.estado == 'pendiente' %}bg-amber-100 text-amber-800 border border-amber-200
+                        {% elif object.estado == 'confirmado' %}bg-emerald-100 text-emerald-800 border border-emerald-200
+                        {% elif object.estado == 'cancelado' %}bg-red-100 text-red-800 border border-red-200
+                        {% elif object.estado == 'completado' %}bg-blue-100 text-blue-800 border border-blue-200
+                        {% endif %}">
+                        <i class="fas fa-circle mr-2 text-xs"></i>
+                        {{ object.estado|title }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 lg:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Información del Cliente -->
+                    <div class="bg-gradient-to-br from-sage-50 to-sand-50 rounded-xl p-6 border border-sage-100">
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 flex items-center">
+                            <i class="fas fa-user-circle mr-3 text-coral-600"></i>
+                            Información del Cliente
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-user w-5 text-sage-600 mr-3"></i>
+                                <span class="text-sm text-sage-600 mr-2">Nombre:</span>
+                                <span class="font-medium text-sage-800">{{ object.nombre }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope w-5 text-sage-600 mr-3"></i>
+                                <span class="text-sm text-sage-600 mr-2">Email:</span>
+                                <span class="font-medium text-sage-800">{{ object.email }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-phone w-5 text-sage-600 mr-3"></i>
+                                <span class="text-sm text-sage-600 mr-2">Teléfono:</span>
+                                <span class="font-medium text-sage-800">{{ object.telefono }}</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <h5 class="text-muted mb-3">Información del Cliente</h5>
-                            <p class="mb-1"><strong>Nombre:</strong> {{ object.nombre }}</p>
-                            <p class="mb-1"><strong>Email:</strong> {{ object.email }}</p>
-                            <p class="mb-3"><strong>Teléfono:</strong> {{ object.telefono }}</p>
+                    <!-- Detalles de la Reserva -->
+                    <div class="bg-gradient-to-br from-coral-50 to-berry-50 rounded-xl p-6 border border-coral-100">
+                        <h3 class="text-lg font-semibold text-sage-800 mb-4 flex items-center">
+                            <i class="fas fa-spa mr-3 text-berry-600"></i>
+                            Detalles de la Reserva
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-concierge-bell w-5 text-sage-600 mr-3"></i>
+                                <span class="text-sm text-sage-600 mr-2">Servicio:</span>
+                                <span class="font-medium text-sage-800">{{ object.servicio.nombre }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar w-5 text-sage-600 mr-3"></i>
+                                <span class="text-sm text-sage-600 mr-2">Fecha:</span>
+                                <span class="font-medium text-sage-800">{{ object.fecha }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock w-5 text-sage-600 mr-3"></i>
+                                <span class="text-sm text-sage-600 mr-2">Horario:</span>
+                                <span class="font-medium text-sage-800">{{ object.hora_inicio|time:"H:i" }} - {{ object.hora_fin|time:"H:i" }}</span>
+                            </div>
                         </div>
-
-                        <div class="col-md-6">
-                            <h5 class="text-muted mb-3">Detalles de la Reserva</h5>
-                            <p class="mb-1"><strong>Servicio:</strong> {{ object.servicio.nombre }}</p>
-                            <p class="mb-1"><strong>Fecha:</strong> {{ object.fecha }}</p>
-                            <p class="mb-3"><strong>Horario:</strong> {{ object.hora_inicio|time:"H:i" }} - {{ object.hora_fin|time:"H:i" }}</p>
-                        </div>
-
-                        {% if object.notas %}
-                        <div class="col-12">
-                            <h5 class="text-muted mb-3">Notas Adicionales</h5>
-                            <p class="mb-0">{{ object.notas }}</p>
-                        </div>
-                        {% endif %}
                     </div>
+                </div>
 
-                    <hr class="my-4">
+                {% if object.notas %}
+                <!-- Notas Adicionales -->
+                <div class="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
+                    <h3 class="text-lg font-semibold text-sage-800 mb-4 flex items-center">
+                        <i class="fas fa-sticky-note mr-3 text-amber-600"></i>
+                        Notas Adicionales
+                    </h3>
+                    <p class="text-sage-700 leading-relaxed">{{ object.notas }}</p>
+                </div>
+                {% endif %}
 
-                    <div class="d-flex gap-2">
+                <!-- Divider -->
+                <div class="border-t border-sage-200 my-8"></div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-between">
+                    <div class="flex flex-col sm:flex-row gap-3">
                         {% if user.is_staff %}
-                        <a href="{% url 'turnos:turno_update' object.id %}" class="btn btn-primary">
-                            <i class="fas fa-edit me-2"></i>Editar Turno
+                        <a href="{% url 'turnos:turno_update' object.id %}" 
+                           class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:outline-none focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            <i class="fas fa-edit mr-2"></i>
+                            Editar Turno
                         </a>
-                        <a href="{% url 'turnos:turno_delete' object.id %}" class="btn btn-outline-danger">
-                            <i class="fas fa-trash me-2"></i>Cancelar Turno
+                        <a href="{% url 'turnos:turno_delete' object.id %}" 
+                           class="inline-flex items-center justify-center px-6 py-3 bg-white border-2 border-red-500 text-red-600 rounded-xl hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            <i class="fas fa-trash mr-2"></i>
+                            Cancelar Turno
                         </a>
                         {% endif %}
-                        <a href="{% url 'turnos:turno_list' %}" class="btn btn-outline-secondary ms-auto">
-                            <i class="fas fa-arrow-left me-2"></i>Volver a la Lista
-                        </a>
                     </div>
+                    <a href="{% url 'turnos:turno_list' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 bg-white border-2 border-sage-300 text-sage-700 rounded-xl hover:bg-sage-50 focus:outline-none focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Volver a la Lista
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

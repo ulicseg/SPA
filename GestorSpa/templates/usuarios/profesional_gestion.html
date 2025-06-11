@@ -1,0 +1,338 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Gestión de Profesionales - GestorSpa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-sage-50 via-white to-sand-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8" data-aos="fade-down">
+            <h1 class="text-3xl md:text-4xl font-bold text-sage-800 mb-4">
+                <i class="fas fa-users-cog mr-3 text-coral-600"></i>
+                Gestión de Profesionales
+            </h1>
+            <p class="text-lg text-sage-600 max-w-2xl mx-auto">
+                Administra el equipo de profesionales del spa, sus especialidades y disponibilidad
+            </p>
+        </div>
+
+        <!-- Estadísticas Rápidas -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" data-aos="fade-up">
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-sage-500 to-sage-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-sage-600">Total</h3>
+                        <p class="text-2xl font-bold text-sage-900">{{ total_profesionales }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-check-circle text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-sage-600">Activos</h3>
+                        <p class="text-2xl font-bold text-green-700">{{ profesionales_activos }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-pause-circle text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-sage-600">Inactivos</h3>
+                        <p class="text-2xl font-bold text-orange-700">{{ profesionales_inactivos }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-sage-100">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-coral-500 to-berry-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-spa text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-sage-600">Especialidades</h3>
+                        <p class="text-2xl font-bold text-coral-700">{{ especialidades_stats|length }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros y Acciones -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-sage-100" data-aos="fade-up">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <!-- Filtros -->
+                <form method="get" class="flex flex-col sm:flex-row gap-4 flex-1">
+                    <div class="flex-1">
+                        <input type="text" 
+                               name="buscar" 
+                               value="{{ busqueda_actual }}" 
+                               placeholder="Buscar por nombre, usuario, email o teléfono..."
+                               class="w-full px-4 py-2 border border-sage-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500">
+                    </div>
+                    
+                    <select name="especialidad" class="px-4 py-2 border border-sage-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500">
+                        <option value="">Todas las especialidades</option>
+                        {% for codigo, nombre in especialidades %}
+                            <option value="{{ codigo }}" {% if codigo == especialidad_actual %}selected{% endif %}>
+                                {{ nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <select name="estado" class="px-4 py-2 border border-sage-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500">
+                        <option value="">Todos los estados</option>
+                        <option value="activo" {% if estado_actual == 'activo' %}selected{% endif %}>Activos</option>
+                        <option value="inactivo" {% if estado_actual == 'inactivo' %}selected{% endif %}>Inactivos</option>
+                    </select>
+                    
+                    <button type="submit" 
+                            class="px-6 py-2 bg-gradient-to-r from-sage-600 to-sage-700 text-white rounded-lg hover:from-sage-700 hover:to-sage-800 focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-medium">
+                        <i class="fas fa-search mr-2"></i>Filtrar
+                    </button>
+                </form>
+                
+                <!-- Acciones -->
+                <div class="flex gap-2">
+                    <a href="{% url 'usuarios:profesional_crear' %}" 
+                       class="inline-flex items-center px-6 py-2 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-lg hover:from-coral-700 hover:to-berry-700 focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Nuevo Profesional
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Profesionales -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-sage-100" data-aos="fade-up">
+            {% if profesionales %}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-sage-50 to-sand-50 border-b border-sage-200">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                    <i class="fas fa-user mr-2 text-sage-600"></i>
+                                    Profesional
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                    <i class="fas fa-star mr-2 text-sage-600"></i>
+                                    Especialidad
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                    <i class="fas fa-spa mr-2 text-sage-600"></i>
+                                    Servicios
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                    <i class="fas fa-clock mr-2 text-sage-600"></i>
+                                    Experiencia
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                    <i class="fas fa-toggle-on mr-2 text-sage-600"></i>
+                                    Estado
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-sage-800 uppercase tracking-wider">
+                                    <i class="fas fa-cogs mr-2 text-sage-600"></i>
+                                    Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-sage-100">
+                            {% for profesional in profesionales %}
+                            <tr class="hover:bg-gradient-to-r hover:from-sage-50 hover:to-sand-50 transition-all duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-12 w-12">
+                                            {% if profesional.foto_profesional %}
+                                                <img class="h-12 w-12 rounded-full object-cover border-2 border-sage-200" 
+                                                     src="{{ profesional.foto_profesional.url }}" 
+                                                     alt="{{ profesional.nombre_completo }}">
+                                            {% else %}
+                                                <div class="h-12 w-12 rounded-full bg-gradient-to-r from-coral-400 to-berry-400 flex items-center justify-center text-white font-semibold text-lg border-2 border-sage-200">
+                                                    {{ profesional.nombre_completo|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-semibold text-sage-800">
+                                                {{ profesional.nombre_completo }}
+                                            </div>
+                                            <div class="text-sm text-sage-600">
+                                                <i class="fas fa-envelope mr-1"></i>
+                                                {{ profesional.usuario.email }}
+                                            </div>
+                                            {% if profesional.telefono %}
+                                            <div class="text-sm text-sage-600">
+                                                <i class="fas fa-phone mr-1"></i>
+                                                {{ profesional.telefono }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-sage-100 text-sage-800">
+                                        {{ profesional.get_especialidad_display }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-sage-800">
+                                        {% for servicio in profesional.servicios_que_ofrece.all|slice:":2" %}
+                                            <span class="inline-block bg-coral-100 text-coral-800 text-xs px-2 py-1 rounded-md mr-1 mb-1">
+                                                {{ servicio.nombre }}
+                                            </span>
+                                        {% empty %}
+                                            <span class="text-sage-500 italic">Sin servicios asignados</span>
+                                        {% endfor %}
+                                        {% if profesional.servicios_que_ofrece.count > 2 %}
+                                            <span class="text-xs text-sage-600">
+                                                +{{ profesional.servicios_que_ofrece.count|add:"-2" }} más
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-sage-800">
+                                        <i class="fas fa-calendar-alt mr-1 text-sage-500"></i>
+                                        {{ profesional.años_experiencia }} año{{ profesional.años_experiencia|pluralize:",s" }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if profesional.activo %}
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Activo
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-times-circle mr-1"></i>
+                                            Inactivo
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex items-center space-x-2">
+                                        <!-- Ver detalles -->
+                                        <a href="{% url 'usuarios:profesional_detalle' profesional.pk %}" 
+                                           class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-sage-500 to-sage-600 text-white rounded-lg hover:from-sage-600 hover:to-sage-700 focus:ring-4 focus:ring-sage-200 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                           title="Ver detalles">
+                                            <i class="fas fa-eye text-sm"></i>
+                                        </a>
+                                        
+                                        <!-- Editar -->
+                                        <a href="{% url 'usuarios:profesional_admin_editar' profesional.pk %}" 
+                                           class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 focus:ring-4 focus:ring-amber-200 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                           title="Editar">
+                                            <i class="fas fa-edit text-sm"></i>
+                                        </a>
+                                        
+                                        <!-- Toggle estado -->
+                                        <a href="{% url 'usuarios:profesional_toggle_estado' profesional.pk %}" 
+                                           class="inline-flex items-center justify-center w-8 h-8 {% if profesional.activo %}bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:ring-red-200{% else %}bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:ring-green-200{% endif %} text-white rounded-lg focus:ring-4 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                           title="{% if profesional.activo %}Desactivar{% else %}Activar{% endif %}"
+                                           onclick="return confirm('¿Está seguro de {% if profesional.activo %}desactivar{% else %}activar{% endif %} a {{ profesional.nombre_completo }}?')">
+                                            <i class="fas {% if profesional.activo %}fa-pause{% else %}fa-play{% endif %} text-sm"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                {% if is_paginated %}
+                <div class="bg-gradient-to-r from-sage-50 to-sand-50 px-6 py-4 border-t border-sage-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center text-sm text-sage-600">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <span>Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} profesionales</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}{% if busqueda_actual %}&buscar={{ busqueda_actual }}{% endif %}{% if especialidad_actual %}&especialidad={{ especialidad_actual }}{% endif %}{% if estado_actual %}&estado={{ estado_actual }}{% endif %}" 
+                                   class="px-3 py-2 bg-white border border-sage-300 rounded-lg text-sage-600 hover:bg-sage-50 transition-colors duration-200">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            {% endif %}
+                            
+                            <span class="px-3 py-2 bg-sage-600 text-white rounded-lg">
+                                {{ page_obj.number }}
+                            </span>
+                            
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}{% if busqueda_actual %}&buscar={{ busqueda_actual }}{% endif %}{% if especialidad_actual %}&especialidad={{ especialidad_actual }}{% endif %}{% if estado_actual %}&estado={{ estado_actual }}{% endif %}" 
+                                   class="px-3 py-2 bg-white border border-sage-300 rounded-lg text-sage-600 hover:bg-sage-50 transition-colors duration-200">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            {% else %}
+                <!-- Estado vacío -->
+                <div class="text-center py-16">
+                    <div class="mx-auto w-24 h-24 bg-gradient-to-r from-sage-100 to-sand-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-4xl text-sage-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-sage-800 mb-4">No se encontraron profesionales</h3>
+                    {% if busqueda_actual or especialidad_actual or estado_actual %}
+                        <p class="text-sage-600 mb-6">No hay profesionales que coincidan con los filtros aplicados.</p>
+                        <a href="{% url 'usuarios:profesional_gestion' %}" 
+                           class="inline-flex items-center px-6 py-3 bg-white border border-sage-300 rounded-xl text-sage-700 hover:bg-sage-50 focus:ring-4 focus:ring-sage-200 transition-all duration-200 font-medium">
+                            <i class="fas fa-times mr-2"></i>
+                            Limpiar Filtros
+                        </a>
+                    {% else %}
+                        <p class="text-sage-600 mb-6">Comienza agregando el primer profesional al equipo.</p>
+                        <a href="{% url 'usuarios:profesional_crear' %}" 
+                           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-coral-600 to-berry-600 text-white rounded-xl hover:from-coral-700 hover:to-berry-700 focus:ring-4 focus:ring-coral-200 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl">
+                            <i class="fas fa-plus-circle mr-2"></i>
+                            Agregar Profesional
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Resumen de Especialidades -->
+        {% if especialidades_stats %}
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6 border border-sage-100" data-aos="fade-up">
+            <h3 class="text-lg font-semibold text-sage-800 mb-4">
+                <i class="fas fa-chart-pie mr-2 text-coral-600"></i>
+                Distribución por Especialidades
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {% for especialidad, count in especialidades_stats.items %}
+                <div class="flex items-center justify-between p-3 bg-gradient-to-r from-sage-50 to-sand-50 rounded-lg">
+                    <span class="text-sm font-medium text-sage-700">{{ especialidad }}</span>
+                    <span class="inline-flex items-center justify-center w-6 h-6 bg-coral-500 text-white text-xs font-bold rounded-full">
+                        {{ count }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
