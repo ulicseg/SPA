@@ -206,6 +206,51 @@ python manage.py create_demo_users
 - ✅ **Interfaz responsive** y moderna
 - Gestión de clientes
 
+## Funcionalidades Avanzadas (2025)
+
+### 💳 Gestión de Pagos y Descuentos
+- Selección de método de pago (efectivo, débito, crédito) al reservar turno.
+- Descuento automático del 15% para pagos con débito si aplica.
+- Cálculo automático del total a pagar y registro de estado de pago.
+
+### ⏰ Lógica de Reservas Inteligente
+- Solo permite reservar turnos con al menos 48 horas de anticipación.
+- Validación de disponibilidad de profesional y duración del servicio.
+- Formulario de reserva adaptado según el rol y la lógica de negocio.
+
+### 📧 Comprobantes Profesionales por Email
+- Envío automático de comprobante de reserva al cliente por email.
+- Comprobante incluye datos de la empresa, contacto y detalles del turno.
+- Configuración de email segura vía variables de entorno.
+
+### 📊 Reportes y Exportación
+- Vista de reportes de turnos y pagos accesible solo para administradores.
+- Filtros por fecha, profesional y servicio.
+- Totales por servicio y profesional, listado detallado de turnos y pagos.
+- Exportación de reportes a PDF (WeasyPrint) y CSV.
+- Acceso a reportes desde el menú de administración.
+
+### 🧭 Navegación y Mensajes Claros
+- Menús dinámicos según el rol del usuario.
+- Mensajes de éxito y error claros en todas las operaciones.
+- Interfaz intuitiva y moderna.
+
+## Ejemplo de Uso de Reportes y Pagos
+
+1. Ingresar como administrador y acceder a "Reportes" desde el menú.
+2. Filtrar por fechas, profesional o servicio según necesidad.
+3. Descargar el reporte en PDF o CSV para análisis o impresión.
+4. Al reservar un turno, seleccionar el método de pago y verificar el descuento automático si corresponde.
+5. El cliente recibirá un comprobante profesional por email tras la reserva.
+
+## Despliegue en Producción
+
+- Configura `DEBUG=False` en el archivo `.env`.
+- Asegúrate de definir correctamente las variables de email y base de datos.
+- Usa un servidor WSGI (como Gunicorn o uWSGI) y un servidor web (Nginx/Apache) para producción.
+- Ejecuta migraciones y crea un superusuario para el entorno productivo.
+- Protege el acceso al panel de administración y reportes.
+
 ## Estructura del Proyecto
 
 ```
