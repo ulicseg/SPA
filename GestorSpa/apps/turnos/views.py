@@ -268,13 +268,33 @@ class TurnoConfirmacionView(TemplateView):
 def turno_confirmacion(request):
     return render(request, 'turnos/turno_confirmacion.html')
 
-class TurnoReservaUnificadaView(TemplateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+# ...existing code...
+
+class TurnoReservaUnificadaView(LoginRequiredMixin, TemplateView):
     template_name = 'turnos/turno_reserva_unificada.html'
     
+    def dispatch(self, request, *args, **kwargs):
+        """Redirigir usuarios no autenticados al registro con mensaje claro"""
+        if not request.user.is_authenticated:
+            messages.info(
+                request, 
+                '🔐 Para reservar un turno en nuestro SPA necesitas estar registrado. '
+                '¡Es gratis y rápido! Regístrate como cliente para comenzar.'
+            )
+            return redirect('usuarios:registro_cliente')
+        return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['servicios'] = Servicio.objects.all()
-        context['form'] = TurnoForm()
+        
+        # Pre-llenar formulario con datos del usuario
+        initial_data = {
+            'nombre': f"{self.request.user.first_name} {self.request.user.last_name}".strip() or self.request.user.username,
+            'email': self.request.user.email,
+        }
+        context['form'] = TurnoForm(initial=initial_data)
         return context
         
     def post(self, request, *args, **kwargs):
@@ -287,7 +307,15 @@ class TurnoReservaUnificadaView(TemplateView):
             form = TurnoForm(request.POST)
             if form.is_valid():
                 try:
-                    turno = form.save()
+                    turno = form.save(commit=False)
+                    # Siempre asociar con el usuario logueado
+                    turno.usuario = request.user
+                    # Asegurar que el email sea el del usuario
+                    turno.email = request.user.email
+                    # Asegurar que el nombre sea el del usuario
+                    if not turno.nombre.strip():
+                        turno.nombre = f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username
+                    turno.save()
                     # Guardar el ID del turno en la sesión
                     request.session['turno_id'] = turno.id
                     logger.info(f"Turno creado exitosamente: {turno.id}")
@@ -380,3 +408,35 @@ def api_profesionales_por_servicio(request, servicio_id):
         except UnicodeEncodeError:
             error_msg = 'Error de caracteres especiales'
         return JsonResponse({'error': error_msg}, status=500)
+
+
+class TurnoDetailView(LoginRequiredMixin, DetailView):
+    """Vista de detalle para visualizar información completa de un turno"""    
+    model = Turno
+    template_name = 'turnos/turno_detail.html'
+    context_object_name = 'turno'
+    
+    def get_queryset(self):
+        """Filtrar turnos según el rol del usuario"""
+        user = self.request.user
+        role_manager = RoleManager()
+        
+        # Administradores pueden ver todos los turnos
+        if role_manager.user_has_role(user, 'administrador'):
+            return Turno.objects.select_related('servicio', 'profesional', 'usuario').all()
+        
+        # Profesionales pueden ver sus turnos asignados
+        elif role_manager.user_has_role(user, 'profesional'):
+            return Turno.objects.select_related('servicio', 'profesional', 'usuario').filter(
+                profesional__user=user
+            )
+        
+        # Clientes solo pueden ver sus propios turnos        else:
+            return Turno.objects.select_related('servicio', 'profesional', 'usuario').filter(
+                usuario=user
+            )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_role'] = RoleManager.get_user_role(self.request.user)
+        return context

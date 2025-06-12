@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from .models import Perfil, Profesional
 
@@ -245,3 +246,95 @@ class EstadoProfesionalForm(forms.ModelForm):
                 raise ValidationError('La fecha de fin debe ser posterior a la fecha de inicio.')
         
         return cleaned_data
+
+
+class ClienteRegistroForm(UserCreationForm):
+    """Formulario de registro para nuevos clientes"""
+    
+    first_name = forms.CharField(
+        max_length=30, 
+        required=True,
+        label='Nombre',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingresa tu nombre'
+        })
+    )
+    
+    last_name = forms.CharField(
+        max_length=30, 
+        required=True,
+        label='Apellido',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingresa tu apellido'
+        })
+    )
+    
+    email = forms.EmailField(
+        required=True,
+        label='Correo electrónico',
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'tu@email.com'
+        })
+    )
+    
+    telefono = forms.CharField(
+        max_length=20,
+        required=False,
+        label='Teléfono (opcional)',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '+54 11 1234-5678'
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre de usuario (único)'
+            }),
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Personalizar widgets para contraseñas
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Contraseña'
+        })
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirma tu contraseña'
+        })
+        
+        # Personalizar labels
+        self.fields['username'].label = 'Nombre de usuario'
+        self.fields['password1'].label = 'Contraseña'
+        self.fields['password2'].label = 'Confirmar contraseña'
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Ya existe un usuario con este correo electrónico.")
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        
+        if commit:
+            user.save()
+            # Crear perfil de cliente
+            perfil = Perfil.objects.create(
+                usuario=user,
+                telefono=self.cleaned_data.get('telefono', ''),
+                tipo_usuario='cliente'
+            )
+        return user

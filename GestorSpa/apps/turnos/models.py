@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 from GestorSpa.apps.servicios.models import Servicio
 from GestorSpa.apps.usuarios.models import Profesional
 from datetime import timedelta, datetime
@@ -10,8 +11,7 @@ from django.utils import timezone
 
 
 class Turno(models.Model):
-    ESTADO_CHOICES = [
-        ('pendiente', _('Pendiente')),
+    ESTADO_CHOICES = [        ('pendiente', _('Pendiente')),
         ('confirmado', _('Confirmado')),
         ('cancelado', _('Cancelado')),
         ('completado', _('Completado')),
@@ -20,6 +20,12 @@ class Turno(models.Model):
     nombre = models.CharField(_('Nombre'), max_length=100)
     email = models.EmailField(_('Email'))
     telefono = models.CharField(_('Teléfono'), max_length=20)
+    usuario = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        verbose_name=_('Usuario'), 
+        help_text='Usuario registrado que realizó la reserva (obligatorio)'
+    )
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name='turnos')
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos', verbose_name=_('Profesional'))
     fecha = models.DateField(_('Fecha'))

@@ -9,6 +9,7 @@ urlpatterns = [
     path('gestionar/', views.gestionar_usuarios, name='gestionar_usuarios'),
     path('asignar-rol/<int:user_id>/', views.asignar_rol_usuario, name='asignar_rol_usuario'),
     path('mis-turnos/', views.mis_turnos, name='mis_turnos'),
+    path('registro-cliente/', views.ClienteRegistroView.as_view(), name='registro_cliente'),
     
     # URLs para profesionales
     path('profesional/', views.perfil_profesional, name='perfil_profesional'),

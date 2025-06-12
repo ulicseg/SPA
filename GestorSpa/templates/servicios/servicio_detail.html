@@ -43,7 +43,7 @@
                     <p class="lead mb-4">{{ object.descripcion }}</p>
 
                     <div class="d-flex gap-2">
-                        <a href="{% url 'turnos:turno_create' %}?servicio={{ object.id }}" class="btn btn-primary btn-lg flex-grow-1">
+                        <a href="{% url 'turnos:turno_reserva_unificada' %}?servicio={{ object.id }}" class="btn btn-primary btn-lg flex-grow-1">
                             <i class="fas fa-calendar-plus me-2"></i>Reservar ahora
                         </a>
                         {% if user.is_staff %}

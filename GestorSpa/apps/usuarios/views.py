@@ -8,7 +8,8 @@ from django.core.exceptions import PermissionDenied
 from .models import Perfil, Profesional
 from .forms import (
     PerfilForm, UsuarioForm, ProfesionalForm, 
-    HorariosProfesionalForm, EstadoProfesionalForm
+    HorariosProfesionalForm, EstadoProfesionalForm,
+    ClienteRegistroForm
 )
 from .permissions import (
     RoleManager, 
@@ -18,6 +19,9 @@ from .permissions import (
 )
 from GestorSpa.apps.turnos.models import Turno
 from GestorSpa.apps.servicios.models import Servicio
+from django.contrib.auth import login
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
 # Create your views here.
 
@@ -33,13 +37,12 @@ def perfil(request):
     # Contexto base
     context = {
         'user_role': user_role,
-        'user_role_display': request.user.perfil.get_rol_display(),
-    }
+        'user_role_display': request.user.perfil.get_rol_display(),    }
     
     if user_role == 'cliente':
-        # Dashboard para clientes
+        # Dashboard para clientes - filtrar solo por usuario
         mis_turnos = Turno.objects.filter(
-            email=request.user.email
+            usuario=request.user
         ).order_by('-fecha', '-hora_inicio')[:5]
         
         context.update({
@@ -166,8 +169,9 @@ def mis_turnos(request):
     user_role = RoleManager.get_user_role(request.user)
     
     if user_role == 'cliente':
+        # Filtrar turnos del cliente solo por usuario
         turnos = Turno.objects.filter(
-            email=request.user.email
+            usuario=request.user
         ).order_by('-fecha', '-hora_inicio')
     else:
         # Los administradores ven todos
@@ -355,3 +359,28 @@ def api_horarios_profesional(request, profesional_id):
             'success': False,
             'error': str(e)
         }, status=400)
+
+
+class ClienteRegistroView(CreateView):
+    """Vista para registro de nuevos clientes"""
+    
+    form_class = ClienteRegistroForm
+    template_name = 'usuarios/registro_cliente.html'
+    success_url = reverse_lazy('turnos:turno_reserva_unificada')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Loguear automáticamente al usuario después del registro
+        login(self.request, self.object)
+        messages.success(
+            self.request, 
+            f'¡Bienvenido/a {self.object.first_name}! Tu cuenta ha sido creada exitosamente. Ahora puedes hacer tu reserva.'
+        )
+        return response
+    
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            'Por favor, corrige los errores en el formulario.'
+        )
+        return super().form_invalid(form)

@@ -13,7 +13,7 @@
                     {% if is_cliente %}Mis Turnos{% else %}Todos los Turnos{% endif %}
                 </h1>
                 {% if is_cliente %}
-                    <a href="{% url 'turnos:turno_create' %}" class="btn btn-success">
+                    <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-success">
                         <i class="fas fa-plus me-1"></i>Reservar Nuevo Turno
                     </a>
                 {% endif %}
@@ -186,7 +186,7 @@
                     {% endif %}
                 </p>
                 {% if is_cliente %}
-                    <a href="{% url 'turnos:turno_create' %}" class="btn btn-success btn-lg">
+                    <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-success btn-lg">
                         <i class="fas fa-plus me-2"></i>Reservar Mi Primer Turno
                     </a>
                 {% endif %}

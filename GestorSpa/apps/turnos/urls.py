@@ -7,6 +7,7 @@ app_name = 'turnos'
 
 urlpatterns = [
     path('', views.TurnoListView.as_view(), name='turno_list'),
+    path('detalle/<int:pk>/', views.TurnoDetailView.as_view(), name='turno_detail'),
     path('editar/<int:pk>/', views.TurnoUpdateView.as_view(), name='turno_update'),
     path('eliminar/<int:pk>/', views.TurnoDeleteView.as_view(), name='turno_delete'),
     path('calendario/', views.calendario_disponibilidad, name='calendario_disponibilidad'),
