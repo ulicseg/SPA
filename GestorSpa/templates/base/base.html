@@ -402,41 +402,116 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+            <div class="collapse navbar-collapse" id="navbarNav">                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'home' %}">
                             <i class="fa-solid fa-home"></i> Inicio
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
-                            <i class="fa-solid fa-calendar-plus"></i> Reservar Turno
-                        </a>
-                    </li>
+                    
                     {% if user.is_authenticated %}
-                        {% if user.is_staff %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'servicios:servicio_list' %}">
-                                <i class="fa-solid fa-spa"></i> Gestionar Servicios
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'turnos:turno_list' %}">
-                                <i class="fa-solid fa-list"></i> Gestionar Turnos
-                            </a>
-                        </li>
-
+                        <!-- Navegación según rol -->
+                        {% if user.perfil.is_cliente %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
+                                    <i class="fa-solid fa-calendar-plus"></i> Reservar Turno
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'usuarios:mis_turnos' %}">
+                                    <i class="fa-solid fa-calendar-check"></i> Mis Turnos
+                                </a>
+                            </li>
+                        {% elif user.perfil.is_profesional %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'servicios:servicio_list' %}">
+                                    <i class="fa-solid fa-spa"></i> Ver Servicios
+                                </a>
+                            </li>
+                        {% elif user.perfil.is_administrador %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-tools"></i> Administración
+                                </a>                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'servicios:servicio_list' %}">
+                                        <i class="fa-solid fa-spa me-2"></i> Gestionar Servicios
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'turnos:turno_list' %}">
+                                        <i class="fa-solid fa-list me-2"></i> Gestionar Turnos
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:gestionar_usuarios' %}">
+                                        <i class="fa-solid fa-users me-2"></i> Gestionar Usuarios
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:gestionar_profesionales' %}">
+                                        <i class="fa-solid fa-user-tie me-2"></i> Gestionar Profesionales
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'turnos:reporte_turnos' %}">
+                                        <i class="fa-solid fa-file-lines me-2"></i> Reporte de Turnos y Pagos
+                                    </a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
+                                    <i class="fa-solid fa-calendar-plus"></i> Nuevo Turno
+                                </a>
+                            </li>
                         {% endif %}
-                        <li class="nav-item">
-                            <form method="post" action="{% url 'logout' %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="nav-link border-0 bg-transparent">
-                                    <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
-                                </button>
-                            </form>
+                        
+                        <!-- Perfil de usuario -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i> 
+                                {{ user.first_name|default:user.username }}
+                                {% if user.perfil %}
+                                    <small class="text-muted">({{ user.perfil.get_tipo_usuario_display }})</small>
+                                {% endif %}
+                            </a>                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if user.perfil.is_cliente %}
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
+                                        <i class="fas fa-user me-2"></i> Mi Perfil
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:mis_turnos' %}">
+                                        <i class="fas fa-calendar-alt me-2"></i> Mis Turnos
+                                    </a></li>
+                                {% elif user.perfil.is_profesional %}
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:perfil_profesional' %}">
+                                        <i class="fas fa-user-tie me-2"></i> Perfil Profesional
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:editar_datos_profesional' %}">
+                                        <i class="fas fa-edit me-2"></i> Editar Datos Profesionales
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:editar_horarios_profesional' %}">
+                                        <i class="fas fa-clock me-2"></i> Gestionar Horarios
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'turnos:turno_list' %}">
+                                        <i class="fa-solid fa-calendar-check me-2"></i> Ver Turnos Asignados
+                                    </a></li>
+                                {% elif user.perfil.is_administrador %}
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
+                                        <i class="fas fa-user me-2"></i> Mi Perfil
+                                    </a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'usuarios:perfil_edit' %}">
+                                    <i class="fas fa-edit me-2"></i> Editar Perfil General
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline w-100">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                     {% else %}
+                        <!-- Usuario no autenticado -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
+                                <i class="fa-solid fa-calendar-plus"></i> Reservar Turno
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">
                                 <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
@@ -451,9 +526,18 @@
     <div class="content-wrapper" style="padding-top: 76px;">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show d-flex align-items-center" role="alert">
+                    {% if message.tags == "success" %}
+                        <i class="fa-solid fa-circle-check me-2"></i>
+                    {% elif message.tags == "error" or message.tags == "danger" %}
+                        <i class="fa-solid fa-circle-xmark me-2"></i>
+                    {% elif message.tags == "warning" %}
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    {% elif message.tags == "info" %}
+                        <i class="fa-solid fa-circle-info me-2"></i>
+                    {% endif %}
+                    <span>{{ message }}</span>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
         {% endif %}
@@ -557,4 +641,4 @@
     </script>
     {% block extra_js %}{% endblock %}
 </body>
-</html> 
+</html>

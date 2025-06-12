@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Turnos de {{ profesional.get_nombre_display }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 13px; }
+        h2 { color: #007bff; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #bbb; padding: 6px 8px; text-align: left; }
+        th { background: #e3f2fd; }
+        .estado-confirmado { color: #198754; font-weight: bold; }
+        .estado-pendiente { color: #ffc107; font-weight: bold; }
+        .estado-cancelado { color: #dc3545; font-weight: bold; }
+        .estado-completado { color: #6c757d; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Turnos de {{ profesional.get_nombre_display }}<br><small>{{ profesional.especialidad }}</small></h2>
+    <p>Fecha: <strong>{{ turnos.0.fecha|date:"d/m/Y" }}</strong></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Estado</th>
+                <th>Notas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for turno in turnos %}
+            <tr>
+                <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                <td>{{ turno.nombre }}</td>
+                <td>{{ turno.servicio.nombre }}</td>
+                <td class="estado-{{ turno.estado }}">{{ turno.get_estado_display }}</td>
+                <td>{{ turno.notas|default:'-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

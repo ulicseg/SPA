@@ -1,7 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from GestorSpa.apps.servicios.models import Servicio
+from GestorSpa.apps.usuarios.models import Profesional
 from datetime import timedelta, datetime
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils import timezone
 
 class Turno(models.Model):
     ESTADO_CHOICES = [
@@ -15,6 +19,7 @@ class Turno(models.Model):
     email = models.EmailField(_('Email'))
     telefono = models.CharField(_('Teléfono'), max_length=20)
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name='turnos')
+    profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos', verbose_name=_('Profesional'))
     fecha = models.DateField(_('Fecha'))
     hora_inicio = models.TimeField(_('Hora de inicio'))
     hora_fin = models.TimeField(_('Hora de fin'), null=True, blank=True)
@@ -22,6 +27,15 @@ class Turno(models.Model):
     notas = models.TextField(_('Notas'), null=True, blank=True)
     created_at = models.DateTimeField(_('Fecha de creación'), auto_now_add=True)
     updated_at = models.DateTimeField(_('Última actualización'), auto_now=True)
+    metodo_pago = models.CharField(
+        _('Método de pago'),
+        max_length=20,
+        choices=[('efectivo', 'Efectivo'), ('debito', 'Tarjeta de Débito'), ('credito', 'Tarjeta de Crédito')],
+        default='efectivo'
+    )
+    pagado = models.BooleanField(_('Pagado'), default=False)
+    descuento_aplicado = models.BooleanField(_('Descuento aplicado'), default=False)
+    total = models.DecimalField(_('Total a pagar'), max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         verbose_name = _('Turno')
@@ -32,13 +46,79 @@ class Turno(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.servicio} - {self.fecha} {self.hora_inicio}"
 
+    def calcular_total(self):
+        """Calcula el total considerando descuento por débito anticipado"""
+        base = self.servicio.precio
+        descuento = 0
+        if self.metodo_pago == 'debito' and self.fecha >= timezone.now().date() + timedelta(days=2):
+            descuento = base * 0.15
+            self.descuento_aplicado = True
+        self.total = base - descuento
+        return self.total
+
     def save(self, *args, **kwargs):
-        if not self.hora_fin and self.hora_inicio and self.servicio:
-            # Calcular hora_fin basado en la duración del servicio
-            hora_inicio_dt = datetime.combine(self.fecha, self.hora_inicio)
-            hora_fin_dt = hora_inicio_dt + timedelta(minutes=self.servicio.duracion)
-            self.hora_fin = hora_fin_dt.time()
+        self.calcular_total()
         super().save(*args, **kwargs)
+        # Enviar comprobante si está pagado
+        if self.pagado:
+            self.enviar_comprobante()
+
+    def enviar_comprobante(self):
+        subject = 'Comprobante de Reserva - Spa Sentirse Bien'
+        empresa = """Spa Sentirse Bien
+Av. San Martin 123, Resistencia
+Tel: +54 3624567890
+Email: info@gestorspa.com"""
+        mensaje = (
+            f"Estimado/a {self.nombre},\n\n"
+            f"Gracias por reservar en Spa Sentirse Bien.\n"
+            f"\n--- Detalle de su reserva ---\n"
+            f"Servicio: {self.servicio.nombre}\n"
+            f"Profesional: {self.profesional}\n"
+            f"Fecha: {self.fecha}\n"
+            f"Hora: {self.hora_inicio}\n"
+            f"Método de pago: {self.get_metodo_pago_display()}\n"
+            f"Total: ${self.total:.2f}"
+        )
+        if self.descuento_aplicado:
+            mensaje += "\n¡Se aplicó un 15% de descuento por pago con débito anticipado!"
+        mensaje += f"\n\n{empresa}\n\nSi tiene dudas o necesita reprogramar, contáctenos.\n¡Gracias por confiar en nosotros!"
+        send_mail(
+            subject,
+            mensaje,
+            getattr(settings, 'DEFAULT_FROM_EMAIL', 'info@gestorspa.com'),
+            [self.email],
+            fail_silently=True
+        )
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        # Validar que el profesional puede realizar el servicio
+        if self.profesional not in self.servicio.profesional_set.all():
+            raise ValidationError('El profesional seleccionado no está habilitado para este servicio.')
+        # Validar disponibilidad horaria
+        dia = self.fecha.strftime('%A').lower()
+        hora_inicio = self.hora_inicio
+        hora_fin = (datetime.combine(self.fecha, self.hora_inicio) + timedelta(minutes=self.servicio.duracion)).time()
+        # Obtener horario del profesional para ese día
+        inicio_prof = getattr(self.profesional, f"hora_inicio_{dia}")
+        fin_prof = getattr(self.profesional, f"hora_fin_{dia}")
+        if not inicio_prof or not fin_prof:
+            raise ValidationError('El profesional no tiene horario configurado para ese día.')
+        if not (inicio_prof <= hora_inicio and hora_fin <= fin_prof):
+            raise ValidationError('El turno está fuera del horario disponible del profesional.')
+        # Validar superposición de turnos
+        solapados = Turno.objects.filter(
+            profesional=self.profesional,
+            fecha=self.fecha,
+            estado__in=['pendiente', 'confirmado']
+        ).exclude(pk=self.pk)
+        for t in solapados:
+            if (t.hora_inicio < hora_fin and hora_inicio < t.hora_fin):
+                raise ValidationError('El profesional ya tiene un turno asignado en ese horario.')
+        # Restricción de 48 horas
+        if self.fecha < timezone.now().date() + timedelta(hours=48/24):
+            raise ValidationError('La reserva debe ser realizada con al menos 48 horas de anticipación.')
 
     @staticmethod
     def get_horarios_disponibles(fecha, servicio):
@@ -67,4 +147,4 @@ class Turno(models.Model):
                 horarios_disponibles.append(hora_str)
             hora_actual += timedelta(minutes=servicio.intervalo)
         
-        return horarios_disponibles 
+        return horarios_disponibles

@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+{% block title %}Mis Turnos de Mañana{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-calendar-day me-2"></i>Turnos asignados para mañana</h2>
+        <a href="{% url 'profesionales:turnos_pdf' %}" class="btn btn-outline-primary" target="_blank">
+            <i class="fas fa-file-pdf me-2"></i>Imprimir PDF
+        </a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            {% if turnos %}
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
+                            <th>Estado</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for turno in turnos %}
+                        <tr>
+                            <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                            <td>{{ turno.nombre }}</td>
+                            <td>{{ turno.servicio.nombre }}</td>
+                            <td>
+                                <span class="badge {% if turno.estado == 'confirmado' %}bg-success{% elif turno.estado == 'pendiente' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                    {{ turno.get_estado_display }}
+                                </span>
+                            </td>
+                            <td>{{ turno.notas|default:'-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center mb-0">
+                No tienes turnos asignados para mañana.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

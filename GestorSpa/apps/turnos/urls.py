@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from . import views_profesional
+from .views_with_permissions import reporte_turnos
 
 app_name = 'turnos'
 
@@ -13,4 +15,7 @@ urlpatterns = [
     path('reservar/', views.TurnoReservaUnificadaView.as_view(), name='turno_reserva_unificada'),
     path('confirmacion/', views.TurnoConfirmacionView.as_view(), name='turno_confirmacion'),
     path('pdf/<int:pk>/', views.turno_pdf, name='turno_pdf'),
-] 
+    path('profesional/turnos-manana/', views_profesional.TurnosDelProfesionalView.as_view(), name='turnos_profesional_manana'),
+    path('profesional/turnos-manana/pdf/', views_profesional.TurnosProfesionalPDFView.as_view(), name='turnos_profesional_pdf'),
+    path('reporte/', reporte_turnos, name='reporte_turnos'),
+]

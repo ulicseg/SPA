@@ -205,13 +205,23 @@
                                 {% endif %}
                             </div>
                             <div class="col-md-6">
-                                <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">Hora</label>
-                                    {{ form.hora_inicio }}
-                                {% if form.hora_inicio.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.hora_inicio.errors }}
-                                    </div>
+                                <label for="{{ form.profesional.id_for_label }}" class="form-label">Profesional</label>
+                                {{ form.profesional }}
+                                {% if form.profesional.errors %}
+                                    <div class="error-message">{{ form.profesional.errors.0 }}</div>
                                 {% endif %}
+                                <div class="form-text">Solo se muestran profesionales habilitados y disponibles para el servicio seleccionado.</div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">Horario disponible</label>
+                                {{ form.hora_inicio }}
+                                {% if form.hora_inicio.errors %}
+                                    <div class="error-message">{{ form.hora_inicio.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">Solo se muestran horarios libres según la duración del servicio y la disponibilidad del profesional.</div>
                             </div>
                         </div>
 
@@ -252,6 +262,7 @@
     const servicioSelect = document.getElementById('{{ form.servicio.id_for_label }}');
     const fechaInput = document.getElementById('{{ form.fecha.id_for_label }}');
     const horaSelect = document.getElementById('{{ form.hora_inicio.id_for_label }}');
+    const profesionalSelect = document.getElementById('{{ form.profesional.id_for_label }}');
 
     async function actualizarHorariosDisponibles() {
         const fecha = fechaInput.value;
@@ -284,4 +295,4 @@
     });
 </script>
 {% endblock %}
-{% endblock %} 
+{% endblock %}

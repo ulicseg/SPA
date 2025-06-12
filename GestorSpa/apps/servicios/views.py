@@ -4,19 +4,30 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Servicio
 from .forms import ServicioForm
+from GestorSpa.apps.usuarios.permissions import (
+    AdministradorRequiredMixin,
+    ProfesionalOrAdminRequiredMixin,
+    administrador_required
+)
 
-class ServicioListView(LoginRequiredMixin, ListView):
+class ServicioListView(ProfesionalOrAdminRequiredMixin, ListView):
+    """Vista para listar servicios - Profesionales y administradores"""
     model = Servicio
     template_name = 'servicios/servicio_list.html'
     context_object_name = 'servicios'
     queryset = Servicio.objects.filter(activo=True)
 
 class ServicioDetailView(DetailView):
+    """Vista pública para ver detalles de servicio"""
     model = Servicio
     template_name = 'servicios/servicio_detail.html'
     context_object_name = 'servicio'
+    
+    def get_queryset(self):
+        return Servicio.objects.filter(activo=True)
 
-class ServicioCreateView(LoginRequiredMixin, CreateView):
+class ServicioCreateView(AdministradorRequiredMixin, CreateView):
+    """Vista para crear servicios - Solo administradores"""
     model = Servicio
     form_class = ServicioForm
     template_name = 'servicios/servicio_form.html'
@@ -26,7 +37,8 @@ class ServicioCreateView(LoginRequiredMixin, CreateView):
         form.instance.intervalo = 60
         return super().form_valid(form)
 
-class ServicioUpdateView(LoginRequiredMixin, UpdateView):
+class ServicioUpdateView(AdministradorRequiredMixin, UpdateView):
+    """Vista para editar servicios - Solo administradores"""
     model = Servicio
     form_class = ServicioForm
     template_name = 'servicios/servicio_form.html'
@@ -36,7 +48,8 @@ class ServicioUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.intervalo = 60
         return super().form_valid(form)
 
-class ServicioDeleteView(LoginRequiredMixin, DeleteView):
+class ServicioDeleteView(AdministradorRequiredMixin, DeleteView):
+    """Vista para eliminar servicios - Solo administradores"""
     model = Servicio
     template_name = 'servicios/servicio_confirm_delete.html'
-    success_url = reverse_lazy('servicios:servicio_list') 
+    success_url = reverse_lazy('servicios:servicio_list')

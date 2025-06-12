@@ -1,0 +1,313 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - {{ user_role_display }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-user-circle me-2"></i>
+                    Mi Perfil - {{ user_role_display }}
+                </h1>
+                <a href="{% url 'usuarios:perfil_edit' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-edit me-1"></i>Editar Perfil
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard según rol -->
+    {% if user_role == 'cliente' %}
+        <!-- Dashboard para Cliente -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-alt me-2"></i>Mis Últimos Turnos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if mis_turnos %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Servicio</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in mis_turnos %}
+                                        <tr>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                            <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% else %}danger{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="{% url 'usuarios:mis_turnos' %}" class="btn btn-primary">
+                                    Ver Todos Mis Turnos
+                                </a>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No tienes turnos registrados.</p>
+                            <a href="{% url 'turnos:turno_create' %}" class="btn btn-success">
+                                <i class="fas fa-plus me-1"></i>Reservar Turno
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-spa me-2"></i>Servicios Disponibles</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for servicio in servicios_disponibles %}
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="{{ servicio.icono }} me-2"></i>
+                                <span>{{ servicio.nombre }}</span>
+                            </div>
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'servicios:servicio_list' %}" class="btn btn-outline-primary btn-sm">
+                                Ver Todos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif user_role == 'profesional' %}
+        <!-- Dashboard para Profesional -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card text-center bg-primary text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_pendientes }}</h4>
+                                <p>Turnos Pendientes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center bg-success text-white">
+                            <div class="card-body">
+                                <h4>{{ servicios_count }}</h4>
+                                <p>Servicios Activos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center bg-info text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_hoy.count }}</h4>
+                                <p>Turnos Próximos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-check me-2"></i>Próximos Turnos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if turnos_hoy %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Servicio</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in turnos_hoy %}
+                                        <tr>
+                                            <td>{{ turno.nombre }}</td>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                            <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% else %}info{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    Ver
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No hay turnos próximos.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif user_role == 'administrador' %}
+        <!-- Dashboard para Administrador -->
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Estadísticas generales -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center bg-primary text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_count }}</h4>
+                                <p>Total Turnos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-success text-white">
+                            <div class="card-body">
+                                <h4>{{ servicios_count }}</h4>
+                                <p>Servicios</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-info text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_hoy }}</h4>
+                                <p>Turnos Hoy</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-warning text-white">
+                            <div class="card-body">
+                                <h4>
+                                    {% for estado in turnos_por_estado %}
+                                        {% if estado.estado == 'pendiente' %}{{ estado.total }}{% endif %}
+                                    {% endfor %}
+                                </h4>
+                                <p>Pendientes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones rápidas -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-tools me-2"></i>Acciones Rápidas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <a href="{% url 'turnos:turno_create' %}" class="btn btn-success w-100 mb-2">
+                                            <i class="fas fa-plus me-1"></i>Nuevo Turno
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="{% url 'servicios:servicio_create' %}" class="btn btn-primary w-100 mb-2">
+                                            <i class="fas fa-spa me-1"></i>Nuevo Servicio
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="{% url 'usuarios:gestionar_usuarios' %}" class="btn btn-info w-100 mb-2">
+                                            <i class="fas fa-users me-1"></i>Gestionar Usuarios
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="{% url 'turnos:turno_list' %}" class="btn btn-warning w-100 mb-2">
+                                            <i class="fas fa-list me-1"></i>Ver Todos los Turnos
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Últimos turnos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-history me-2"></i>Últimos Turnos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if ultimos_turnos %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Servicio</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in ultimos_turnos %}
+                                        <tr>
+                                            <td>{{ turno.nombre }}</td>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                            <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% else %}danger{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    Ver
+                                                </a>
+                                                <a href="{% url 'turnos:turno_update' turno.pk %}" class="btn btn-sm btn-outline-warning">
+                                                    Editar
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No hay turnos registrados.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- Usuario sin rol asignado -->
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Sin rol asignado:</strong> Contacta al administrador para que te asigne un rol en el sistema.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

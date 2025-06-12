@@ -126,28 +126,84 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-8. **Crear Superusuario**
+8. **Configurar Sistema de Roles**
+```bash
+# Configurar grupos y permisos
+python manage.py setup_roles --create-groups
+
+# Crear usuarios de demostración (opcional)
+python manage.py create_demo_users
+```
+
+9. **Crear Superusuario (si no usas usuarios demo)**
 ```bash
 python manage.py createsuperuser
 ```
 
-9. **Ejecutar el Servidor de Desarrollo**
+10. **Ejecutar el Servidor de Desarrollo**
 ```bash
 python manage.py runserver
 ```
 
 El sitio estará disponible en `http://127.0.0.1:8000/`
 
-## Acceso al Admin
+## Sistema de Roles Implementado
 
-1. Acceder a `http://127.0.0.1:8000/admin`
-2. Ingresar con las credenciales del superusuario creado
+### 👤 Roles Disponibles
+
+| Rol | Descripción | Permisos |
+|-----|-------------|----------|
+| **Cliente** | Usuarios que reservan servicios | • Reservar turnos<br>• Ver su historial<br>• Editar perfil |
+| **Profesional** | Personal del spa | • Ver turnos asignados<br>• Cambiar estado de turnos<br>• Ver servicios |
+| **Administrador** | Gestión completa | • CRUD servicios<br>• CRUD turnos<br>• Gestionar usuarios<br>• Acceso admin |
+
+### 🔑 Usuarios Demo Incluidos
+
+| Usuario | Contraseña | Rol | Email |
+|---------|------------|-----|-------|
+| `cliente_demo` | `demo123` | Cliente | cliente@demo.com |
+| `profesional_demo` | `demo123` | Profesional | profesional@demo.com |
+| `admin_demo` | `demo123` | Administrador | admin@demo.com |
+
+### 🛠️ Comandos de Gestión de Roles
+
+```bash
+# Configurar roles iniciales
+python manage.py setup_roles --create-groups
+
+# Listar roles disponibles
+python manage.py setup_roles --list-roles
+
+# Asignar rol a usuario
+python manage.py setup_roles --assign-role username:cliente
+
+# Ver roles de usuarios
+python manage.py setup_roles --show-user-roles
+
+# Crear usuarios demo
+python manage.py create_demo_users
+```
+
+## Acceso al Sistema
+
+### Login Público
+- **URL:** `http://127.0.0.1:8000/login`
+- **Usuarios demo disponibles** (ver tabla arriba)
+
+### Panel de Administración
+- **URL:** `http://127.0.0.1:8000/admin`
+- **Usuario:** `admin_demo` / `demo123`
 
 ## Características Principales
 
-- Gestión de servicios del spa
-- Sistema de reserva de turnos
-- Panel de administración
+- ✅ **Sistema de roles** con 3 niveles de permisos
+- ✅ **Gestión de servicios** del spa
+- ✅ **Sistema de reserva** de turnos inteligente
+- ✅ **Dashboard personalizado** según rol
+- ✅ **Panel de administración** avanzado
+- ✅ **Gestión de usuarios** y permisos
+- ✅ **Generación de PDFs** para comprobantes
+- ✅ **Interfaz responsive** y moderna
 - Gestión de clientes
 
 ## Estructura del Proyecto

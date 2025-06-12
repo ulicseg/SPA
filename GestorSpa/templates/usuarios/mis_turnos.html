@@ -1,0 +1,230 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Mis Turnos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    {% if is_cliente %}Mis Turnos{% else %}Todos los Turnos{% endif %}
+                </h1>
+                {% if is_cliente %}
+                    <a href="{% url 'turnos:turno_create' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>Reservar Nuevo Turno
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if turnos %}
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                {% if not is_cliente %}
+                                    <th>Cliente</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                {% endif %}
+                                <th>Servicio</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Duración</th>
+                                <th>Estado</th>
+                                <th>Precio</th>
+                                {% if not is_cliente %}
+                                    <th>Acciones</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for turno in turnos %}
+                            <tr>
+                                {% if not is_cliente %}
+                                    <td>
+                                        <strong>{{ turno.nombre }}</strong>
+                                    </td>
+                                    <td>
+                                        <a href="mailto:{{ turno.email }}">{{ turno.email }}</a>
+                                    </td>
+                                    <td>
+                                        {% if turno.telefono %}
+                                            <a href="tel:{{ turno.telefono }}">{{ turno.telefono }}</a>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="{{ turno.servicio.icono }} me-2 text-primary"></i>
+                                        <div>
+                                            <strong>{{ turno.servicio.nombre }}</strong>
+                                            {% if turno.servicio.descripcion %}
+                                                <br><small class="text-muted">{{ turno.servicio.descripcion|truncatewords:8 }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>{{ turno.fecha|date:"d/m/Y" }}</strong>
+                                    <br><small class="text-muted">{{ turno.fecha|date:"l" }}</small>
+                                </td>
+                                <td>
+                                    <strong>{{ turno.hora_inicio|time:"H:i" }}</strong>
+                                    {% if turno.hora_fin %}
+                                        <br><small class="text-muted">hasta {{ turno.hora_fin|time:"H:i" }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ turno.servicio.duracion }} min</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% elif turno.estado == 'cancelado' %}danger{% else %}secondary{% endif %}">
+                                        {{ turno.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>${{ turno.servicio.precio }}</strong>
+                                </td>
+                                {% if not is_cliente %}
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Acciones">
+                                            <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'turnos:turno_update' turno.pk %}" class="btn btn-sm btn-outline-warning" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'turnos:turno_pdf' turno.pk %}" class="btn btn-sm btn-outline-info" title="Descargar PDF" target="_blank">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen de turnos -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Resumen</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="border-end">
+                                    <h4 class="text-primary">{{ turnos|length }}</h4>
+                                    <p class="text-muted mb-0">Total de Turnos</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border-end">
+                                    <h4 class="text-warning">
+                                        {% for turno in turnos %}
+                                            {% if turno.estado == 'pendiente' %}{{ forloop.counter0|add:1 }}{% endif %}
+                                        {% endfor %}
+                                    </h4>
+                                    <p class="text-muted mb-0">Pendientes</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border-end">
+                                    <h4 class="text-success">
+                                        {% for turno in turnos %}
+                                            {% if turno.estado == 'confirmado' %}{{ forloop.counter0|add:1 }}{% endif %}
+                                        {% endfor %}
+                                    </h4>
+                                    <p class="text-muted mb-0">Confirmados</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-info">
+                                    {% for turno in turnos %}
+                                        {% if turno.estado == 'completado' %}{{ forloop.counter0|add:1 }}{% endif %}
+                                    {% endfor %}
+                                </h4>
+                                <p class="text-muted mb-0">Completados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- Sin turnos -->
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
+                <h4 class="text-muted">
+                    {% if is_cliente %}
+                        No tienes turnos registrados
+                    {% else %}
+                        No hay turnos en el sistema
+                    {% endif %}
+                </h4>
+                <p class="text-muted mb-4">
+                    {% if is_cliente %}
+                        ¡Reserva tu primer turno y disfruta de nuestros servicios!
+                    {% else %}
+                        Los turnos aparecerán aquí cuando los clientes hagan reservas.
+                    {% endif %}
+                </p>
+                {% if is_cliente %}
+                    <a href="{% url 'turnos:turno_create' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus me-2"></i>Reservar Mi Primer Turno
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Información adicional para clientes -->
+    {% if is_cliente %}
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información Importante</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-clock me-1"></i>Política de Cancelación</h6>
+                                <ul class="small">
+                                    <li>Cancela tu turno con al menos 24 horas de anticipación</li>
+                                    <li>Puedes reprogramar hasta 2 horas antes</li>
+                                    <li>Llegadas tardías de más de 15 minutos pueden ser canceladas</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-spa me-1"></i>Preparación para tu Cita</h6>
+                                <ul class="small">
+                                    <li>Llega 10 minutos antes de tu cita</li>
+                                    <li>Trae una identificación válida</li>
+                                    <li>Informa sobre alergias o condiciones médicas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Gestionar Usuarios{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-users me-2"></i>
+                    Gestionar Usuarios
+                </h1>
+                <a href="{% url 'admin:auth_user_add' %}" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i>Nuevo Usuario
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>Rol Actual</th>
+                            <th>Tipo Usuario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if usuario.perfil.foto %}
+                                        <img src="{{ usuario.perfil.foto.url }}" alt="Foto" class="rounded-circle me-2" width="30" height="30">
+                                    {% else %}
+                                        <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                    <strong>{{ usuario.username }}</strong>
+                                </div>
+                            </td>
+                            <td>{{ usuario.first_name }} {{ usuario.last_name|default:"" }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>
+                                {% if usuario.perfil %}
+                                    {{ usuario.perfil.get_rol_display }}
+                                {% else %}
+                                    <span class="text-muted">Sin rol</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if usuario.perfil %}
+                                    <span class="badge bg-{% if usuario.perfil.tipo_usuario == 'cliente' %}primary{% elif usuario.perfil.tipo_usuario == 'profesional' %}info{% else %}danger{% endif %}">
+                                        {{ usuario.perfil.get_tipo_usuario_display }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if usuario.is_active %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <!-- Botón para asignar rol -->
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalRol{{ usuario.id }}">
+                                        <i class="fas fa-user-tag me-1"></i>Rol
+                                    </button>
+                                    
+                                    <!-- Editar usuario -->
+                                    <a href="{% url 'admin:auth_user_change' usuario.id %}" class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+
+                                <!-- Modal para asignar rol -->
+                                <div class="modal fade" id="modalRol{{ usuario.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Asignar Rol - {{ usuario.username }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form method="post" action="{% url 'usuarios:asignar_rol_usuario' usuario.id %}">
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="rol{{ usuario.id }}" class="form-label">Seleccionar Rol:</label>
+                                                        <select class="form-select" id="rol{{ usuario.id }}" name="rol" required>
+                                                            <option value="">-- Seleccionar Rol --</option>
+                                                            {% for rol_key, rol_name in roles_disponibles %}
+                                                                <option value="{{ rol_key }}">{{ rol_name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="alert alert-info">
+                                                        <small>
+                                                            <strong>Roles disponibles:</strong><br>
+                                                            • <strong>Cliente:</strong> Puede reservar turnos y ver su historial<br>
+                                                            • <strong>Profesional:</strong> Puede consultar turnos asignados<br>
+                                                            • <strong>Administrador:</strong> Gestión completa del sistema
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Asignar Rol</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No hay usuarios registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información sobre roles -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle me-2"></i>Información sobre Roles</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6 class="text-primary"><i class="fas fa-user me-1"></i>Cliente</h6>
+                            <ul class="small">
+                                <li>Puede reservar turnos</li>
+                                <li>Ve su historial de turnos</li>
+                                <li>Acceso limitado al sistema</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-info"><i class="fas fa-user-md me-1"></i>Profesional</h6>
+                            <ul class="small">
+                                <li>Consulta turnos asignados</li>
+                                <li>Ve detalles de servicios</li>
+                                <li>Puede cambiar estado de turnos</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-danger"><i class="fas fa-user-shield me-1"></i>Administrador</h6>
+                            <ul class="small">
+                                <li>Gestión completa de turnos</li>
+                                <li>CRUD de servicios</li>
+                                <li>Gestión de usuarios y roles</li>
+                                <li>Acceso a reportes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
@@ -9,6 +9,16 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from .models import Turno
 from GestorSpa.apps.servicios.models import Servicio
+from GestorSpa.apps.usuarios.permissions import (
+    RoleManager, 
+    AdministradorRequiredMixin, 
+    ClienteOrAdminRequiredMixin,
+    ProfesionalOrAdminRequiredMixin,
+    role_required,
+    administrador_required,
+    cliente_or_admin_required,
+    profesional_or_admin_required
+)
 from datetime import datetime, timedelta, date
 from calendar import monthcalendar, month_name
 import locale
@@ -27,19 +37,18 @@ except:
     except:
         pass
 
-class AdminRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.is_staff
-
 class CalendarioDisponibilidadView(TemplateView):
+    """Vista pública para mostrar calendario de disponibilidad"""
     template_name = 'turnos/calendario_disponibilidad.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['servicios'] = Servicio.objects.all()
+        context['servicios'] = Servicio.objects.filter(activo=True)
         return context
 
+
 class HorariosDisponiblesDiaView(TemplateView):
+    """Vista pública para mostrar horarios disponibles de un día"""
     template_name = 'turnos/horarios_disponibles_dia.html'
     
     def get_context_data(self, **kwargs):
@@ -77,7 +86,8 @@ class HorariosDisponiblesDiaView(TemplateView):
         
         return context
 
-class TurnoListView(LoginRequiredMixin, ListView):
+class TurnoListView(ProfesionalOrAdminRequiredMixin, ListView):
+    """Vista para listar turnos - Solo profesionales y administradores"""
     model = Turno
     template_name = 'turnos/turno_list.html'
     context_object_name = 'turnos'
@@ -85,8 +95,15 @@ class TurnoListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Turno.objects.all()
-        fecha_filtro = self.request.GET.get('fecha')
         
+        # Si es profesional, solo ve sus propios turnos
+        user_role = RoleManager.get_user_role(self.request.user)
+        if user_role == 'profesional':
+            # Aquí podrías filtrar por profesional asignado si tienes ese campo
+            # queryset = queryset.filter(profesional=self.request.user)
+            pass
+        
+        fecha_filtro = self.request.GET.get('fecha')
         if fecha_filtro:
             try:
                 fecha = datetime.strptime(fecha_filtro, '%Y-%m-%d').date()
@@ -101,21 +118,33 @@ class TurnoListView(LoginRequiredMixin, ListView):
         context['fecha_filtro'] = self.request.GET.get('fecha', '')
         return context
 
-class TurnoDetailView(AdminRequiredMixin, DetailView):
+class TurnoDetailView(ProfesionalOrAdminRequiredMixin, DetailView):
+    """Vista para ver detalles de turno - Solo profesionales y administradores"""
     model = Turno
     template_name = 'turnos/turno_detail.html'
     context_object_name = 'turno'
 
     def get_queryset(self):
-        return Turno.objects.all()
+        queryset = Turno.objects.all()
+        user_role = RoleManager.get_user_role(self.request.user)
+        
+        # Si es profesional, solo puede ver sus propios turnos
+        if user_role == 'profesional':
+            # Filtrar por profesional asignado cuando tengas ese campo
+            # queryset = queryset.filter(profesional=self.request.user)
+            pass
+            
+        return queryset
 
 def calendario_disponibilidad(request):
-    servicios = Servicio.objects.all()
+    """Vista pública para calendario de disponibilidad"""
+    servicios = Servicio.objects.filter(activo=True)
     return render(request, 'turnos/calendario_disponibilidad.html', {
         'servicios': servicios
     })
 
-class TurnoCreateView(CreateView):
+class TurnoCreateView(ClienteOrAdminRequiredMixin, CreateView):
+    """Vista para crear turnos - Solo clientes y administradores"""
     model = Turno
     form_class = TurnoForm
     template_name = 'turnos/turno_form.html'
@@ -123,27 +152,48 @@ class TurnoCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['servicios'] = Servicio.objects.all()
+        context['servicios'] = Servicio.objects.filter(activo=True)
         return context
 
     def form_valid(self, form):
+        # Si es cliente, asignar automáticamente sus datos
+        user_role = RoleManager.get_user_role(self.request.user)
+        if user_role == 'cliente':
+            if self.request.user.first_name or self.request.user.last_name:
+                form.instance.nombre = f"{self.request.user.first_name} {self.request.user.last_name}".strip()
+            if self.request.user.email:
+                form.instance.email = self.request.user.email
+            if hasattr(self.request.user, 'perfil') and self.request.user.perfil.telefono:
+                form.instance.telefono = self.request.user.perfil.telefono
+        
         messages.success(self.request, 'Turno creado exitosamente.')
         return super().form_valid(form)
 
-class TurnoUpdateView(LoginRequiredMixin, UpdateView):
+class TurnoUpdateView(AdministradorRequiredMixin, UpdateView):
+    """Vista para editar turnos - Solo administradores"""
     model = Turno
     form_class = TurnoForm
     template_name = 'turnos/turno_form.html'
     success_url = reverse_lazy('turnos:turno_list')
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['servicios'] = Servicio.objects.all()
+        context['servicios'] = Servicio.objects.filter(activo=True)
         return context
 
     def form_valid(self, form):
         messages.success(self.request, 'Turno actualizado exitosamente.')
         return super().form_valid(form)
+
+class TurnoDeleteView(AdministradorRequiredMixin, DeleteView):
+    """Vista para eliminar turnos - Solo administradores"""
+    model = Turno
+    template_name = 'turnos/turno_confirm_delete.html'
+    success_url = reverse_lazy('turnos:turno_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Turno eliminado exitosamente.')
+        return super().delete(request, *args, **kwargs)
 
 class TurnoDeleteView(LoginRequiredMixin, DeleteView):
     model = Turno
