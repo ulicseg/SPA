@@ -18,6 +18,17 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
+
+# Tests antiguos (mantener solo los organizados)
+test_complete_system.py
+test_email_encoding.py
+test_email_fixed.py
+test_encoding.py
+test_system_simple.py
+
+# Logs
+logs/
+*.log
 *.egg
 
 # Django

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -19,6 +20,7 @@ from GestorSpa.apps.usuarios.permissions import (
     cliente_or_admin_required,
     profesional_or_admin_required
 )
+from GestorSpa.apps.usuarios.models import Profesional
 from datetime import datetime, timedelta, date
 from calendar import monthcalendar, month_name
 import locale
@@ -27,6 +29,10 @@ from django.views.decorators.http import require_http_methods
 from weasyprint import HTML
 from django.template.loader import render_to_string
 import os
+import logging
+
+# Configurar logger para debugging
+logger = logging.getLogger(__name__)
 
 # Configurar locale para español
 try:
@@ -143,32 +149,6 @@ def calendario_disponibilidad(request):
         'servicios': servicios
     })
 
-class TurnoCreateView(ClienteOrAdminRequiredMixin, CreateView):
-    """Vista para crear turnos - Solo clientes y administradores"""
-    model = Turno
-    form_class = TurnoForm
-    template_name = 'turnos/turno_form.html'
-    success_url = reverse_lazy('turnos:turno_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['servicios'] = Servicio.objects.filter(activo=True)
-        return context
-
-    def form_valid(self, form):
-        # Si es cliente, asignar automáticamente sus datos
-        user_role = RoleManager.get_user_role(self.request.user)
-        if user_role == 'cliente':
-            if self.request.user.first_name or self.request.user.last_name:
-                form.instance.nombre = f"{self.request.user.first_name} {self.request.user.last_name}".strip()
-            if self.request.user.email:
-                form.instance.email = self.request.user.email
-            if hasattr(self.request.user, 'perfil') and self.request.user.perfil.telefono:
-                form.instance.telefono = self.request.user.perfil.telefono
-        
-        messages.success(self.request, 'Turno creado exitosamente.')
-        return super().form_valid(form)
-
 class TurnoUpdateView(AdministradorRequiredMixin, UpdateView):
     """Vista para editar turnos - Solo administradores"""
     model = Turno
@@ -208,43 +188,25 @@ class TurnoDeleteView(LoginRequiredMixin, DeleteView):
 def verificar_disponibilidad(request):
     fecha = request.GET.get('fecha')
     servicio_id = request.GET.get('servicio')
-    hora_inicio_str = request.GET.get('hora_inicio', '09:00')
-    hora_fin_str = request.GET.get('hora_fin', '20:00')
-
-    if not fecha or not servicio_id:
-        return JsonResponse({
-            'error': 'Se requieren los parámetros fecha y servicio'
-        }, status=400)
-
+    profesional_id = request.GET.get('profesional')
+    if not fecha or not servicio_id or not profesional_id:
+        return JsonResponse({'error': 'Fecha, servicio y profesional son requeridos'}, status=400)
     try:
-        servicio = Servicio.objects.get(id=servicio_id)
-        fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
-        
-        # Convertir las horas de string a time
-        hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
-        hora_fin = datetime.strptime(hora_fin_str, '%H:%M').time()
-        
-        # Actualizar temporalmente los horarios del servicio
-        servicio.hora_inicio = hora_inicio
-        servicio.hora_fin = hora_fin
-        
-        horarios_disponibles = Turno.get_horarios_disponibles(fecha, servicio)
-        
-        return JsonResponse({
-            'horarios_disponibles': horarios_disponibles
-        })
+        fecha_dt = datetime.strptime(fecha, '%Y-%m-%d').date()
+        from GestorSpa.apps.servicios.models import Servicio
+        from GestorSpa.apps.usuarios.models import Profesional
+        servicio = Servicio.objects.get(pk=servicio_id)
+        profesional = Profesional.objects.get(pk=profesional_id)
+        # Usar lógica del formulario para obtener horarios disponibles
+        from .forms import TurnoForm
+        horarios = TurnoForm().get_horarios_disponibles(fecha_dt, servicio, profesional)
+        return JsonResponse({'horarios_disponibles': horarios})
     except Servicio.DoesNotExist:
-        return JsonResponse({
-            'error': 'Servicio no encontrado'
-        }, status=404)
-    except ValueError:
-        return JsonResponse({
-            'error': 'Formato de fecha inválido'
-        }, status=400)
+        return JsonResponse({'error': 'Servicio no encontrado'}, status=404)
+    except Profesional.DoesNotExist:
+        return JsonResponse({'error': 'Profesional no encontrado'}, status=404)
     except Exception as e:
-        return JsonResponse({
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({'error': str(e)}, status=500)
 
 def get_horarios_disponibles(request):
     fecha = request.GET.get('fecha')
@@ -316,23 +278,58 @@ class TurnoReservaUnificadaView(TemplateView):
         return context
         
     def post(self, request, *args, **kwargs):
+        """Procesa la reserva con manejo robusto de encoding UTF-8"""
         try:
+            # Configurar encoding para la request
+            if hasattr(request, 'encoding'):
+                request.encoding = 'utf-8'
+            
             form = TurnoForm(request.POST)
             if form.is_valid():
-                turno = form.save()
-                # Guardar el ID del turno en la sesión
-                request.session['turno_id'] = turno.id
-                return redirect('turnos:turno_confirmacion')
+                try:
+                    turno = form.save()
+                    # Guardar el ID del turno en la sesión
+                    request.session['turno_id'] = turno.id
+                    logger.info(f"Turno creado exitosamente: {turno.id}")
+                    return redirect('turnos:turno_confirmacion')
+                except UnicodeEncodeError as e:
+                    logger.error(f"Error de encoding al guardar turno: {str(e)}")
+                    messages.error(request, 'Error de codificación de caracteres. Verifique que no haya caracteres especiales en los datos.')
+                except Exception as e:
+                    logger.error(f"Error general al guardar turno: {str(e)}")
+                    messages.error(request, f'Error al procesar la reserva: {str(e)}')
             else:
+                # Manejar errores del formulario con encoding seguro
                 for field, errors in form.errors.items():
                     for error in errors:
-                        messages.error(request, f'Error en {field}: {error}')
-                context = self.get_context_data()
-                context['form'] = form
-                return self.render_to_response(context)
-        except Exception as e:
-            messages.error(request, f'Error al procesar la reserva: {str(e)}')
+                        try:
+                            # Asegurar que el mensaje sea UTF-8
+                            error_msg = str(error).encode('utf-8', errors='ignore').decode('utf-8')
+                            field_name = str(field).encode('utf-8', errors='ignore').decode('utf-8')
+                            messages.error(request, f'Error en {field_name}: {error_msg}')
+                        except (UnicodeEncodeError, UnicodeDecodeError):
+                            messages.error(request, f'Error en {field}: Error de caracteres especiales')
+            
             context = self.get_context_data()
+            context['form'] = form
+            return self.render_to_response(context)
+            
+        except UnicodeEncodeError as e:
+            logger.error(f"Error de encoding en POST: {str(e)}")
+            messages.error(request, 'Error de codificación de caracteres. Por favor, evite usar caracteres especiales.')
+            context = self.get_context_data()
+            form = TurnoForm(request.POST)
+            context['form'] = form
+            return self.render_to_response(context)
+        except Exception as e:
+            logger.error(f"Error general en POST: {str(e)}")
+            try:
+                error_msg = str(e).encode('utf-8', errors='ignore').decode('utf-8')
+                messages.error(request, f'Error al procesar la reserva: {error_msg}')
+            except (UnicodeEncodeError, UnicodeDecodeError):
+                messages.error(request, 'Error al procesar la reserva: Error de caracteres especiales')
+            context = self.get_context_data()
+            form = TurnoForm(request.POST)
             context['form'] = form
             return self.render_to_response(context)
 
@@ -359,4 +356,27 @@ def turno_pdf(request, pk):
     # Generar el PDF usando WeasyPrint
     HTML(string=html_string).write_pdf(response)
     
-    return response 
+    return response
+
+def api_profesionales_por_servicio(request, servicio_id):
+    """Devuelve los profesionales habilitados para un servicio (API)."""
+    from GestorSpa.apps.usuarios.models import Profesional
+    try:
+        profesionales = Profesional.objects.filter(
+            servicios_especialidad=servicio_id,
+            estado='activo'
+        )
+        data = []
+        for p in profesionales:
+            try:
+                nombre = str(p)
+            except UnicodeEncodeError:
+                nombre = p.nombre_completo if hasattr(p, 'nombre_completo') else f'Profesional {p.id}'
+            data.append({'id': p.id, 'nombre': nombre})
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        try:
+            error_msg = str(e)
+        except UnicodeEncodeError:
+            error_msg = 'Error de caracteres especiales'
+        return JsonResponse({'error': error_msg}, status=500)

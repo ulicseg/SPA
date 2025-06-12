@@ -7,7 +7,6 @@ app_name = 'turnos'
 
 urlpatterns = [
     path('', views.TurnoListView.as_view(), name='turno_list'),
-    path('nuevo/', views.TurnoCreateView.as_view(), name='turno_create'),
     path('editar/<int:pk>/', views.TurnoUpdateView.as_view(), name='turno_update'),
     path('eliminar/<int:pk>/', views.TurnoDeleteView.as_view(), name='turno_delete'),
     path('calendario/', views.calendario_disponibilidad, name='calendario_disponibilidad'),
@@ -18,4 +17,5 @@ urlpatterns = [
     path('profesional/turnos-manana/', views_profesional.TurnosDelProfesionalView.as_view(), name='turnos_profesional_manana'),
     path('profesional/turnos-manana/pdf/', views_profesional.TurnosProfesionalPDFView.as_view(), name='turnos_profesional_pdf'),
     path('reporte/', reporte_turnos, name='reporte_turnos'),
+    path('api/servicio/<int:servicio_id>/profesionales/', views.api_profesionales_por_servicio, name='api_profesionales_por_servicio'),
 ]

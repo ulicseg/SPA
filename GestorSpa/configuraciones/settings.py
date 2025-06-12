@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for GestorSpa project.
 
@@ -10,9 +11,45 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+# Configurar encoding UTF-8 antes que cualquier otra cosa
+import sys
+import os
+
+# Configurar encoding del sistema
+sys.dont_write_bytecode = True
+os.environ['PYTHONIOENCODING'] = 'utf-8'
+
+# Importar configuración de encoding
+try:
+    from GestorSpa.encoding_config import configurar_encoding
+    configurar_encoding()
+except ImportError:
+    pass
+
 from pathlib import Path
 import os
+import sys
 from dotenv import load_dotenv
+
+# Configurar encoding UTF-8 para el sistema
+if sys.platform.startswith('win'):
+    import locale
+    try:
+        locale.setlocale(locale.LC_ALL, 'es_ES.UTF-8')
+    except locale.Error:
+        try:
+            locale.setlocale(locale.LC_ALL, 'Spanish_Spain.1252')
+        except locale.Error:
+            pass
+    
+# Forzar encoding UTF-8 en Python
+import codecs
+if hasattr(sys.stdout, 'detach'):
+    try:
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
+    except:
+        pass
 
 # Cargar variables de entorno
 load_dotenv()
@@ -48,6 +85,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'GestorSpa.middleware.UTF8EncodingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -132,6 +170,10 @@ STATICFILES_DIRS = [
 MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Configuraciones de encoding y archivos
+FILE_CHARSET = 'utf-8'
+DEFAULT_CHARSET = 'utf-8'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -149,3 +191,18 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'info@gestorspa.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'info@gestorspa.com')
+
+# Configuración básica de logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

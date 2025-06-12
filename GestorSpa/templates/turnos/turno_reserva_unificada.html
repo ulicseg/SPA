@@ -151,7 +151,6 @@
         <h3 class="section-title">
             <i class="fas fa-list me-2"></i>Paso 1: Seleccione un Servicio
         </h3>
-
         <div class="servicios-grid">
             {% for servicio in servicios %}
             <div class="servicio-card" onclick="seleccionarServicio({{ servicio.id }}, '{{ servicio.nombre }}')">
@@ -168,28 +167,21 @@
         </div>
     </div>
 
-    <!-- Paso 2: Selección de Fecha y Hora -->
+    <!-- Paso 2: Selección de Profesional -->
     <div id="paso2" class="calendario-container">
         <h3 class="section-title">
-            <i class="fas fa-calendar-alt me-2"></i>Paso 2: Seleccione Fecha y Hora
+            <i class="fas fa-user-md me-2"></i>Paso 2: Seleccione un Profesional
         </h3>
-        
         <div class="row">
             <div class="col-md-12">
                 <div class="mb-3">
-                    <label for="fecha" class="form-label">Fecha</label>
-                    <input type="text" id="fecha" class="form-control" placeholder="Seleccione una fecha">
+                    <label for="profesional" class="form-label">Profesional</label>
+                    <select id="profesional" class="form-control" disabled>
+                        <option value="">Seleccione un profesional</option>
+                    </select>
                 </div>
             </div>
         </div>
-        
-        <div class="mt-4">
-            <h4 class="mb-3">Horarios disponibles:</h4>
-            <div id="horariosGrid" class="horarios-grid">
-                <!-- Los horarios se cargarán dinámicamente -->
-            </div>
-        </div>
-
         <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-secondary" onclick="volverAPaso1()">
                 <i class="fas fa-arrow-left me-2"></i>Volver
@@ -200,19 +192,46 @@
         </div>
     </div>
 
-    <!-- Paso 3: Formulario de Datos -->
-    <div id="paso3" class="formulario-container">
+    <!-- Paso 3: Selección de Fecha y Hora -->
+    <div id="paso3" class="calendario-container">
         <h3 class="section-title">
-            <i class="fas fa-user me-2"></i>Paso 3: Complete sus Datos
+            <i class="fas fa-calendar-alt me-2"></i>Paso 3: Seleccione Fecha y Hora
         </h3>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label for="fecha" class="form-label">Fecha</label>
+                    <input type="text" id="fecha" class="form-control" placeholder="Seleccione una fecha" disabled>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <h4 class="mb-3">Horarios disponibles:</h4>
+            <div id="horariosGrid" class="horarios-grid">
+                <!-- Los horarios se cargarán dinámicamente -->
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary" onclick="volverAPaso2()">
+                <i class="fas fa-arrow-left me-2"></i>Volver
+            </button>
+            <button type="button" class="btn btn-primary" onclick="avanzarAPaso4()" id="btnAvanzarPaso4" disabled>
+                <i class="fas fa-arrow-right me-2"></i>Continuar
+            </button>
+        </div>
+    </div>
 
+    <!-- Paso 4: Formulario de Datos -->
+    <div id="paso4" class="formulario-container">
+        <h3 class="section-title">
+            <i class="fas fa-user me-2"></i>Paso 4: Complete sus Datos
+        </h3>
         <form method="post" id="turnoForm">
             {% csrf_token %}
-            
             <input type="hidden" name="servicio" id="servicio_id">
+            <input type="hidden" name="profesional" id="profesional_id">
             <input type="hidden" name="fecha" id="fecha_form">
             <input type="hidden" name="hora_inicio" id="hora_inicio_form">
-            
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="nombre" class="form-label">Nombre</label>
@@ -223,7 +242,6 @@
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
             </div>
-
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="telefono" class="form-label">Teléfono</label>
@@ -240,17 +258,36 @@
                     <textarea class="form-control" id="notas" name="notas" rows="3"></textarea>
                 </div>
             </div>
-
-            <div class="alert alert-info">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="metodo_pago" class="form-label">Método de pago</label>
+                    <select class="form-control" id="metodo_pago" name="metodo_pago" required onchange="actualizarResumenPago()">
+                        <option value="">Seleccione un método</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="debito">Tarjeta de Débito (15% de descuento si reserva con 48h de anticipación)</option>
+                        <option value="credito">Tarjeta de Crédito</option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" id="pagado" name="pagado">
+                        <label class="form-check-label" for="pagado">¿Pagado?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="alert alert-info" id="resumenPago">
                 <h5 class="alert-heading">Resumen de su reserva</h5>
                 <hr>
                 <p class="mb-1"><strong>Servicio:</strong> <span id="resumen-servicio"></span></p>
+                <p class="mb-1"><strong>Profesional:</strong> <span id="resumen-profesional"></span></p>
                 <p class="mb-1"><strong>Fecha:</strong> <span id="resumen-fecha"></span></p>
                 <p class="mb-1"><strong>Hora:</strong> <span id="resumen-hora"></span></p>
+                <p class="mb-1"><strong>Precio base:</strong> $<span id="resumen-precio"></span></p>
+                <p class="mb-1 text-success" id="resumen-descuento" style="display:none;"></p>
+                <p class="mb-1 fs-5"><strong>Total a pagar:</strong> $<span id="resumen-total"></span></p>
             </div>
-
             <div class="d-flex justify-content-between mt-4">
-                <button type="button" class="btn btn-secondary" onclick="volverAPaso2()">
+                <button type="button" class="btn btn-secondary" onclick="volverAPaso3()">
                     <i class="fas fa-arrow-left me-2"></i>Volver
                 </button>
                 <button type="submit" class="btn btn-primary">
@@ -268,192 +305,219 @@
 <script>
     // Variables globales para el estado del formulario
     let servicioSeleccionado = null;
+    let profesionalSeleccionado = null;
     let fechaSeleccionada = null;
     let horaSeleccionada = null;
     let nombreServicioSeleccionado = '';
+    let nombreProfesionalSeleccionado = '';
+    let precioServicioSeleccionado = 0;
 
-    // Función para seleccionar servicio
+    function mostrarSoloPaso(paso) {
+        // Oculta todos los pasos
+        ['paso1','paso2','paso3','paso4'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('visible');
+        });
+        // Muestra solo el paso indicado
+        const pasoEl = document.getElementById(paso);
+        if (pasoEl) pasoEl.classList.add('visible');
+    }
+
+    // Paso 1: Selección de servicio
     function seleccionarServicio(servicioId, nombreServicio) {
         servicioSeleccionado = servicioId;
         nombreServicioSeleccionado = nombreServicio;
-        document.getElementById('resumen-servicio').textContent = nombreServicioSeleccionado;
-        document.getElementById('servicio_id').value = servicioId;
-        
-        // Actualizar UI
+        // Obtener precio del servicio desde el DOM de forma más robusta
+        let precio = 0;
         document.querySelectorAll('.servicio-card').forEach(card => {
-            card.classList.remove('selected');
+            const nombre = card.querySelector('.servicio-nombre').textContent.trim();
+            if (nombre === nombreServicio) {
+                const precioText = card.querySelector('.servicio-detalles .fa-tag').parentElement.textContent.replace(/[^\d.,]/g, '').replace(',', '.');
+                precio = parseFloat(precioText);
+            }
         });
-        document.querySelector(`.servicio-card[onclick="seleccionarServicio(${servicioId}, '${nombreServicio}')"]`).classList.add('selected');
-        
-        // Mostrar paso 2
-        document.getElementById('paso2').classList.add('visible');
-        
-        // Scroll automático a Paso 2
+        precioServicioSeleccionado = precio;
+        document.getElementById('resumen-servicio').textContent = nombreServicioSeleccionado;
+        document.getElementById('resumen-precio').textContent = precioServicioSeleccionado.toFixed(2);
+        document.getElementById('servicio_id').value = servicioId;
+        // Resetear selección de profesional, fecha y hora
+        profesionalSeleccionado = null;
+        fechaSeleccionada = null;
+        horaSeleccionada = null;
+        document.getElementById('profesional').selectedIndex = 0;
+        document.getElementById('fecha').value = '';
+        document.getElementById('fecha').disabled = true;
+        document.getElementById('btnAvanzarPaso3').disabled = true;
+        document.getElementById('btnAvanzarPaso4').disabled = true;
+        document.getElementById('resumen-profesional').textContent = '';
+        document.getElementById('resumen-fecha').textContent = '';
+        document.getElementById('resumen-hora').textContent = '';
+        cargarProfesionales(servicioId);
+        mostrarSoloPaso('paso2');
         setTimeout(function() {
             document.getElementById('paso2').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 200);
-        
-        // Resetear selección de fecha y hora
-        fechaSeleccionada = null;
-        horaSeleccionada = null;
-        fp.clear();
-        document.getElementById('btnAvanzarPaso3').disabled = true;
+        actualizarResumenPago();
     }
 
-    // Función para seleccionar fecha
-    function seleccionarFecha(fecha) {
-        fechaSeleccionada = fecha;
-        document.getElementById('resumen-fecha').textContent = formatearFecha(fecha);
-        document.getElementById('paso3').classList.add('visible');
-        
-        // Cargar horarios disponibles
-        cargarHorarios();
+    // Paso 2: Selección de profesional
+    function cargarProfesionales(servicioId) {
+        const profesionalSelect = document.getElementById('profesional');
+        profesionalSelect.innerHTML = '<option value="">Cargando...</option>';
+        profesionalSelect.disabled = true;
+        fetch(`/turnos/api/servicio/${servicioId}/profesionales/`)
+            .then(response => response.json())
+            .then(data => {
+                profesionalSelect.innerHTML = '<option value="">Seleccione un profesional</option>';
+                data.forEach(prof => {
+                    const option = document.createElement('option');
+                    option.value = prof.id;
+                    option.textContent = prof.nombre;
+                    profesionalSelect.appendChild(option);
+                });
+                profesionalSelect.disabled = false;
+                // Si solo hay un profesional, seleccionarlo automáticamente y habilitar el botón
+                if (data.length === 1) {
+                    profesionalSelect.selectedIndex = 1;
+                    profesionalSeleccionado = data[0].id;
+                    nombreProfesionalSeleccionado = data[0].nombre;
+                    document.getElementById('resumen-profesional').textContent = nombreProfesionalSeleccionado;
+                    document.getElementById('profesional_id').value = profesionalSeleccionado;
+                    document.getElementById('fecha').disabled = false;
+                    document.getElementById('btnAvanzarPaso3').disabled = false;
+                } else {
+                    document.getElementById('btnAvanzarPaso3').disabled = true;
+                }
+            });
+        profesionalSelect.onchange = function() {
+            profesionalSeleccionado = profesionalSelect.value;
+            nombreProfesionalSeleccionado = profesionalSelect.options[profesionalSelect.selectedIndex].text;
+            document.getElementById('resumen-profesional').textContent = nombreProfesionalSeleccionado;
+            document.getElementById('profesional_id').value = profesionalSeleccionado;
+            document.getElementById('fecha').disabled = false;
+            document.getElementById('btnAvanzarPaso3').disabled = !profesionalSeleccionado;
+        };
     }
 
-    // Función para seleccionar hora
-    function seleccionarHorario(hora) {
-        horaSeleccionada = hora;
-        document.getElementById('resumen-hora').textContent = hora;
-        document.getElementById('hora_inicio_form').value = hora;
-        document.getElementById('btnAvanzarPaso3').disabled = false;
-        
-        // Actualizar UI para mostrar la selección
-        document.querySelectorAll('.horario-btn').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-        document.querySelector(`.horario-btn[data-hora="${hora}"]`).classList.add('selected');
-    }
-
-    // Función para volver al paso anterior
-    function volverAPasoAnterior(pasoActual) {
-        document.getElementById(pasoActual).classList.remove('visible');
-        document.getElementById(`paso${parseInt(pasoActual.slice(-1)) - 1}`).classList.add('visible');
-    }
-
-    // Función para volver al paso 2
-    function volverAPaso2() {
-        document.getElementById('paso3').classList.remove('visible');
-        document.getElementById('paso2').classList.add('visible');
-    }
-
-    // Función para volver al paso 1
-    function volverAPaso1() {
-        document.getElementById('paso2').classList.remove('visible');
-        document.getElementById('paso1').classList.add('visible');
-    }
-
-    // Función para avanzar al siguiente paso
     function avanzarAPaso3() {
-        if (servicioSeleccionado && fechaSeleccionada && horaSeleccionada) {
-            document.getElementById('fecha_form').value = fechaSeleccionada;
-            document.getElementById('hora_inicio_form').value = horaSeleccionada;
-            
-            // Actualizar resumen
-            document.getElementById('resumen-fecha').textContent = formatearFecha(fechaSeleccionada);
-            document.getElementById('resumen-hora').textContent = horaSeleccionada;
-            
-            // Mostrar paso 3
-            document.getElementById('paso3').classList.add('visible');
-            // Scroll automático a Paso 3
+        if (profesionalSeleccionado) {
+            mostrarSoloPaso('paso3');
             setTimeout(function() {
                 document.getElementById('paso3').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 200);
         }
     }
-
-    function formatearFecha(fechaStr) {
-        const fecha = new Date(fechaStr);
-        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return fecha.toLocaleDateString('es-ES', opciones);
+    function volverAPaso1() {
+        mostrarSoloPaso('paso1');
+    }
+    function volverAPaso2() {
+        mostrarSoloPaso('paso2');
     }
 
-    // Configurar Flatpickr
+    // Paso 3: Selección de fecha y horario
     const fp = flatpickr("#fecha", {
         locale: "es",
         dateFormat: "Y-m-d",
         minDate: "today",
         disable: [
             function(date) {
-                // Deshabilitar domingos (0 = domingo, 1 = lunes, ..., 6 = sábado)
                 return date.getDay() === 0;
             }
         ],
         onChange: function(selectedDates, dateStr) {
             fechaSeleccionada = dateStr;
-            if (servicioSeleccionado) {
-                cargarHorarios(dateStr);
-            }
+            cargarHorarios();
         }
     });
-
-    // Cargar horarios cuando se selecciona una fecha
     document.getElementById('fecha').addEventListener('change', function() {
-        const dateStr = this.value;
-        if (servicioSeleccionado) {
-            cargarHorarios(dateStr);
-        }
+        fechaSeleccionada = this.value;
+        cargarHorarios();
     });
-
     function cargarHorarios() {
         const fecha = document.getElementById('fecha').value;
         const contenedorHorarios = document.getElementById('horariosGrid');
-        
-        if (!fecha || !servicioSeleccionado) {
-            contenedorHorarios.innerHTML = '<p class="text-muted">Por favor, seleccione una fecha y un servicio.</p>';
+        if (!fecha || !servicioSeleccionado || !profesionalSeleccionado) {
+            contenedorHorarios.innerHTML = '<p class="text-muted">Seleccione profesional y fecha.</p>';
             return;
         }
-
-        // Obtener el día de la semana (0 = domingo, 1 = lunes, ..., 6 = sábado)
-        const dia = new Date(fecha).getDay();
-        
-        // Definir horarios según el día
-        let horaInicio, horaFin;
-        if (dia === 6) { // Sábado
-            horaInicio = '10:00';
-            horaFin = '18:00';
-        } else { // Lunes a viernes
-            horaInicio = '09:00';
-            horaFin = '20:00';
-        }
-        
         contenedorHorarios.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
-        
-        fetch(`/turnos/verificar-disponibilidad/?fecha=${fecha}&servicio=${servicioSeleccionado}&hora_inicio=${horaInicio}&hora_fin=${horaFin}`)
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.error || 'Error al cargar los horarios');
-                    });
-                }
-                return response.json();
-            })
+        fetch(`/turnos/verificar-disponibilidad/?fecha=${fecha}&servicio=${servicioSeleccionado}&profesional=${profesionalSeleccionado}`)
+            .then(response => response.json())
             .then(data => {
                 if (!data.horarios_disponibles || data.horarios_disponibles.length === 0) {
                     contenedorHorarios.innerHTML = '<p class="text-muted">No hay horarios disponibles para la fecha seleccionada.</p>';
+                    document.getElementById('btnAvanzarPaso4').disabled = true;
                     return;
                 }
-                
-                // Ordenar los horarios
-                const horariosOrdenados = data.horarios_disponibles.sort();
-                
-                const horariosHTML = horariosOrdenados.map(hora => `
-                    <button class="horario-btn" 
-                            onclick="seleccionarHorario('${hora}')"
-                            data-hora="${hora}">
-                        ${hora}
-                    </button>
+                const horariosHTML = data.horarios_disponibles.map(hora => `
+                    <button class="horario-btn" onclick="seleccionarHorario('${hora}')" data-hora="${hora}">${hora}</button>
                 `).join('');
-                
                 contenedorHorarios.innerHTML = horariosHTML;
-            })
-            .catch(error => {
-                contenedorHorarios.innerHTML = `
-                    <div class="alert alert-danger" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        ${error.message}
-                    </div>
-                `;
             });
     }
+    function seleccionarHorario(hora) {
+        horaSeleccionada = hora;
+        document.getElementById('resumen-hora').textContent = hora;
+        document.getElementById('hora_inicio_form').value = hora;
+        document.getElementById('btnAvanzarPaso4').disabled = false;
+        document.querySelectorAll('.horario-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        document.querySelector(`.horario-btn[data-hora="${hora}"]`).classList.add('selected');
+    }
+    function avanzarAPaso4() {
+        if (servicioSeleccionado && profesionalSeleccionado && fechaSeleccionada && horaSeleccionada) {
+            document.getElementById('fecha_form').value = fechaSeleccionada;
+            document.getElementById('hora_inicio_form').value = horaSeleccionada;
+            mostrarSoloPaso('paso4');
+            setTimeout(function() {
+                document.getElementById('paso4').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+            actualizarResumenPago();
+        }
+    }
+    function volverAPaso3() {
+        mostrarSoloPaso('paso3');
+    }
+    function formatearFecha(fechaStr) {
+        const fecha = new Date(fechaStr);
+        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return fecha.toLocaleDateString('es-ES', opciones);
+    }
+
+    // Actualizar resumen de pago
+    function actualizarResumenPago() {
+        const metodo = document.getElementById('metodo_pago') ? document.getElementById('metodo_pago').value : '';
+        const fecha = fechaSeleccionada;
+        let descuento = 0;
+        let total = precioServicioSeleccionado;
+        let mostrarDescuento = false;
+        if (metodo === 'debito' && fecha) {
+            // Calcular si corresponde descuento (48h anticipación)
+            const hoy = new Date();
+            const fechaTurno = new Date(fecha);
+            const diff = (fechaTurno - hoy) / (1000 * 60 * 60 * 24);
+            if (diff >= 2) {
+                descuento = precioServicioSeleccionado * 0.15;
+                mostrarDescuento = true;
+            }
+        }
+        total = precioServicioSeleccionado - descuento;
+        document.getElementById('resumen-precio').textContent = precioServicioSeleccionado.toFixed(2);
+        document.getElementById('resumen-total').textContent = total.toFixed(2);
+        const descElem = document.getElementById('resumen-descuento');
+        if (mostrarDescuento) {
+            descElem.style.display = '';
+            descElem.textContent = `Descuento aplicado: -$${descuento.toFixed(2)} (15% por débito y reserva anticipada)`;
+        } else {
+            descElem.style.display = 'none';
+            descElem.textContent = '';
+        }
+    }
+
+    // Inicializar resumen de pago al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        actualizarResumenPago();
+    });
 </script>
-{% endblock %} 
+{% endblock %}
