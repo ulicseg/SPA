@@ -471,14 +471,10 @@
                                         <i class="fas fa-user me-2"></i> Mi Perfil
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'usuarios:mis_turnos' %}">
-                                        <i class="fas fa-calendar-alt me-2"></i> Mis Turnos
-                                    </a></li>
+                                        <i class="fas fa-calendar-alt me-2"></i> Mis Turnos                                    </a></li>
                                 {% elif user.perfil.is_profesional %}
-                                    <li><a class="dropdown-item" href="{% url 'usuarios:perfil_profesional' %}">
-                                        <i class="fas fa-user-tie me-2"></i> Perfil Profesional
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="{% url 'usuarios:editar_datos_profesional' %}">
-                                        <i class="fas fa-edit me-2"></i> Editar Datos Profesionales
+                                    <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
+                                        <i class="fas fa-user-tie me-2"></i> Mi Perfil
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'usuarios:editar_horarios_profesional' %}">
                                         <i class="fas fa-clock me-2"></i> Gestionar Horarios
@@ -491,9 +487,6 @@
                                         <i class="fas fa-user me-2"></i> Mi Perfil
                                     </a></li>
                                 {% endif %}
-                                <li><a class="dropdown-item" href="{% url 'usuarios:perfil_edit' %}">
-                                    <i class="fas fa-edit me-2"></i> Editar Perfil General
-                                </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="post" action="{% url 'logout' %}" class="d-inline w-100">

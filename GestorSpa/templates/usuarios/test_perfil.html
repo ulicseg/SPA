@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Test Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Test de Rol: {{ user_role }}</h1>
+    
+    {% if user_role == 'cliente' %}
+        <div class="alert alert-primary">CLIENTE</div>
+    {% elif user_role == 'profesional' %}
+        <div class="alert alert-info">PROFESIONAL</div>
+    {% elif user_role == 'administrador' %}
+        <div class="alert alert-danger">ADMINISTRADOR DETECTADO</div>
+        <div class="row">
+            <div class="col-12">
+                <h2>Dashboard de Administrador</h2>
+                <p>Usuarios totales: {{ total_usuarios }}</p>
+                <p>Profesionales: {{ total_profesionales }}</p>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">SIN ROL</div>
+    {% endif %}
+</div>
+{% endblock %}
