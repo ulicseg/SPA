@@ -80,6 +80,14 @@
     .edit-forms-section.active {
         display: block;
     }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 1rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1rem;
+    }
 </style>
 {% endblock %}
 
@@ -731,6 +739,17 @@
         <i class="fas fa-exclamation-triangle me-2"></i>
         <strong>Sin rol asignado:</strong> Contacta al administrador para que te asigne un rol en el sistema.
     </div>
+{% endif %}
+
+<!-- Advertencia para administradores que acceden al perfil -->
+{% if user_role == 'administrador' %}
+<div style="background:orange;color:black;padding:20px;font-size:24px;z-index:9999;position:relative;">
+  ATENCIÓN: Estás viendo el template de PERFIL UNIFICADO.<br>
+  user_role: {{ user_role|default:'-' }}<br>
+  user_role_display: {{ user_role_display|default:'-' }}<br>
+  Si ves esto, el sistema está redirigiendo a 'perfil.html' y NO a 'perfil_administrador.html'.<br>
+  <b>Esto indica que la lógica de la vista no está detectando tu usuario como administrador.</b>
+</div>
 {% endif %}
 
 <!-- Formularios de Edición Unificados (Ocultos por defecto) -->

@@ -1,0 +1,237 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - {{ user_role_display }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+    
+    .client-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .edit-forms-section {
+        display: none;
+    }
+    
+    .edit-forms-section.active {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Mensaje de Depuración -->
+    <div style="background:orange;color:black;padding:10px;font-size:20px;">DEBUG: Renderizando perfil_cliente.html</div>
+
+    <!-- Encabezado de Cliente -->
+    <div class="client-header text-center">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <i class="fas fa-user fa-4x mb-3"></i>
+            </div>
+            <div class="col-md-6">
+                <h1 class="h2 mb-2">{{ user_role_display }}</h1>
+                <p class="lead mb-0">Bienvenido/a al Spa</p>
+                <small class="text-light">Gestiona tus turnos y perfil personal</small>
+            </div>
+            <div class="col-md-3">
+                <button onclick="toggleEditMode()" class="btn btn-light btn-lg" id="editButton">
+                    <i class="fas fa-edit me-2"></i>Editar Perfil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard para Cliente -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-calendar-alt me-2"></i>Mis Últimos Turnos</h5>
+                </div>
+                <div class="card-body">
+                    {% if mis_turnos %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Servicio</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for turno in mis_turnos %}
+                                    <tr>
+                                        <td>{{ turno.servicio.nombre }}</td>
+                                        <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                        <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% else %}danger{% endif %}">
+                                                {{ turno.get_estado_display }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'usuarios:mis_turnos' %}" class="btn btn-primary">
+                                Ver Todos Mis Turnos
+                            </a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No tienes turnos registrados.</p>
+                        <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>Reservar Turno
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-spa me-2"></i>Servicios Disponibles</h5>
+                </div>
+                <div class="card-body">
+                    {% for servicio in servicios_disponibles %}
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="{{ servicio.icono }} me-2"></i>
+                            <span>{{ servicio.nombre }}</span>
+                        </div>
+                    {% endfor %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'servicios:servicio_list' %}" class="btn btn-outline-primary btn-sm">
+                            Ver Todos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de Edición de Perfil (Oculto por defecto) -->
+    <div class="edit-forms-section" id="editFormsSection">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user me-2"></i>Editar Mi Perfil</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="edit_perfil" value="1">
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" 
+                                   value="{{ perfil_form_data.first_name }}" placeholder="Tu nombre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" 
+                                   value="{{ perfil_form_data.last_name }}" placeholder="Tu apellido" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ perfil_form_data.email }}" placeholder="tu@email.com" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                   value="{{ perfil_form_data.telefono }}" placeholder="+54 11 1234-5678">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                                   value="{{ perfil_form_data.fecha_nacimiento|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="foto" class="form-label">Foto de Perfil</label>
+                            <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                            {% if perfil_form_data.foto %}
+                                <small class="text-muted">Actual: {{ perfil_form_data.foto.name }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" 
+                               value="{{ perfil_form_data.direccion }}" placeholder="Tu dirección completa">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="bio" class="form-label">Biografía</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                  placeholder="Cuéntanos un poco sobre ti...">{{ perfil_form_data.bio }}</textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="button" onclick="toggleEditMode()" class="btn btn-secondary me-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para activar/desactivar el modo de edición
+function toggleEditMode() {
+    const editSection = document.getElementById('editFormsSection');
+    const editButton = document.getElementById('editButton');
+    
+    if (editSection.classList.contains('active')) {
+        // Ocultar formularios
+        editSection.classList.remove('active');
+        editButton.innerHTML = '<i class="fas fa-edit me-2"></i>Editar Perfil';
+        editButton.className = 'btn btn-light btn-lg';
+    } else {
+        // Mostrar formularios
+        editSection.classList.add('active');
+        editButton.innerHTML = '<i class="fas fa-times me-2"></i>Cancelar Edición';
+        editButton.className = 'btn btn-outline-secondary btn-lg';
+        
+        // Scroll hacia los formularios
+        editSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+</script>
+{% endblock %}

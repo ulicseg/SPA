@@ -3,21 +3,15 @@ from . import views
 
 app_name = 'usuarios'
 
-urlpatterns = [
-    # Vista principal unificada de perfil
+urlpatterns = [    # Vista principal unificada de perfil
     path('perfil/', views.perfil, name='perfil'),
-    
-    # Vista de prueba para admin
-    path('test-perfil/', views.test_perfil, name='test_perfil'),
     
     # Gestión de usuarios
     path('gestionar/', views.gestionar_usuarios, name='gestionar_usuarios'),
     path('asignar-rol/<int:user_id>/', views.asignar_rol_usuario, name='asignar_rol_usuario'),
     path('mis-turnos/', views.mis_turnos, name='mis_turnos'),
     path('registro-cliente/', views.ClienteRegistroView.as_view(), name='registro_cliente'),
-    
-    # URLs para profesionales
-    path('profesional/', views.perfil_profesional, name='perfil_profesional'),
+      # URLs para profesionales
     path('profesional/editar-horarios/', views.editar_horarios_profesional, name='editar_horarios_profesional'),
     
     # URLs para administradores - gestión de profesionales

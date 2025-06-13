@@ -1,0 +1,457 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - GestorSpa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #2196f3;
+        box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #2196f3, #1976d2);
+        border: none;
+        border-radius: 25px;
+        padding: 0.75rem 2rem;
+        transition: transform 0.2s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        background: linear-gradient(45deg, #1976d2, #1565c0);
+    }
+    
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border: none;
+        margin-bottom: 2rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border-radius: 10px 10px 0 0;
+        border: none;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        color: #666;
+        background: #f8f9fa;
+        margin-right: 0.5rem;
+    }
+    
+    .nav-tabs .nav-link.active {
+        background: #2196f3;
+        color: white;
+    }
+    
+    .form-floating > label {
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .btn-save {
+        background: linear-gradient(45deg, #4caf50, #45a049);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-user-circle me-2"></i>
+                    Mi Perfil - {{ user_role_display }}
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formularios de Edición Unificados -->
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="editTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="general-tab" data-bs-toggle="tab" 
+                            data-bs-target="#general-profile" type="button" role="tab">
+                        <i class="fas fa-user me-2"></i>Perfil General
+                    </button>
+                </li>
+                {% if user_role == 'profesional' and profesional_form %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="professional-tab" data-bs-toggle="tab" 
+                            data-bs-target="#professional-profile" type="button" role="tab">
+                        <i class="fas fa-user-tie me-2"></i>Datos Profesionales
+                    </button>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <div class="card-body">
+            <div class="tab-content" id="editTabContent">
+                <!-- Tab Perfil General -->
+                <div class="tab-pane fade show active" id="general-profile" role="tabpanel">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="edit_perfil" value="1">
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2">
+                                    <i class="fas fa-user-circle me-2"></i>Información Personal
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="{{ perfil_form_data.first_name }}" placeholder="Tu nombre" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       value="{{ perfil_form_data.last_name }}" placeholder="Tu apellido" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ perfil_form_data.email }}" placeholder="tu@email.com" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                       value="{{ perfil_form_data.telefono }}" placeholder="+54 11 1234-5678">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                                       value="{{ perfil_form_data.fecha_nacimiento|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="foto" class="form-label">Foto de Perfil</label>
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                                {% if perfil_form_data.foto %}
+                                    <small class="text-muted">Actual: {{ perfil_form_data.foto.name }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" 
+                                   value="{{ perfil_form_data.direccion }}" placeholder="Tu dirección completa">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="bio" class="form-label">Biografía</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                      placeholder="Cuéntanos un poco sobre ti...">{{ perfil_form_data.bio }}</textarea>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-save">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab Datos Profesionales -->
+                {% if user_role == 'profesional' and profesional_form %}
+                <div class="tab-pane fade" id="professional-profile" role="tabpanel">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="edit_profesional" value="1">
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2">
+                                    <i class="fas fa-user-tie me-2"></i>Información Profesional
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.nombre_completo.id_for_label }}" class="form-label">Nombre Completo Profesional</label>
+                                {{ profesional_form.nombre_completo }}
+                                {% if profesional_form.nombre_completo.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.nombre_completo.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.contacto.id_for_label }}" class="form-label">Email Profesional</label>
+                                {{ profesional_form.contacto }}
+                                {% if profesional_form.contacto.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.contacto.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.telefono_profesional.id_for_label }}" class="form-label">Teléfono Profesional</label>
+                                {{ profesional_form.telefono_profesional }}
+                                {% if profesional_form.telefono_profesional.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.telefono_profesional.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.experiencia_anos.id_for_label }}" class="form-label">Años de Experiencia</label>
+                                {{ profesional_form.experiencia_anos }}
+                                {% if profesional_form.experiencia_anos.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.experiencia_anos.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.especialidad.id_for_label }}" class="form-label">Especialidad Principal</label>
+                                {{ profesional_form.especialidad }}
+                                {% if profesional_form.especialidad.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.especialidad.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.numero_matricula.id_for_label }}" class="form-label">Número de Matrícula</label>
+                                {{ profesional_form.numero_matricula }}
+                                {% if profesional_form.numero_matricula.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.numero_matricula.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.especialidades_secundarias.id_for_label }}" class="form-label">Especialidades Secundarias</label>
+                                {{ profesional_form.especialidades_secundarias }}
+                                {% if profesional_form.especialidades_secundarias.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.especialidades_secundarias.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ profesional_form.colegio_profesional.id_for_label }}" class="form-label">Colegio Profesional</label>
+                                {{ profesional_form.colegio_profesional }}
+                                {% if profesional_form.colegio_profesional.errors %}
+                                    <div class="text-danger small mt-1">{{ profesional_form.colegio_profesional.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ profesional_form.servicios_especialidad.id_for_label }}" class="form-label">Servicios de Especialidad</label>
+                            {{ profesional_form.servicios_especialidad }}
+                            {% if profesional_form.servicios_especialidad.errors %}
+                                <div class="text-danger small mt-1">{{ profesional_form.servicios_especialidad.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ profesional_form.biografia.id_for_label }}" class="form-label">Biografía Profesional</label>
+                            {{ profesional_form.biografia }}
+                            {% if profesional_form.biografia.errors %}
+                                <div class="text-danger small mt-1">{{ profesional_form.biografia.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ profesional_form.disponibilidad_notas.id_for_label }}" class="form-label">Notas de Disponibilidad</label>
+                            {{ profesional_form.disponibilidad_notas }}
+                            {% if profesional_form.disponibilidad_notas.errors %}
+                                <div class="text-danger small mt-1">{{ profesional_form.disponibilidad_notas.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ profesional_form.foto_profesional.id_for_label }}" class="form-label">Foto Profesional</label>
+                            {{ profesional_form.foto_profesional }}
+                            {% if profesional_form.foto_profesional.errors %}
+                                <div class="text-danger small mt-1">{{ profesional_form.foto_profesional.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-save">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios Profesionales
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard según rol -->
+    {% if user_role == 'cliente' %}
+        <!-- Dashboard para Cliente -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-check me-2"></i>Mis Últimos Turnos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if mis_turnos %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Servicio</th>
+                                            <th>Profesional</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in mis_turnos %}
+                                        <tr>
+                                            <td>{{ turno.fecha|date:"d/m/Y" }} {{ turno.hora_inicio }}</td>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>{{ turno.profesional.nombre_completo }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% else %}danger{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No tienes turnos registrados aún.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif user_role == 'profesional' %}
+        <!-- Dashboard para Profesional -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-day me-2"></i>Turnos de Hoy</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if turnos_hoy %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Hora</th>
+                                            <th>Cliente</th>
+                                            <th>Servicio</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in turnos_hoy %}
+                                        <tr>
+                                            <td>{{ turno.hora_inicio }}</td>
+                                            <td>{{ turno.usuario.get_full_name }}</td>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% else %}info{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No hay turnos para hoy.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif user_role == 'administrador' %}
+        <!-- Dashboard para Administrador -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Resumen del Sistema</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <h3 class="text-primary">{{ turnos_count }}</h3>
+                                <p>Total Turnos</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h3 class="text-success">{{ servicios_count }}</h3>
+                                <p>Servicios</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h3 class="text-info">{{ turnos_hoy }}</h3>
+                                <p>Turnos Hoy</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- Usuario sin rol asignado -->
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Sin rol asignado:</strong> Contacta al administrador para que te asigne un rol en el sistema.
+        </div>
+    {% endif %}
+</div>
+
+<!-- Script para inicializar tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

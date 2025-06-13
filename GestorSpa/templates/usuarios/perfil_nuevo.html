@@ -1,0 +1,592 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - {{ user_role_display }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 0.75rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #17a2b8;
+        box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+    }
+    
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+    
+    .text-primary {
+        color: #17a2b8 !important;
+    }
+    
+    .bg-info {
+        background-color: #17a2b8 !important;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .img-thumbnail {
+        border-radius: 8px;
+    }
+    
+    .form-floating > label {
+        color: #666;
+    }
+    
+    .btn-save {
+        background: linear-gradient(45deg, #4caf50, #45a049);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        color: white;
+    }
+    
+    .current-image {
+        max-width: 150px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    
+    .section-divider {
+        border-bottom: 2px solid #e3f2fd;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-user-circle me-2"></i>
+                    Mi Perfil - {{ user_role_display }}
+                </h1>
+                <button onclick="activateEditMode()" class="btn btn-outline-primary">
+                    <i class="fas fa-edit me-1"></i>Editar Perfil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard según rol -->
+    {% if user_role == 'cliente' %}
+        <!-- Dashboard para Cliente -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-alt me-2"></i>Mis Últimos Turnos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if mis_turnos %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Servicio</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in mis_turnos %}
+                                        <tr>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                            <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% else %}danger{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No tienes turnos registrados aún.</p>
+                        {% endif %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Reservar Nuevo Turno
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-spa me-2"></i>Servicios Disponibles</h6>
+                    </div>
+                    <div class="card-body">
+                        {% for servicio in servicios_disponibles %}
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="{{ servicio.icono }} me-2"></i>
+                                <span>{{ servicio.nombre }}</span>
+                            </div>
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'servicios:servicio_list' %}" class="btn btn-outline-primary btn-sm">
+                                Ver Todos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif user_role == 'profesional' %}
+        <!-- Dashboard para Profesional -->
+        <div class="row">
+            <!-- Estadísticas del Profesional -->
+            <div class="col-md-12">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card text-center bg-primary text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_pendientes }}</h4>
+                                <p>Turnos Pendientes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center bg-success text-white">
+                            <div class="card-body">
+                                <h4>{{ servicios_count }}</h4>
+                                <p>Servicios Activos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center bg-info text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_hoy.count }}</h4>
+                                <p>Turnos Próximos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Edición de Datos Profesionales -->
+                {% if profesional_form %}
+                <div class="card mb-4">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-edit me-2"></i>
+                            Mis Datos Profesionales
+                            <small class="float-end">
+                                <i class="fas fa-info-circle" data-bs-toggle="tooltip" title="Edita tu información profesional directamente desde aquí"></i>
+                            </small>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="edit_profesional" value="1">
+                            
+                            <!-- Información Personal -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary section-divider">
+                                        <i class="fas fa-user me-2"></i>Información Personal
+                                    </h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.nombre_completo }}
+                                        <label for="{{ profesional_form.nombre_completo.id_for_label }}">Nombre Completo *</label>
+                                        {% if profesional_form.nombre_completo.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.nombre_completo.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.contacto }}
+                                        <label for="{{ profesional_form.contacto.id_for_label }}">Email de Contacto</label>
+                                        {% if profesional_form.contacto.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.contacto.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.telefono_profesional }}
+                                        <label for="{{ profesional_form.telefono_profesional.id_for_label }}">Teléfono Profesional</label>
+                                        {% if profesional_form.telefono_profesional.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.telefono_profesional.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.experiencia_anos }}
+                                        <label for="{{ profesional_form.experiencia_anos.id_for_label }}">Años de Experiencia</label>
+                                        {% if profesional_form.experiencia_anos.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.experiencia_anos.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información Profesional -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary section-divider">
+                                        <i class="fas fa-briefcase me-2"></i>Información Profesional
+                                    </h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.especialidad }}
+                                        <label for="{{ profesional_form.especialidad.id_for_label }}">Especialidad Principal *</label>
+                                        {% if profesional_form.especialidad.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.especialidad.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.numero_matricula }}
+                                        <label for="{{ profesional_form.numero_matricula.id_for_label }}">Número de Matrícula</label>
+                                        {% if profesional_form.numero_matricula.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.numero_matricula.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.especialidades_secundarias }}
+                                        <label for="{{ profesional_form.especialidades_secundarias.id_for_label }}">Especialidades Secundarias</label>
+                                        {% if profesional_form.especialidades_secundarias.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.especialidades_secundarias.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">Separa múltiples especialidades con comas</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.colegio_profesional }}
+                                        <label for="{{ profesional_form.colegio_profesional.id_for_label }}">Colegio Profesional</label>
+                                        {% if profesional_form.colegio_profesional.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.colegio_profesional.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Servicios que Realizas -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary section-divider">
+                                        <i class="fas fa-spa me-2"></i>Servicios que Realizas
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="{{ profesional_form.servicios_especialidad.id_for_label }}" class="form-label">
+                                            {{ profesional_form.servicios_especialidad.label }}
+                                        </label>
+                                        {{ profesional_form.servicios_especialidad }}
+                                        {% if profesional_form.servicios_especialidad.errors %}
+                                            <div class="text-danger small">{{ profesional_form.servicios_especialidad.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">{{ profesional_form.servicios_especialidad.help_text }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Biografía y Disponibilidad -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary section-divider">
+                                        <i class="fas fa-file-text me-2"></i>Biografía y Disponibilidad
+                                    </h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.biografia }}
+                                        <label for="{{ profesional_form.biografia.id_for_label }}">Biografía Profesional</label>
+                                        {% if profesional_form.biografia.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.biografia.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">Describe tu experiencia, formación y filosofía profesional</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ profesional_form.disponibilidad_notas }}
+                                        <label for="{{ profesional_form.disponibilidad_notas.id_for_label }}">Notas de Disponibilidad</label>
+                                        {% if profesional_form.disponibilidad_notas.errors %}
+                                            <div class="text-danger small mt-1">{{ profesional_form.disponibilidad_notas.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">Información adicional sobre tu horario o disponibilidad</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Foto Profesional -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary section-divider">
+                                        <i class="fas fa-camera me-2"></i>Foto Profesional
+                                    </h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ profesional_form.foto_profesional.id_for_label }}" class="form-label">
+                                            {{ profesional_form.foto_profesional.label }}
+                                        </label>
+                                        {{ profesional_form.foto_profesional }}
+                                        {% if profesional_form.foto_profesional.errors %}
+                                            <div class="text-danger small">{{ profesional_form.foto_profesional.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">Formatos permitidos: JPG, PNG. Tamaño máximo: 2MB</div>
+                                    </div>
+                                </div>
+                                {% if profesional.foto_profesional %}
+                                <div class="col-md-6">
+                                    <div class="text-center">
+                                        <img src="{{ profesional.foto_profesional.url }}" alt="Foto profesional actual" 
+                                             class="current-image">
+                                        <div class="text-muted mt-2">Foto actual</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Botones de acción -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="location.reload()">
+                                            <i class="fas fa-times me-1"></i>Cancelar Cambios
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-save">
+                                            <i class="fas fa-save me-1"></i>Guardar Cambios
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Próximos Turnos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-check me-2"></i>Próximos Turnos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if turnos_hoy %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Servicio</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in turnos_hoy %}
+                                        <tr>
+                                            <td>{{ turno.usuario.get_full_name|default:turno.usuario.username }}</td>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                            <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% else %}info{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    Ver
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No hay turnos próximos programados.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif user_role == 'administrador' %}
+        <!-- Dashboard para Administrador -->
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Estadísticas generales -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center bg-primary text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_count }}</h4>
+                                <p>Total Turnos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-success text-white">
+                            <div class="card-body">
+                                <h4>{{ servicios_count }}</h4>
+                                <p>Servicios</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-info text-white">
+                            <div class="card-body">
+                                <h4>{{ turnos_hoy }}</h4>
+                                <p>Turnos Hoy</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-warning text-white">
+                            <div class="card-body">
+                                <h4>{{ user.username }}</h4>
+                                <p>Administrador</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Últimos turnos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-calendar-alt me-2"></i>Últimos Turnos Registrados</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if ultimos_turnos %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Servicio</th>
+                                            <th>Profesional</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for turno in ultimos_turnos %}
+                                        <tr>
+                                            <td>{{ turno.usuario.get_full_name|default:turno.usuario.username }}</td>
+                                            <td>{{ turno.servicio.nombre }}</td>
+                                            <td>{{ turno.profesional.user.get_full_name|default:turno.profesional.user.username }}</td>
+                                            <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                            <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% else %}danger{% endif %}">
+                                                    {{ turno.get_estado_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    Ver
+                                                </a>
+                                                <a href="{% url 'turnos:turno_update' turno.pk %}" class="btn btn-sm btn-outline-warning">
+                                                    Editar
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No hay turnos registrados aún.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Dashboard para usuarios sin rol específico -->
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    <h4>Sin rol asignado</h4>
+                    <p>Tu cuenta no tiene un rol específico asignado. Contacta al administrador para obtener los permisos correspondientes.</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Script para inicializar tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
+// Función para activar el modo de edición
+function activateEditMode() {
+    // Buscar y hacer clic en el tab de edición si existe
+    const editTab = document.querySelector('button[data-bs-target="#edit-profile"]');
+    if (editTab) {
+        editTab.click();
+    } else {
+        // Si no existe el tab de edición, scroll hacia los formularios
+        const editForms = document.querySelector('.edit-forms-section');
+        if (editForms) {
+            editForms.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+}
+</script>
+{% endblock %}

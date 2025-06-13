@@ -1,0 +1,259 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Panel de Administración{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-panel {
+        max-width: 1100px;
+        margin: 40px auto 0 auto;
+        padding: 32px 24px 24px 24px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+    .admin-header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+    .admin-header .icon {
+        font-size: 3rem;
+        color: #5a5aee;
+        background: #f2f4ff;
+        border-radius: 50%;
+        padding: 18px;
+    }
+    .admin-header .info h2 {
+        margin: 0 0 4px 0;
+        font-size: 2rem;
+        font-weight: 600;
+        color: #333;
+    }
+    .admin-header .info p {
+        margin: 0;
+        color: #888;
+        font-size: 1.1rem;
+    }
+    .admin-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-bottom: 32px;
+    }
+    .metric-box {
+        flex: 1 1 180px;
+        background: #f7f8fa;
+        border-radius: 12px;
+        padding: 18px 0 12px 0;
+        text-align: center;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .metric-box i {
+        font-size: 1.7rem;
+        margin-bottom: 6px;
+        color: #5a5aee;
+    }
+    .metric-box h4 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #222;
+    }
+    .metric-box p {
+        margin: 0;
+        color: #888;
+        font-size: 1rem;
+    }
+    .quick-actions {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+    .quick-actions a {
+        flex: 1 1 160px;
+        background: #e9f0ff;
+        color: #2a2a6a;
+        border-radius: 10px;
+        padding: 18px 0 12px 0;
+        text-align: center;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.2s;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    }
+    .quick-actions a:hover {
+        background: #d0e2ff;
+        color: #1a1a4a;
+    }
+    .quick-actions i {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .admin-section {
+        margin-bottom: 32px;
+    }
+    .admin-section h5 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 12px;
+    }
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f7f8fa;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    }
+    .table th, .table td {
+        vertical-align: middle;
+        font-size: 0.98rem;
+    }
+    .admin-links {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+    .admin-link-box {
+        flex: 1 1 220px;
+        background: #f2f4ff;
+        border-radius: 10px;
+        padding: 18px 16px;
+        text-align: left;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        margin-bottom: 12px;
+    }
+    .admin-link-box strong {
+        color: #2a2a6a;
+        font-size: 1.1rem;
+    }
+    .admin-link-box small {
+        color: #888;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <div class="admin-header">
+        <span class="icon"><i class="fas fa-user-shield"></i></span>
+        <div class="info">
+            <h2>{{ user_role_display }}</h2>
+            <p>Panel de administración y control del sistema</p>
+        </div>
+        <div style="margin-left:auto;">
+            <a href="{% url 'usuarios:perfil' %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-edit me-1"></i>Editar Perfil
+            </a>
+        </div>
+    </div>
+    <div class="admin-metrics">
+        <div class="metric-box">
+            <i class="fas fa-users"></i>
+            <h4>{{ total_usuarios|default:0 }}</h4>
+            <p>Usuarios</p>
+        </div>
+        <div class="metric-box">
+            <i class="fas fa-user-md"></i>
+            <h4>{{ total_profesionales|default:0 }}</h4>
+            <p>Profesionales</p>
+        </div>
+        <div class="metric-box">
+            <i class="fas fa-spa"></i>
+            <h4>{{ servicios_count|default:0 }}</h4>
+            <p>Servicios</p>
+        </div>
+        <div class="metric-box">
+            <i class="fas fa-calendar-alt"></i>
+            <h4>{{ turnos_count|default:0 }}</h4>
+            <p>Turnos</p>
+        </div>
+        <div class="metric-box">
+            <i class="fas fa-calendar-day"></i>
+            <h4>{{ turnos_hoy|default:0 }}</h4>
+            <p>Turnos Hoy</p>
+        </div>
+        <div class="metric-box">
+            <i class="fas fa-chart-pie"></i>
+            <h4>{% for estado in turnos_por_estado %}{{ estado.total }} {% endfor %}</h4>
+            <p>Estados</p>
+        </div>
+    </div>
+    <div class="quick-actions">
+        <a href="{% url 'turnos:turno_reserva_unificada' %}"><i class="fas fa-plus-circle"></i>Nuevo Turno</a>
+        <a href="{% url 'servicios:servicio_create' %}"><i class="fas fa-spa"></i>Nuevo Servicio</a>
+        <a href="{% url 'usuarios:gestionar_usuarios' %}"><i class="fas fa-users-cog"></i>Gestionar Usuarios</a>
+        <a href="{% url 'turnos:turno_list' %}"><i class="fas fa-list-alt"></i>Ver Turnos</a>
+    </div>
+    <div class="admin-section">
+        <h5>Últimos Turnos</h5>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Servicio</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for turno in ultimos_turnos %}
+                    <tr>
+                        <td>{{ turno.nombre|default:turno.usuario.get_full_name }}</td>
+                        <td>{{ turno.servicio.nombre }}</td>
+                        <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                        <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                        <td>
+                            <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% else %}danger{% endif %}">
+                                {{ turno.get_estado_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'turnos:turno_update' turno.pk %}" class="btn btn-sm btn-outline-warning" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="text-center text-muted">No hay turnos registrados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="admin-section">
+        <h5>Panel de Administración</h5>
+        <div class="admin-links">
+            <div class="admin-link-box">
+                <strong><i class="fas fa-cog me-2"></i>Django Admin</strong><br>
+                <small>Gestión avanzada del sistema</small><br>
+                <a href="/admin/" class="btn btn-link p-0">Ir</a>
+            </div>
+            <div class="admin-link-box">
+                <strong><i class="fas fa-user-md me-2"></i>Gestionar Profesionales</strong><br>
+                <small>Horarios, especialidades y estado</small><br>
+                <a href="{% url 'usuarios:gestionar_profesionales' %}" class="btn btn-link p-0">Ir</a>
+            </div>
+            <div class="admin-link-box">
+                <strong><i class="fas fa-file-excel me-2"></i>Reporte de Turnos</strong><br>
+                <small>Exportar datos en Excel/CSV</small><br>
+                <a href="#" class="btn btn-link p-0">Descargar</a>
+            </div>
+            <div class="admin-link-box">
+                <strong><i class="fas fa-chart-bar me-2"></i>Estadísticas</strong><br>
+                <small>Gráficos y métricas</small><br>
+                <a href="#" class="btn btn-link p-0">Ver</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
