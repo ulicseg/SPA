@@ -1,178 +1,387 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Registro de Cliente - SPA Gestión{% endblock %}
+{% block title %}Únete a nosotros - SPA Gestión{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4><i class="fas fa-user-plus me-2"></i>Registro de Cliente</h4>
-                    <p class="mb-0">Únete a nuestro SPA y disfruta de nuestros servicios</p>
-                </div>
-                <div class="card-body">
-                    <!-- Mensaje de información -->
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>¡Bienvenido/a!</strong> Para realizar reservas en nuestro SPA, necesitas crear una cuenta de cliente.
-                        Es rápido, gratuito y te permitirá gestionar todas tus reservas de forma cómoda y segura.
+<style>
+.registro-container {
+    background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-sage) 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+    position: relative;
+}
+
+.registro-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(224,213,190,0.1)"><polygon points="1000,100 1000,0 0,100"/></svg>');
+    background-size: 100% 100%;
+}
+
+.registro-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(70, 106, 68, 0.15);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.registro-header {
+    background: linear-gradient(135deg, var(--color-coral) 0%, var(--color-berry) 100%);
+    padding: 2rem;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.registro-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-coral), var(--color-berry), var(--color-coral));
+}
+
+.form-floating {
+    margin-bottom: 1.2rem;
+}
+
+.form-floating .form-control {
+    border: 1px solid rgba(154, 168, 168, 0.2);
+    border-radius: 12px;
+    padding: 1rem 0.75rem;
+    height: auto;
+    background: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+}
+
+.form-floating .form-control:focus {
+    border-color: var(--color-berry);
+    box-shadow: 0 0 0 0.2rem var(--color-berry-light);
+    background: white;
+    transform: translateY(-1px);
+}
+
+.form-floating label {
+    color: var(--color-forest);
+    padding: 1rem 0.75rem;
+}
+
+.form-floating .form-control:focus ~ label,
+.form-floating .form-control:not(:placeholder-shown) ~ label {
+    color: var(--color-berry);
+    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+.input-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-sage);
+    z-index: 4;
+    transition: color 0.3s ease;
+}
+
+.form-floating:focus-within .input-icon {
+    color: var(--color-berry);
+}
+
+.btn-registro {
+    background: linear-gradient(135deg, var(--color-coral) 0%, var(--color-berry) 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--color-coral-light);
+}
+
+.btn-registro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--color-berry-light);
+    color: white;
+    background: linear-gradient(135deg, var(--color-berry) 0%, var(--color-coral) 100%);
+}
+
+.btn-login {
+    background: transparent;
+    border: 2px solid var(--color-sage);
+    border-radius: 12px;
+    padding: 0.7rem 2rem;
+    color: var(--color-forest);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background: var(--color-sage);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.beneficios-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin-top: 1.5rem;
+}
+
+.beneficio-item {
+    padding: 0.5rem 0;
+    border-left: 3px solid var(--color-berry);
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 0 8px 8px 0;
+    transition: transform 0.2s ease;
+}
+
+.beneficio-item:hover {
+    transform: translateX(5px);
+    background: var(--color-sand-light);
+}
+
+.form-check-custom {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(224, 213, 190, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(154, 168, 168, 0.1);
+}
+
+.form-check-custom input[type="checkbox"] {
+    margin-right: 0.8rem;
+    transform: scale(1.2);
+}
+
+.password-strength {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    background: var(--color-sand);
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.titulo-elegante {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: 'Raleway', sans-serif;
+}
+
+.subtitulo-elegante {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin-bottom: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+}
+
+.text-primary {
+    color: var(--color-berry) !important;
+}
+
+.text-success {
+    color: var(--color-forest) !important;
+}
+
+.text-info {
+    color: var(--color-sage) !important;
+}
+
+.text-warning {
+    color: var(--color-coral) !important;
+}
+</style>
+
+<div class="registro-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="registro-card">
+                    <div class="registro-header">
+                        <div class="mb-3">
+                            <i class="fas fa-spa fa-3x mb-3" style="opacity: 0.9;"></i>
+                        </div>                        <h1 class="titulo-elegante">¡Únete a nosotros!</h1>
+                        <p class="subtitulo-elegante">Crea tu cuenta gratuita y accede a nuestros servicios de bienestar. ¡Podrás reservar turnos de forma fácil y rápida!</p>
                     </div>
-
-                    <!-- Formulario de registro -->
-                    <form method="post" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        
-                        <!-- Username -->
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">
-                                <i class="fas fa-user me-1"></i>Nombre de usuario
-                            </label>
-                            {{ form.username }}
-                            <div class="form-text">
-                                Será tu identificador único en el sistema. Solo letras, números y @/./+/-/_ permitidos.
-                            </div>
-                            {% if form.username.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.username.errors %}
-                                        {{ error }}
-                                    {% endfor %}
+                    
+                    <div class="p-4">
+                        <form method="post" class="needs-validation" novalidate id="registroForm">
+                            {% csrf_token %}
+                            
+                            <!-- Datos personales -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.first_name }}
+                                        <label for="{{ form.first_name.id_for_label }}">Nombre</label>
+                                        <i class="fas fa-user input-icon"></i>
+                                        {% if form.first_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.first_name.errors %}{{ error }}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            {% endif %}
-                        </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.last_name }}
+                                        <label for="{{ form.last_name.id_for_label }}">Apellido</label>
+                                        <i class="fas fa-user input-icon"></i>
+                                        {% if form.last_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.last_name.errors %}{{ error }}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
 
-                        <!-- Nombre y apellido -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                                    <i class="fas fa-id-card me-1"></i>Nombre
-                                </label>
-                                {{ form.first_name }}
-                                {% if form.first_name.errors %}
+                            <!-- Username -->
+                            <div class="form-floating">
+                                {{ form.username }}
+                                <label for="{{ form.username.id_for_label }}">Nombre de usuario</label>
+                                <i class="fas fa-at input-icon"></i>
+                                {% if form.username.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.first_name.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {% for error in form.username.errors %}{{ error }}{% endfor %}
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                                    <i class="fas fa-id-card me-1"></i>Apellido
-                                </label>
-                                {{ form.last_name }}
-                                {% if form.last_name.errors %}
+
+                            <!-- Email y teléfono -->
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="form-floating">
+                                        {{ form.email }}
+                                        <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+                                        <i class="fas fa-envelope input-icon"></i>
+                                        {% if form.email.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-floating">
+                                        {{ form.telefono }}
+                                        <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                                        <i class="fas fa-phone input-icon"></i>
+                                        {% if form.telefono.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.telefono.errors %}{{ error }}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contraseñas -->
+                            <div class="form-floating">
+                                {{ form.password1 }}
+                                <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+                                <i class="fas fa-lock input-icon"></i>
+                                <div class="password-strength">
+                                    <div class="password-strength-bar" id="strengthBar"></div>
+                                </div>
+                                {% if form.password1.errors %}
                                     <div class="invalid-feedback d-block">
-                                        {% for error in form.last_name.errors %}
-                                            {{ error }}
-                                        {% endfor %}
+                                        {% for error in form.password1.errors %}{{ error }}{% endfor %}
                                     </div>
                                 {% endif %}
                             </div>
-                        </div>
 
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">
-                                <i class="fas fa-envelope me-1"></i>Correo electrónico
-                            </label>
-                            {{ form.email }}
-                            <div class="form-text">
-                                Usaremos este email para enviarte confirmaciones de tus reservas.
+                            <div class="form-floating">
+                                {{ form.password2 }}
+                                <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+                                <i class="fas fa-check-circle input-icon" id="confirmIcon"></i>
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.password2.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            {% if form.email.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.email.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
 
-                        <!-- Teléfono -->
-                        <div class="mb-3">
-                            <label for="{{ form.telefono.id_for_label }}" class="form-label">
-                                <i class="fas fa-phone me-1"></i>Teléfono
-                            </label>
-                            {{ form.telefono }}
-                            <div class="form-text">
-                                Número de contacto para comunicarnos contigo sobre tus reservas.
+                            <!-- Términos y condiciones -->
+                            <div class="form-check-custom">
+                                <input type="checkbox" class="form-check-input" id="terminos" required>
+                                <label class="form-check-label" for="terminos">
+                                    Acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#modalTerminos" class="text-decoration-none">términos y condiciones</a>
+                                </label>
                             </div>
-                            {% if form.telefono.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.telefono.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
 
-                        <!-- Password -->
-                        <div class="mb-3">
-                            <label for="{{ form.password1.id_for_label }}" class="form-label">
-                                <i class="fas fa-lock me-1"></i>Contraseña
-                            </label>
-                            {{ form.password1 }}
-                            <div class="form-text">
-                                Tu contraseña debe tener al menos 8 caracteres y no puede ser completamente numérica.
+                            <!-- Botones -->
+                            <div class="d-grid gap-3 mt-4">
+                                <button type="submit" class="btn btn-registro btn-lg">
+                                    <i class="fas fa-sparkles me-2"></i>Crear mi cuenta
+                                </button>
+                                <div class="text-center">
+                                    <span class="text-muted">¿Ya tienes una cuenta?</span>
+                                    <a href="{% url 'login' %}" class="btn btn-login ms-2">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Iniciar sesión
+                                    </a>
+                                </div>
                             </div>
-                            {% if form.password1.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.password1.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Confirm Password -->
-                        <div class="mb-3">
-                            <label for="{{ form.password2.id_for_label }}" class="form-label">
-                                <i class="fas fa-lock me-1"></i>Confirmar contraseña
-                            </label>
-                            {{ form.password2 }}
-                            {% if form.password2.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.password2.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Checkbox de términos -->
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="terminos" required>
-                            <label class="form-check-label" for="terminos">
-                                Acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#modalTerminos">términos y condiciones</a> del SPA
-                            </label>
-                        </div>
-
-                        <!-- Botones -->
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-user-plus me-2"></i>Crear Cuenta de Cliente
-                            </button>
-                            <a href="{% url 'login' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-sign-in-alt me-2"></i>Ya tengo una cuenta
-                            </a>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Información adicional -->
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h6><i class="fas fa-gift me-2 text-primary"></i>Beneficios de registrarte:</h6>
-                    <ul class="small mb-0">
-                        <li>Reserva turnos de forma rápida y segura</li>
-                        <li>Historial completo de tus servicios</li>
-                        <li>Recordatorios automáticos por email</li>
-                        <li>Gestión fácil de tus datos personales</li>
-                        <li>Acceso a promociones especiales</li>
-                    </ul>
+                <!-- Beneficios compactos -->
+                <div class="beneficios-card">
+                    <div class="card-body p-3">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="beneficio-item">
+                                    <i class="fas fa-calendar-check me-2 text-primary"></i>
+                                    <small>Reservas fáciles</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="beneficio-item">
+                                    <i class="fas fa-history me-2 text-success"></i>
+                                    <small>Historial completo</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="beneficio-item">
+                                    <i class="fas fa-bell me-2 text-info"></i>
+                                    <small>Recordatorios</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="beneficio-item">
+                                    <i class="fas fa-gift me-2 text-warning"></i>
+                                    <small>Promociones</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,50 +391,194 @@
 <!-- Modal de Términos y Condiciones -->
 <div class="modal fade" id="modalTerminos" tabindex="-1" aria-labelledby="modalTerminosLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTerminosLabel">Términos y Condiciones</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 15px 15px 0 0;">
+                <h5 class="modal-title" id="modalTerminosLabel">
+                    <i class="fas fa-file-contract me-2"></i>Términos y Condiciones
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <h6>1. Registro de Usuario</h6>
-                <p>Al registrarte como cliente del SPA, aceptas proporcionar información veraz y mantenerla actualizada.</p>
-                
-                <h6>2. Uso del Sistema</h6>
-                <p>El sistema de reservas está destinado exclusivamente para el uso personal del cliente registrado.</p>
-                
-                <h6>3. Política de Cancelación</h6>
-                <p>Las cancelaciones deben realizarse con al menos 24 horas de anticipación.</p>
-                
-                <h6>4. Privacidad de Datos</h6>
-                <p>Tus datos personales serán protegidos y utilizados únicamente para la gestión de servicios del SPA.</p>
-                
-                <h6>5. Responsabilidades</h6>
-                <p>El cliente es responsable de mantener la confidencialidad de su cuenta y contraseña.</p>
+            <div class="modal-body" style="padding: 2rem;">
+                <div class="terms-content">
+                    <div class="term-section mb-4">
+                        <h6 class="text-primary"><i class="fas fa-user-circle me-2"></i>1. Registro de Usuario</h6>
+                        <p class="small text-muted">Al registrarte como cliente del SPA, aceptas proporcionar información veraz y mantenerla actualizada. Garantizamos la confidencialidad de tus datos personales.</p>
+                    </div>
+                    
+                    <div class="term-section mb-4">
+                        <h6 class="text-primary"><i class="fas fa-desktop me-2"></i>2. Uso del Sistema</h6>
+                        <p class="small text-muted">El sistema de reservas está destinado exclusivamente para el uso personal del cliente registrado. No está permitido compartir credenciales de acceso.</p>
+                    </div>
+                    
+                    <div class="term-section mb-4">
+                        <h6 class="text-primary"><i class="fas fa-calendar-times me-2"></i>3. Política de Cancelación</h6>
+                        <p class="small text-muted">Las cancelaciones deben realizarse con al menos 24 horas de anticipación para evitar cargos. Las cancelaciones tardías pueden estar sujetas a penalizaciones.</p>
+                    </div>
+                    
+                    <div class="term-section mb-4">
+                        <h6 class="text-primary"><i class="fas fa-shield-alt me-2"></i>4. Privacidad de Datos</h6>
+                        <p class="small text-muted">Tus datos personales serán protegidos según la normativa vigente y utilizados únicamente para la gestión de servicios del SPA. No compartimos información con terceros sin tu consentimiento.</p>
+                    </div>
+                    
+                    <div class="term-section">
+                        <h6 class="text-primary"><i class="fas fa-exclamation-triangle me-2"></i>5. Responsabilidades</h6>
+                        <p class="small text-muted">El cliente es responsable de mantener la confidencialidad de su cuenta y contraseña. Cualquier actividad realizada con tu cuenta será de tu responsabilidad.</p>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <div class="modal-footer" style="border: none; padding: 1rem 2rem;">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cerrar
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="document.getElementById('terminos').checked = true;">
+                    <i class="fas fa-check me-1"></i>Acepto los términos
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Validación del formulario
-(function() {
-    'use strict';
-    window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-                if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación del formulario
+    const form = document.getElementById('registroForm');
+    const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+    const password2 = document.getElementById('{{ form.password2.id_for_label }}');
+    const strengthBar = document.getElementById('strengthBar');
+    const confirmIcon = document.getElementById('confirmIcon');
+
+    // Añadir clases de Bootstrap a los campos del formulario
+    const formFields = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="tel"]');
+    formFields.forEach(field => {
+        field.classList.add('form-control');
+        field.setAttribute('placeholder', ' '); // Para que funcione el floating label
+    });
+
+    // Verificación de fortaleza de contraseña
+    if (password1) {
+        password1.addEventListener('input', function() {
+            const strength = checkPasswordStrength(this.value);
+            updatePasswordStrength(strength);
         });
-    }, false);
-})();
+    }
+
+    // Verificación de coincidencia de contraseñas
+    if (password2) {
+        password2.addEventListener('input', function() {
+            checkPasswordMatch();
+        });
+    }
+
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        
+        return strength;
+    }    function updatePasswordStrength(strength) {
+        // Usando los colores del sistema: rojo -> coral -> berry -> forest -> sage
+        const colors = ['#C7495C', '#E0908D', '#9AA8A8', '#466A44', '#466A44'];
+        const widths = ['20%', '40%', '60%', '80%', '100%'];
+        
+        if (strengthBar && strength > 0) {
+            strengthBar.style.width = widths[strength - 1];
+            strengthBar.style.backgroundColor = colors[strength - 1];
+        } else if (strengthBar) {
+            strengthBar.style.width = '0%';
+        }
+    }    function checkPasswordMatch() {
+        if (password1 && password2 && confirmIcon) {
+            if (password1.value === password2.value && password2.value !== '') {
+                confirmIcon.className = 'fas fa-check-circle input-icon text-success';
+                password2.style.borderColor = '#466A44'; // color-forest
+            } else if (password2.value !== '') {
+                confirmIcon.className = 'fas fa-times-circle input-icon text-danger';
+                password2.style.borderColor = '#C7495C'; // color-berry
+            } else {
+                confirmIcon.className = 'fas fa-check-circle input-icon';
+                password2.style.borderColor = '#E0D5BE'; // color-sand
+            }
+        }
+    }
+
+    // Validación en tiempo real
+    formFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            validateField(this);
+        });
+
+        field.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validateField(this);
+            }
+        });
+    });
+
+    function validateField(field) {
+        const isValid = field.checkValidity();
+        
+        if (isValid) {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+        }
+    }
+
+    // Animaciones de entrada
+    const elementos = document.querySelectorAll('.form-floating, .btn-registro, .beneficio-item');
+    elementos.forEach((elemento, index) => {
+        elemento.style.opacity = '0';
+        elemento.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            elemento.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            elemento.style.opacity = '1';
+            elemento.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+
+    // Validación del formulario al enviar
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Mostrar campos inválidos
+            const invalidFields = form.querySelectorAll(':invalid');
+            invalidFields.forEach(field => {
+                field.classList.add('is-invalid');
+            });
+            
+            // Scroll al primer campo inválido
+            if (invalidFields.length > 0) {
+                invalidFields[0].scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                invalidFields[0].focus();
+            }
+        }
+        
+        form.classList.add('was-validated');
+    });
+
+    // Efectos visuales adicionales
+    const card = document.querySelector('.registro-card');
+    if (card) {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    }
+});
 </script>
 {% endblock %}

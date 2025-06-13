@@ -110,27 +110,393 @@
             margin-bottom: 2rem;
             color: rgba(255, 255, 255, 0.95);
         }
-        
+          /* NAVBAR MODERNO CON GLASSMORPHISM */
         .navbar {
-            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            padding: 1rem 0;
+            background: rgba(70, 106, 68, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
         }
         
         .navbar-scrolled {
-            background: linear-gradient(135deg, var(--color-forest), var(--color-sage));
-            padding: 0.5rem 0;
+            background: rgba(70, 106, 68, 0.98);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-container {
+            padding: 1rem 2rem;
+            transition: padding 0.3s ease;
+        }
+
+        .navbar-scrolled .navbar-container {
+            padding: 0.75rem 2rem;
         }
         
-        .navbar-brand, .nav-link {
+        .navbar-brand {
             color: white !important;
+            font-family: 'Raleway', sans-serif;
+            font-weight: 400;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .navbar-brand i {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--color-coral), var(--color-sand));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .navbar-brand:hover {
+            color: var(--color-sand) !important;
+            transform: translateY(-1px);
+        }
+
+        .navbar-nav {
+            gap: 0.5rem;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 400;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(224, 144, 141, 0.1), rgba(224, 213, 190, 0.1));
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         .nav-link:hover {
-            color: var(--color-sand) !important;
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Dropdown moderno */
+        .dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            min-width: 240px;
+        }
+
+        .dropdown-item {
+            color: var(--color-forest);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 400;
+            margin-bottom: 0.25rem;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, var(--color-sand-light), var(--color-coral-light));
+            color: var(--color-forest);
+            transform: translateX(4px);
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            margin: 0.75rem 0;
+            border-color: rgba(154, 168, 168, 0.2);
+        }
+
+        /* Mobile toggle moderno */
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* FOOTER MODERNO */
+        .footer {
+            background: linear-gradient(135deg, 
+                rgba(70, 106, 68, 0.95) 0%, 
+                rgba(154, 168, 168, 0.95) 50%, 
+                rgba(70, 106, 68, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(224, 213, 190, 0.5) 25%, 
+                rgba(224, 144, 141, 0.7) 50%, 
+                rgba(224, 213, 190, 0.5) 75%, 
+                transparent 100%);
+        }
+
+        .footer::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(224, 213, 190, 0.05) 0%, transparent 70%);
+            animation: footerGlow 15s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes footerGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer-section {
+            position: relative;
+            z-index: 1;
+            padding: 0 1rem;
+        }
+
+        .footer-heading {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 400;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-sand);
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-coral), var(--color-berry));
+            border-radius: 1px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .footer-contact-item:hover {
+            color: var(--color-sand);
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 0.75rem;
+        }
+
+        .footer-contact-item i {
+            color: var(--color-coral);
+            margin-right: 1rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .footer-contact-item:hover i {
+            color: var(--color-sand);
+            transform: scale(1.1);
+        }
+
+        /* Social icons modernos */
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .social-icons a {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-icons a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .social-icons a:hover::before {
+            left: 100%;
+        }
+
+        .social-icons a:hover {
+            background: var(--color-coral);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(224, 144, 141, 0.3);
+            border-color: var(--color-coral);
+        }
+
+        .social-icons a:nth-child(1):hover { background: #1877f2; }
+        .social-icons a:nth-child(2):hover { background: #e4405f; }
+        .social-icons a:nth-child(3):hover { background: #1da1f2; }
+        .social-icons a:nth-child(4):hover { background: #25d366; }
+
+        .social-icons a i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons a:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Footer bottom moderno */
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 3rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .footer-bottom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-sand), transparent);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-container {
+                padding: 1rem;
+            }
+
+            .navbar-scrolled .navbar-container {
+                padding: 0.75rem 1rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 1rem !important;
+            }
+
+            .footer {
+                padding: 3rem 0 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .footer-section {
+                margin-bottom: 2rem;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
         }
         
         .card {
@@ -162,78 +528,11 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(70, 106, 68, 0.2);
         }
-        
-        .btn-secondary {
-            background-color: var(--color-forest);
-            border-color: var(--color-forest);
-        }
-        
+          
         .btn-accent {
             background-color: var(--color-sand);
             border-color: var(--color-sand);
             color: var(--color-forest);
-        }
-        
-        .footer {
-            background-color: #79927d;
-            color: white;
-            padding: 50px 0 20px;
-            margin-top: 50px;
-            position: relative;
-        }
-
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(to right, var(--color-sand), var(--color-forest), var(--color-sage));
-        }
-        
-        .footer-contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .footer-contact-item i {
-            color: var(--color-sand);
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-icons a {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .social-icons a:hover {
-            background-color: var(--color-sand);
-            transform: translateY(-3px);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 30px;
-            padding-top: 20px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
         }
 
         /* Efectos de scroll */
@@ -393,20 +692,21 @@
     </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
+<body>    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container navbar-container">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="fa-solid fa-spa"></i> Spa "Sentirse Bien"
+                <i class="fa-solid fa-spa"></i>
+                <span>Spa "Sentirse Bien"</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'home' %}">
-                            <i class="fa-solid fa-home"></i> Inicio
+                            <i class="fa-solid fa-home"></i>
+                            <span>Inicio</span>
                         </a>
                     </li>
                     
@@ -415,77 +715,96 @@
                         {% if user.perfil.is_cliente %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
-                                    <i class="fa-solid fa-calendar-plus"></i> Reservar Turno
+                                    <i class="fa-solid fa-calendar-plus"></i>
+                                    <span>Reservar Turno</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'usuarios:mis_turnos' %}">
-                                    <i class="fa-solid fa-calendar-check"></i> Mis Turnos
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                    <span>Mis Turnos</span>
                                 </a>
                             </li>
                         {% elif user.perfil.is_profesional %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'servicios:servicio_list' %}">
-                                    <i class="fa-solid fa-spa"></i> Ver Servicios
+                                    <i class="fa-solid fa-spa"></i>
+                                    <span>Ver Servicios</span>
                                 </a>
                             </li>
                         {% elif user.perfil.is_administrador %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown">
-                                    <i class="fa-solid fa-tools"></i> Administración
-                                </a>                                <ul class="dropdown-menu">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-tools"></i>
+                                    <span>Administración</span>
+                                </a>
+                                <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="{% url 'servicios:servicio_list' %}">
-                                        <i class="fa-solid fa-spa me-2"></i> Gestionar Servicios
+                                        <i class="fa-solid fa-spa"></i>
+                                        <span>Gestionar Servicios</span>
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'turnos:turno_list' %}">
-                                        <i class="fa-solid fa-list me-2"></i> Gestionar Turnos
+                                        <i class="fa-solid fa-list"></i>
+                                        <span>Gestionar Turnos</span>
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'usuarios:gestionar_usuarios' %}">
-                                        <i class="fa-solid fa-users me-2"></i> Gestionar Usuarios
+                                        <i class="fa-solid fa-users"></i>
+                                        <span>Gestionar Usuarios</span>
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'usuarios:gestionar_profesionales' %}">
-                                        <i class="fa-solid fa-user-tie me-2"></i> Gestionar Profesionales
+                                        <i class="fa-solid fa-user-tie"></i>
+                                        <span>Gestionar Profesionales</span>
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'turnos:reporte_turnos' %}">
-                                        <i class="fa-solid fa-file-lines me-2"></i> Reporte de Turnos y Pagos
+                                        <i class="fa-solid fa-file-lines"></i>
+                                        <span>Reporte de Turnos y Pagos</span>
                                     </a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
-                                    <i class="fa-solid fa-calendar-plus"></i> Nuevo Turno
+                                    <i class="fa-solid fa-calendar-plus"></i>
+                                    <span>Nuevo Turno</span>
                                 </a>
                             </li>
                         {% endif %}
                         
                         <!-- Perfil de usuario -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i> 
-                                {{ user.first_name|default:user.username }}
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>
+                                <span>{{ user.first_name|default:user.username }}</span>
                                 {% if user.perfil %}
                                     <small class="text-muted">({{ user.perfil.get_tipo_usuario_display }})</small>
                                 {% endif %}
-                            </a>                            <ul class="dropdown-menu dropdown-menu-end">
+                            </a>
+                            <ul class="dropdown-menu">
                                 {% if user.perfil.is_cliente %}
                                     <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
-                                        <i class="fas fa-user me-2"></i> Mi Perfil
+                                        <i class="fas fa-user"></i>
+                                        <span>Mi Perfil</span>
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'usuarios:mis_turnos' %}">
-                                        <i class="fas fa-calendar-alt me-2"></i> Mis Turnos                                    </a></li>
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>Mis Turnos</span>
+                                    </a></li>
                                 {% elif user.perfil.is_profesional %}
                                     <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
-                                        <i class="fas fa-user-tie me-2"></i> Mi Perfil
+                                        <i class="fas fa-user-tie"></i>
+                                        <span>Mi Perfil</span>
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'usuarios:editar_horarios_profesional' %}">
-                                        <i class="fas fa-clock me-2"></i> Gestionar Horarios
+                                        <i class="fas fa-clock"></i>
+                                        <span>Gestionar Horarios</span>
                                     </a></li>
                                     <li><a class="dropdown-item" href="{% url 'turnos:turno_list' %}">
-                                        <i class="fa-solid fa-calendar-check me-2"></i> Ver Turnos Asignados
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                        <span>Ver Turnos Asignados</span>
                                     </a></li>
                                 {% elif user.perfil.is_administrador %}
                                     <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
-                                        <i class="fas fa-user me-2"></i> Mi Perfil
+                                        <i class="fas fa-user"></i>
+                                        <span>Mi Perfil</span>
                                     </a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
@@ -493,7 +812,8 @@
                                     <form method="post" action="{% url 'logout' %}" class="d-inline w-100">
                                         {% csrf_token %}
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            <span>Cerrar Sesión</span>
                                         </button>
                                     </form>
                                 </li>
@@ -503,37 +823,40 @@
                         <!-- Usuario no autenticado -->
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'turnos:turno_reserva_unificada' %}">
-                                <i class="fa-solid fa-calendar-plus"></i> Reservar Turno
+                                <i class="fa-solid fa-calendar-plus"></i>
+                                <span>Reservar Turno</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">
-                                <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Iniciar Sesión</span>
                             </a>
                         </li>
                     {% endif %}
                 </ul>
             </div>
-        </div>
-    </nav>
+        </div>    </nav>
 
-    <div class="content-wrapper" style="padding-top: 76px;">
+    <div class="content-wrapper" style="padding-top: 80px; min-height: calc(100vh - 80px);">
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show d-flex align-items-center" role="alert">
-                    {% if message.tags == "success" %}
-                        <i class="fa-solid fa-circle-check me-2"></i>
-                    {% elif message.tags == "error" or message.tags == "danger" %}
-                        <i class="fa-solid fa-circle-xmark me-2"></i>
-                    {% elif message.tags == "warning" %}
-                        <i class="fa-solid fa-triangle-exclamation me-2"></i>
-                    {% elif message.tags == "info" %}
-                        <i class="fa-solid fa-circle-info me-2"></i>
-                    {% endif %}
-                    <span>{{ message }}</span>
-                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show d-flex align-items-center shadow-sm" role="alert" style="border: none; border-radius: 12px; backdrop-filter: blur(10px);">
+                        {% if message.tags == "success" %}
+                            <i class="fa-solid fa-circle-check me-2"></i>
+                        {% elif message.tags == "error" or message.tags == "danger" %}
+                            <i class="fa-solid fa-circle-xmark me-2"></i>
+                        {% elif message.tags == "warning" %}
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                        {% elif message.tags == "info" %}
+                            <i class="fa-solid fa-circle-info me-2"></i>
+                        {% endif %}
+                        <span>{{ message }}</span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
         
         {% block content %}{% endblock %}
@@ -542,8 +865,8 @@
     <footer class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading" style="color: #fdfffc;">Contacto</h4>
+                <div class="col-lg-4 col-md-6 footer-section">
+                    <h4 class="footer-heading">Contacto</h4>
                     <div class="footer-contact-item">
                         <i class="fa-solid fa-phone"></i>
                         <span>+54 3624567890</span>
@@ -557,30 +880,58 @@
                         <span>Av. San Martin 123, Ciudad de Resistencia</span>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading" style="color: #fdfffc;">Horarios</h4>
+                
+                <div class="col-lg-4 col-md-6 footer-section">
+                    <h4 class="footer-heading">Horarios de Atención</h4>
                     <div class="footer-contact-item">
                         <i class="fa-solid fa-clock"></i>
-                        <span>Lunes a Sabados: 9:00 - 20:00</span>
+                        <span>Lunes a Sábados: 9:00 - 20:00</span>
                     </div>
-                      <div class="footer-contact-item">
-                        <i class="fa-solid fa-clock"></i>
+                    <div class="footer-contact-item">
+                        <i class="fa-solid fa-calendar-xmark"></i>
                         <span>Domingos: Cerrado</span>
                     </div>
+                    <div class="footer-contact-item">
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Reservas 24/7 online</span>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading" style="color: #fdfffc;">Síguenos</h4>
-                    <p class="mb-3">Mantente al día con nuestras últimas novedades y promociones</p>
+                
+                <div class="col-lg-4 col-md-12 footer-section">
+                    <h4 class="footer-heading">Conecta con Nosotros</h4>
+                    <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1.5rem; line-height: 1.6;">
+                        Síguenos en nuestras redes sociales para estar al día con las últimas novedades, promociones especiales y consejos de bienestar.
+                    </p>
                     <div class="social-icons">
-                        <a href="#" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="#" target="_blank" aria-label="Facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="#" target="_blank" aria-label="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#" target="_blank" aria-label="Twitter">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                        <a href="#" target="_blank" aria-label="WhatsApp">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
                     </div>
                 </div>
             </div>
+            
             <div class="footer-bottom">
-                <p>&copy; {% now "Y" %} GestorSpa. Todos los derechos reservados.</p>
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="mb-0">
+                            &copy; {% now "Y" %} <strong>Spa "Sentirse Bien"</strong>. Todos los derechos reservados.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <p class="mb-0">
+                            <small>Diseñado con <i class="fa-solid fa-heart" style="color: var(--color-coral);"></i> para tu bienestar</small>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>

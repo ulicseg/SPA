@@ -311,8 +311,7 @@ class ClienteRegistroForm(UserCreationForm):
             'class': 'form-control',
             'placeholder': 'Confirma tu contraseña'
         })
-        
-        # Personalizar labels
+          # Personalizar labels
         self.fields['username'].label = 'Nombre de usuario'
         self.fields['password1'].label = 'Contraseña'
         self.fields['password2'].label = 'Confirmar contraseña'
@@ -331,10 +330,9 @@ class ClienteRegistroForm(UserCreationForm):
         
         if commit:
             user.save()
-            # Crear perfil de cliente
-            perfil = Perfil.objects.create(
-                usuario=user,
-                telefono=self.cleaned_data.get('telefono', ''),
-                tipo_usuario='cliente'
-            )
+            # El perfil se crea automáticamente por el signal, solo lo actualizamos
+            perfil = user.perfil
+            perfil.telefono = self.cleaned_data.get('telefono', '')
+            perfil.tipo_usuario = 'cliente'
+            perfil.save()
         return user

@@ -276,15 +276,12 @@ class TurnoReservaUnificadaView(LoginRequiredMixin, TemplateView):
     template_name = 'turnos/turno_reserva_unificada.html'
     
     def dispatch(self, request, *args, **kwargs):
-        """Redirigir usuarios no autenticados al registro con mensaje claro"""
+        """Redirigir usuarios no autenticados al registro"""
         if not request.user.is_authenticated:
-            messages.info(
-                request, 
-                '🔐 Para reservar un turno en nuestro SPA necesitas estar registrado. '
-                '¡Es gratis y rápido! Regístrate como cliente para comenzar.'
-            )
+            # Redirigir silenciosamente al registro sin mensaje intrusivo
             return redirect('usuarios:registro_cliente')
         return super().dispatch(request, *args, **kwargs)
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['servicios'] = Servicio.objects.all()

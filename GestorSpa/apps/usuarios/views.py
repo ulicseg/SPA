@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Q
 from .models import Perfil, Profesional
 from .forms import (
     PerfilForm, UsuarioForm, ProfesionalForm, 
@@ -25,86 +26,91 @@ from django.views.generic import CreateView
 
 @login_required
 def perfil(request):
-    user_role = RoleManager.get_user_role(request.user)
-    context = {
-        'user_role': user_role,
-        'user_role_display': request.user.perfil.get_rol_display(),
-    }
-    # Depuración global
-    context['debug'] = f"Entrando a vista perfil, rol detectado: {user_role}, usuario: {request.user.username}"
+    user = request.user
+    role_manager = RoleManager() # Instanciar RoleManager
+    user_role = role_manager.get_user_role(user)
 
-    if user_role == 'cliente':
-        mis_turnos = Turno.objects.filter(usuario=request.user).order_by('-fecha', '-hora_inicio')[:5]
-        context.update({
-            'mis_turnos': mis_turnos,
-            'total_mis_turnos': mis_turnos.count(),
-            'servicios_disponibles': Servicio.objects.filter(activo=True)[:6],
-            'debug': context['debug'] + ' | Cliente'
-        })
-        return render(request, 'usuarios/perfil_cliente.html', context)
+    if user_role == 'administrador':
+        try:
+            total_usuarios = User.objects.count()
+            total_profesionales = Profesional.objects.count()
+            turnos_count = Turno.objects.count()
+            servicios_count = Servicio.objects.count()
+            turnos_hoy = Turno.objects.filter(fecha=timezone.now().date()).count()
+            ultimos_turnos = Turno.objects.all().order_by('-fecha', '-hora_inicio')[:5]
+            turnos_por_estado = Turno.objects.values('estado').annotate(total=Count('id'))
+            
+            context = {
+                'total_usuarios': total_usuarios,
+                'total_profesionales': total_profesionales,
+                'turnos_count': turnos_count,
+                'servicios_count': servicios_count,
+                'turnos_hoy': turnos_hoy,
+                'ultimos_turnos': ultimos_turnos,
+                'turnos_por_estado': turnos_por_estado,
+                'user_role_display': 'Administrador',
+                'user_role': 'administrador',
+            }
+            return render(request, 'usuarios/perfil_administrador.html', context)
+        except Exception as e:
+            messages.error(request, f"Error al cargar el perfil de administrador: {e}")
+            # Considera redirigir a una página de error o mostrar un mensaje más amigable
+            return render(request, 'usuarios/perfil_administrador.html', {'user_role_display': 'Administrador', 'user_role': 'administrador'})
 
     elif user_role == 'profesional':
         try:
-            profesional = request.user.profesional
-            profesional_form = ProfesionalForm(instance=profesional)
-            turnos_hoy = Turno.objects.filter(
-                profesional=profesional,
-                fecha=timezone.now().date(),
-                estado__in=['pendiente', 'confirmado']
-            ).order_by('hora_inicio')[:10]
-            ultimos_turnos = Turno.objects.filter(
-                profesional=profesional,
-                fecha__gt=timezone.now().date(),
-                estado__in=['pendiente', 'confirmado']
-            ).order_by('fecha', 'hora_inicio')[:10]
-            turnos_pendientes = Turno.objects.filter(
-                profesional=profesional,
-                estado='pendiente'
-            ).count()
+            profesional = user.profesional # Access Profesional instance from User
+            
+            # Corrected field name from profesional_asignado to profesional
+            turnos_asignados = Turno.objects.filter(profesional=profesional).order_by('-fecha', '-hora_inicio')
+            turnos_pendientes = turnos_asignados.filter(estado='pendiente').count()
+            turnos_confirmados = turnos_asignados.filter(estado='confirmado').count()
+            turnos_hoy_profesional = turnos_asignados.filter(fecha=timezone.now().date()).count()
+            
+            context = {
+                'profesional': profesional,
+                'turnos_asignados': turnos_asignados[:10], # Limitar para la vista
+                'total_turnos_asignados': turnos_asignados.count(),
+                'turnos_pendientes': turnos_pendientes,
+                'turnos_confirmados': turnos_confirmados,
+                'turnos_hoy_profesional': turnos_hoy_profesional,
+                'user_role_display': 'Profesional',
+                'user_role': 'profesional',
+                'horarios_semana': profesional.get_horarios_semana(),
+                'especialidades': profesional.get_especialidades_todas(),
+            }
+            # Usar el template perfil.html para profesionales
+            return render(request, 'usuarios/perfil.html', context) 
         except Profesional.DoesNotExist:
-            messages.warning(request, 'No tienes un perfil profesional asignado.')
-            profesional = None
-            profesional_form = None
-            turnos_hoy = []
-            ultimos_turnos = []
-            turnos_pendientes = 0
-        context.update({
-            'turnos_hoy': turnos_hoy,
-            'ultimos_turnos': ultimos_turnos,
-            'turnos_pendientes': turnos_pendientes,
-            'servicios_count': Servicio.objects.filter(activo=True).count(),
-            'profesional': profesional,
-            'profesional_form': profesional_form,
-            'debug': context['debug'] + ' | Profesional'
-        })
-        return render(request, 'usuarios/perfil_profesional.html', context)
+            messages.error(request, "No se encontró tu perfil profesional. Por favor, contacta al administrador.")
+            return redirect('home') 
+        except Exception as e:
+            messages.error(request, f"Error al cargar el perfil profesional: {e}")
+            return redirect('home')
 
-    elif user_role == 'administrador':
-        from django.db.models import Count
-        total_usuarios = User.objects.count()
-        total_profesionales = Profesional.objects.count()
-        turnos_count = Turno.objects.count()
-        servicios_count = Servicio.objects.count()
-        turnos_hoy = Turno.objects.filter(fecha=timezone.now().date()).count()
-        ultimos_turnos = Turno.objects.all().order_by('-fecha', '-hora_inicio')[:5]
-        turnos_por_estado = Turno.objects.values('estado').annotate(total=Count('id'))
-        context.update({
-            'total_usuarios': total_usuarios,
-            'total_profesionales': total_profesionales,
-            'turnos_count': turnos_count,
-            'servicios_count': servicios_count,
-            'turnos_hoy': turnos_hoy,
-            'ultimos_turnos': ultimos_turnos,
-            'turnos_por_estado': turnos_por_estado,
-            'debug': context['debug'] + ' | Administrador'
-        })
-        return render(request, 'usuarios/perfil_administrador.html', context)
 
+    elif user_role == 'cliente':
+        try:
+            # Asumiendo que el cliente tiene un perfil simple o usa 'perfil_cliente.html'
+            # Si 'perfil.html' es genérico, se puede usar también.
+            # Por ahora, redirigimos a 'mis_turnos' como ejemplo o usamos un template específico.
+            turnos_cliente = Turno.objects.filter(usuario=user).order_by('-fecha', '-hora_inicio')
+            context = {
+                'user_role_display': 'Cliente',
+                'user_role': 'cliente',
+                'turnos_cliente': turnos_cliente[:10],
+                'total_turnos_cliente': turnos_cliente.count(),
+                'perfil_usuario': user.perfil, # Asumiendo que existe el related_name 'perfil' en User
+            }
+            return render(request, 'usuarios/perfil_cliente.html', context)
+        except Exception as e:
+            messages.error(request, f"Error al cargar el perfil de cliente: {e}")
+            return redirect('home')
+            
     else:
-        context['error'] = 'No tienes un rol asignado. Contacta al administrador.'
-        context['debug'] = context['debug'] + ' | Sin rol'
-        return render(request, 'usuarios/perfil_cliente.html', context)
-
+        # Rol desconocido o sin perfil asignado
+        messages.warning(request, "No tienes un rol asignado o tu perfil no está completo.")
+        return redirect('home')
 
 @administrador_required
 def gestionar_usuarios(request):
@@ -300,8 +306,4 @@ class ClienteRegistroView(CreateView):
             'Por favor, corrige los errores en el formulario.'
         )
         return super().form_invalid(form)
-
-def perfil(request):
-    # BLOQUE DE DEPURACIÓN SIEMPRE VISIBLE
-    return render(request, 'usuarios/perfil_administrador.html', {'debug': 'Renderizando desde la vista perfil', 'user': request.user})
 
