@@ -17,12 +17,9 @@
 - � **Interfaz Moderna**: Diseño responsivo con Bootstrap 5
 - 🔒 **Seguridad**: Sistema de permisos y autenticación robusto
 
-## 🚀 Demo
+## 🚀 Instalación y Configuración
 
-Usuarios de prueba disponibles después de la instalación:
-- **Administrador**: `admin_demo` / `demo123`
-- **Profesional**: `profesional_demo` / `demo123`
-- **Cliente**: `cliente_demo` / `demo123`
+> ⚠️ **IMPORTANTE**: Este proyecto no incluye usuarios predeterminados por seguridad. Debes crear tus propios usuarios después de la instalación.
 
 ## ⚡ Instalación Rápida
 
@@ -46,7 +43,7 @@ cp .env.example .env
 # 5. Ejecutar migraciones
 python manage.py migrate
 
-# 6. Crear superusuario
+# 6. Crear superusuario (OBLIGATORIO)
 python manage.py createsuperuser
 
 # 7. Configurar roles del sistema
@@ -213,13 +210,31 @@ El sitio estará disponible en `http://127.0.0.1:8000/`
 | **Profesional** | Personal del spa | • Ver turnos asignados<br>• Cambiar estado de turnos<br>• Ver servicios |
 | **Administrador** | Gestión completa | • CRUD servicios<br>• CRUD turnos<br>• Gestionar usuarios<br>• Acceso admin |
 
-### 🔑 Usuarios Demo Incluidos
+### 🔑 Configuración de Usuarios
 
-| Usuario | Contraseña | Rol | Email |
-|---------|------------|-----|-------|
-| `cliente_demo` | `demo123` | Cliente | cliente@demo.com |
-| `profesional_demo` | `demo123` | Profesional | profesional@demo.com |
-| `admin_demo` | `demo123` | Administrador | admin@demo.com |
+**El sistema NO incluye usuarios predeterminados por seguridad.** Después de la instalación:
+
+1. **Crear Administrador Principal**:
+```bash
+python manage.py createsuperuser
+```
+
+2. **Crear Usuarios Adicionales** (opcional para desarrollo):
+   - Accede al panel de administración: `http://127.0.0.1:8000/admin`
+   - Ve a "Usuarios" y crea usuarios con los roles necesarios
+   - O crea usuarios desde la interfaz de registro del sistema
+
+3. **Asignar Roles**:
+```bash
+# Listar usuarios existentes
+python manage.py setup_roles --show-user-roles
+
+# Asignar rol específico a un usuario
+python manage.py setup_roles --assign-role nombre_usuario:cliente
+python manage.py setup_roles --assign-role nombre_usuario:profesional
+```
+
+> 🛡️ **Seguridad**: Nunca uses contraseñas simples en producción. Siempre cambia las credenciales por defecto.
 
 ### 🛠️ Comandos de Gestión de Roles
 
@@ -230,25 +245,22 @@ python manage.py setup_roles --create-groups
 # Listar roles disponibles
 python manage.py setup_roles --list-roles
 
-# Asignar rol a usuario
+# Asignar rol a usuario existente
 python manage.py setup_roles --assign-role username:cliente
 
-# Ver roles de usuarios
+# Ver roles de usuarios actuales
 python manage.py setup_roles --show-user-roles
-
-# Crear usuarios demo
-python manage.py create_demo_users
 ```
 
 ## Acceso al Sistema
 
-### Login Público
+### Login del Sistema
 - **URL:** `http://127.0.0.1:8000/login`
-- **Usuarios demo disponibles** (ver tabla arriba)
+- **Usa las credenciales** que creaste con `createsuperuser` o registra nuevos usuarios
 
 ### Panel de Administración
 - **URL:** `http://127.0.0.1:8000/admin`
-- **Usuario:** `admin_demo` / `demo123`
+- **Usuario:** El superusuario que creaste durante la instalación
 
 ## Características Principales
 
