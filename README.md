@@ -1,40 +1,64 @@
-# GestorSpa
+# 🏨 GestorSpa - Sistema de Gestión para Spa
 
-## ✅ PROBLEMA DE ENCODING UTF-8 SOLUCIONADO
+[![Django](https://img.shields.io/badge/Django-5.2-green.svg)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**ESTADO:** ✅ **RESUELTO** - El error `'ascii' codec can't encode character '\xf1'` ha sido completamente solucionado.
+> Sistema completo de gestión para spa que permite administrar servicios, turnos, profesionales y clientes con un sistema de roles robusto.
 
-### Correcciones Implementadas:
+## ✨ Características Principales
 
-1. **Configuración Global de Encoding**
-   - ✅ Configuración UTF-8 en `settings.py` con imports de configuración de encoding
-   - ✅ Middleware personalizado `UTF8EncodingMiddleware` para forzar UTF-8 en todas las requests
-   - ✅ Variables de entorno configuradas (`PYTHONIOENCODING=utf-8`)
+- 👥 **Sistema de Usuarios Multi-Rol**: Clientes, Profesionales y Administradores
+- 📅 **Gestión de Turnos**: Reserva inteligente con disponibilidad en tiempo real
+- 💆 **Servicios del Spa**: Catálogo completo con precios y descripciones
+- 👨‍⚕️ **Gestión de Profesionales**: Perfiles, especialidades y horarios
+- 📧 **Notificaciones por Email**: Confirmaciones automáticas de reservas
+- 📊 **Reportes y Estadísticas**: Panel de control con métricas
+- � **Interfaz Moderna**: Diseño responsivo con Bootstrap 5
+- 🔒 **Seguridad**: Sistema de permisos y autenticación robusto
 
-2. **Modelo Turno Mejorado**
-   - ✅ Método `enviar_comprobante()` completamente reescrito con manejo robusto de UTF-8
-   - ✅ Uso correcto de `EmailMessage` sin parámetros incorrectos
-   - ✅ Manejo de excepciones específicas para errores de encoding
-   - ✅ Logging de errores sin fallar la reserva
+## 🚀 Demo
 
-3. **Sistema de Reserva Unificado**
-   - ✅ Selección de servicio y profesional en un solo flujo
-   - ✅ Fecha y horario según disponibilidad real
-   - ✅ Precio, descuentos y total antes de confirmar
-   - ✅ Comprobante por email sin errores de encoding
+Usuarios de prueba disponibles después de la instalación:
+- **Administrador**: `admin_demo` / `demo123`
+- **Profesional**: `profesional_demo` / `demo123`
+- **Cliente**: `cliente_demo` / `demo123`
 
-4. **Pruebas Exitosas**
-   - ✅ Script de prueba de emails con caracteres especiales
-   - ✅ Prueba completa del sistema de reservas
-   - ✅ Verificación del flujo completo funcional
+## ⚡ Instalación Rápida
 
-🎉 **SISTEMA LISTO PARA USAR** - Funciona correctamente con caracteres especiales del español.
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/tu-usuario/GestorSpa.git
+cd GestorSpa
 
----
+# 2. Crear entorno virtual
+python -m venv env
+# Windows: env\Scripts\activate
+# Linux/Mac: source env/bin/activate
 
-Sistema de gestión para spa que permite administrar servicios, turnos y clientes.
+# 3. Instalar dependencias
+pip install -r requirements.txt
 
-## Requisitos Previos
+# 4. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus configuraciones
+
+# 5. Ejecutar migraciones
+python manage.py migrate
+
+# 6. Crear superusuario
+python manage.py createsuperuser
+
+# 7. Configurar roles del sistema
+python manage.py setup_roles --create-groups
+
+# 8. Ejecutar servidor
+python manage.py runserver
+```
+
+📱 **¡Listo!** Visita `http://127.0.0.1:8000` para usar la aplicación.
+
+## 📋 Instalación Detallada
 
 1. **Instalar Python**
    - Descargar Python 3.8 o superior desde [python.org](https://www.python.org/downloads/)
@@ -289,4 +313,66 @@ pip install psycopg2-binary
 ```bash
 pip freeze > requirements.txt
 ```
+
+## 🛠️ Tecnologías Utilizadas
+
+### Backend
+- **Django 5.2** - Framework web de Python
+- **PostgreSQL** - Base de datos principal
+- **SQLite** - Base de datos de desarrollo
+- **WeasyPrint** - Generación de PDFs
+
+### Frontend
+- **Bootstrap 5** - Framework CSS
+- **HTML5 & CSS3** - Estructura y estilos
+- **JavaScript** - Interactividad
+
+### Herramientas
+- **Git** - Control de versiones
+- **Python-dotenv** - Gestión de variables de entorno
+- **Django Forms** - Validación de datos
+- **Django Auth** - Sistema de autenticación
+
+## 📸 Capturas de Pantalla
+
+### Panel de Administración
+![Admin Dashboard](docs/images/admin-dashboard.png)
+
+### Sistema de Reservas
+![Booking System](docs/images/booking-system.png)
+
+### Gestión de Servicios
+![Services Management](docs/images/services-management.png)
+
+## 🤝 Contribuir
+
+¡Las contribuciones son bienvenidas! Por favor lee [CONTRIBUTING.md](CONTRIBUTING.md) para conocer el proceso.
+
+1. Fork el proyecto
+2. Crea una rama para tu funcionalidad (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## 💬 Contacto
+
+- **Proyecto**: [https://github.com/tu-usuario/GestorSpa](https://github.com/tu-usuario/GestorSpa)
+- **Issues**: [https://github.com/tu-usuario/GestorSpa/issues](https://github.com/tu-usuario/GestorSpa/issues)
+
+## 🚀 Próximas Funcionalidades
+
+- [ ] Integración con sistemas de pago
+- [ ] Notificaciones push
+- [ ] API REST para aplicaciones móviles
+- [ ] Calendario avanzado con vista semanal/mensual
+- [ ] Sistema de descuentos y promociones
+- [ ] Integración con redes sociales
+
+---
+
+⭐ **¡Dale una estrella si te gusta el proyecto!** ⭐
 
