@@ -3,65 +3,246 @@
 
 {% block title %}Detalle del Turno - GestorSpa{% endblock %}
 
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--spa-sand-light);
+        overflow: hidden;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pendiente { background: linear-gradient(135deg, #ffc107, #ffb300); color: #000; }
+    .status-confirmado { background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage)); color: white; }
+    .status-cancelado { background: linear-gradient(135deg, var(--spa-berry), #dc3545); color: white; }
+    .status-completado { background: linear-gradient(135deg, var(--spa-coral), var(--spa-sand)); color: white; }
+
+    .info-section h5 {
+        color: var(--spa-forest);
+        font-family: 'Raleway', sans-serif;
+        font-weight: 400;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--spa-sand-light);
+        padding-bottom: 0.5rem;
+    }
+
+    .btn-spa-primary {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(70, 106, 68, 0.2);
+    }
+
+    .btn-spa-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(70, 106, 68, 0.3);
+        color: white;
+    }
+
+    .btn-spa-secondary {
+        background: linear-gradient(135deg, var(--spa-coral), var(--spa-sand));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(224, 144, 141, 0.2);
+    }
+
+    .btn-spa-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(224, 144, 141, 0.3);
+        color: white;
+    }
+
+    .btn-spa-danger {
+        background: linear-gradient(135deg, var(--spa-berry), #dc3545);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(199, 73, 92, 0.2);
+    }
+
+    .btn-spa-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(199, 73, 92, 0.3);
+        color: white;
+    }
+
+    .breadcrumb {
+        background: var(--spa-sand-light);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+    }
+
+    .breadcrumb-item a {
+        color: var(--spa-forest);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .breadcrumb-item a:hover {
+        color: var(--spa-sage);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <nav aria-label="breadcrumb" data-aos="fade-right">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'turnos:turno_list' %}" class="text-decoration-none">Turnos</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'turnos:turno_list' %}">Turnos</a></li>
             <li class="breadcrumb-item active">Detalle del Turno</li>
         </ol>
     </nav>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8" data-aos="fade-up">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h1 class="display-6 mb-0">Detalle de la Reserva</h1>
-                        <span class="badge {% if object.estado == 'pendiente' %}bg-success
-                                          {% elif object.estado == 'confirmado' %}bg-success
-                                          {% elif object.estado == 'cancelado' %}bg-danger
-                                          {% elif object.estado == 'completado' %}bg-info
-                                          {% endif %} p-2">
-                            {{ object.estado }}
-                        </span>
-                    </div>
+    <!-- Header unificado -->
+    <div class="page-header" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-calendar-check me-3"></i>
+                    Detalle de la Reserva
+                </h1>
+                <p class="page-subtitle">Información completa del turno #{{ object.id }}</p>
+            </div>
+            <div>
+                <span class="status-badge status-{{ object.estado }}">
+                    <i class="fas fa-circle me-2"></i>{{ object.get_estado_display }}
+                </span>
+            </div>
+        </div>
+    </div>
 
-                    <div class="row g-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10" data-aos="fade-up">
+            <div class="detail-card">
+                <div class="card-body p-4">                    <div class="row g-4">
                         <div class="col-md-6">
-                            <h5 class="text-muted mb-3">Información del Cliente</h5>
-                            <p class="mb-1"><strong>Nombre:</strong> {{ object.nombre }}</p>
-                            <p class="mb-1"><strong>Email:</strong> {{ object.email }}</p>
-                            <p class="mb-3"><strong>Teléfono:</strong> {{ object.telefono }}</p>
+                            <div class="info-section">
+                                <h5><i class="fas fa-user me-2"></i>Información del Cliente</h5>
+                                {% if user.perfil.is_administrador or user.perfil.is_profesional %}
+                                    <!-- Admins y profesionales ven toda la info del cliente -->
+                                    <p class="mb-2"><strong>Nombre:</strong> {{ object.nombre }}</p>
+                                    <p class="mb-2"><strong>Email:</strong> {{ object.email }}</p>
+                                    <p class="mb-3"><strong>Teléfono:</strong> {{ object.telefono }}</p>
+                                {% elif user.perfil.is_cliente and object.usuario == user %}
+                                    <!-- Cliente solo ve su propia info -->
+                                    <p class="mb-2"><strong>Nombre:</strong> {{ object.nombre }}</p>
+                                    <p class="mb-2"><strong>Email:</strong> {{ object.email }}</p>
+                                    <p class="mb-3"><strong>Teléfono:</strong> {{ object.telefono }}</p>
+                                {% else %}
+                                    <p class="text-muted">No autorizado para ver esta información</p>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="col-md-6">
-                            <h5 class="text-muted mb-3">Detalles de la Reserva</h5>
-                            <p class="mb-1"><strong>Servicio:</strong> {{ object.servicio.nombre }}</p>
-                            <p class="mb-1"><strong>Fecha:</strong> {{ object.fecha }}</p>
-                            <p class="mb-3"><strong>Horario:</strong> {{ object.hora_inicio|time:"H:i" }} - {{ object.hora_fin|time:"H:i" }}</p>
+                            <div class="info-section">
+                                <h5><i class="fas fa-spa me-2"></i>Detalles de la Reserva</h5>
+                                <p class="mb-2"><strong>Servicio:</strong> {{ object.servicio.nombre }}</p>
+                                {% if user.perfil.is_administrador %}
+                                    <p class="mb-2"><strong>Profesional:</strong> {{ object.profesional.nombre_completo }}</p>
+                                {% endif %}
+                                <p class="mb-2"><strong>Fecha:</strong> {{ object.fecha|date:"d/m/Y" }}</p>
+                                <p class="mb-2"><strong>Horario:</strong> {{ object.hora_inicio|time:"H:i" }}</p>
+                                <p class="mb-2"><strong>Estado:</strong> 
+                                    <span class="status-badge status-{{ object.estado }}">
+                                        {{ object.get_estado_display }}
+                                    </span>
+                                </p>
+                                {% if user.perfil.is_administrador %}
+                                    <p class="mb-2"><strong>Método de pago:</strong> {{ object.get_metodo_pago_display }}</p>
+                                    <p class="mb-2"><strong>Total:</strong> ${{ object.total|default:"0" }}</p>
+                                    <p class="mb-3"><strong>Pagado:</strong> 
+                                        {% if object.pagado %}
+                                            <span class="status-badge status-confirmado">Sí</span>
+                                        {% else %}
+                                            <span class="status-badge status-pendiente">No</span>
+                                        {% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
                         </div>
 
                         {% if object.notas %}
                         <div class="col-12">
-                            <h5 class="text-muted mb-3">Notas Adicionales</h5>
-                            <p class="mb-0">{{ object.notas }}</p>
+                            <div class="info-section">
+                                <h5><i class="fas fa-sticky-note me-2"></i>Notas Adicionales</h5>
+                                <div class="alert" style="background: var(--spa-sand-light); border: 1px solid var(--spa-sand); color: var(--spa-forest);">
+                                    {{ object.notas }}
+                                </div>
+                            </div>
                         </div>
                         {% endif %}
                     </div>
 
-                    <hr class="my-4">
+                    <hr style="border-color: var(--spa-sand); margin: 2rem 0;">
 
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-3 justify-content-end">
                         {% if user.is_staff %}
-                        <a href="{% url 'turnos:turno_update' object.id %}" class="btn btn-primary">
+                        <a href="{% url 'turnos:turno_update' object.id %}" class="btn-spa-primary">
                             <i class="fas fa-edit me-2"></i>Editar Turno
                         </a>
-                        <a href="{% url 'turnos:turno_delete' object.id %}" class="btn btn-outline-danger">
+                        <a href="{% url 'turnos:turno_delete' object.id %}" class="btn-spa-danger">
                             <i class="fas fa-trash me-2"></i>Cancelar Turno
                         </a>
                         {% endif %}
-                        <a href="{% url 'turnos:turno_list' %}" class="btn btn-outline-secondary ms-auto">
+                        <a href="{% url 'turnos:turno_list' %}" class="btn-spa-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Volver a la Lista
                         </a>
                     </div>
@@ -70,4 +251,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

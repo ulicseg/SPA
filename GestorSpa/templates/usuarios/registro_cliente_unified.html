@@ -1,0 +1,470 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Únete a nosotros - GestorSpa{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--spa-forest) 0%, var(--spa-sage) 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .registro-container {
+        min-height: 100vh;
+        padding: 2rem 0;
+        position: relative;
+    }
+
+    .registro-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(224,213,190,0.1)"><polygon points="1000,100 1000,0 0,100"/></svg>');
+        background-size: 100% 100%;
+    }
+
+    .registro-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(70, 106, 68, 0.15);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .registro-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        padding: 2rem;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1rem;
+        font-weight: 300;
+    }
+
+    .form-container {
+        padding: 2rem;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: 2px solid var(--spa-sand);
+        border-radius: 12px;
+        padding: 1rem;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: var(--spa-forest);
+        box-shadow: 0 0 0 3px var(--spa-forest-light);
+        outline: none;
+        background: white;
+        transform: translateY(-1px);
+    }
+
+    .form-label {
+        position: absolute;
+        left: 1rem;
+        top: 1rem;
+        font-size: 1rem;
+        color: var(--spa-sage);
+        background: white;
+        padding: 0 0.5rem;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .form-control:focus + .form-label,
+    .form-control:not(:placeholder-shown) + .form-label,
+    .form-control:valid + .form-label,
+    .form-group.filled .form-label {
+        top: -0.75rem;
+        left: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--spa-forest);
+        background: white;
+    }
+
+    .form-check {
+        margin: 1.5rem 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-check-input {
+        accent-color: var(--spa-forest);
+        width: 20px;
+        height: 20px;
+        margin-right: 0.75rem;
+    }
+
+    .form-check-label {
+        color: #333;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .btn-spa-primary {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(70, 106, 68, 0.2);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-spa-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(70, 106, 68, 0.3);
+        color: white;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--spa-sand);
+    }
+
+    .login-link a {
+        color: var(--spa-forest);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .login-link a:hover {
+        color: var(--spa-coral);
+        text-decoration: underline;
+    }
+
+    .invalid-feedback {
+        color: var(--spa-berry);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+        display: block;
+    }
+
+    .form-control.is-invalid {
+        border-color: var(--spa-berry);
+    }
+
+    .form-control.is-invalid:focus {
+        border-color: var(--spa-berry);
+        box-shadow: 0 0 0 3px var(--spa-berry-light);
+    }
+
+    /* Animation */
+    .registro-card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .registro-container {
+            padding: 1rem;
+        }
+        
+        .form-container {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="registro-container">
+    <div class="container">
+        <div class="registro-card">
+            <div class="registro-header">
+                <h1 class="page-title">
+                    <i class="fas fa-user-plus me-3"></i>
+                    Únete a nosotros
+                </h1>
+                <p class="page-subtitle">Crea tu cuenta y comienza a disfrutar nuestros servicios</p>
+            </div>
+
+            <div class="form-container">
+                {% if form.errors %}
+                    <div class="alert alert-danger mb-4">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Errores en el formulario</h5>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <p class="mb-1">{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" 
+                                       name="first_name" 
+                                       id="id_first_name" 
+                                       class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                                       placeholder=" "
+                                       value="{{ form.first_name.value|default_if_none:'' }}"
+                                       required>
+                                <label for="id_first_name" class="form-label">Nombre</label>
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.first_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" 
+                                       name="last_name" 
+                                       id="id_last_name" 
+                                       class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                                       placeholder=" "
+                                       value="{{ form.last_name.value|default_if_none:'' }}"
+                                       required>
+                                <label for="id_last_name" class="form-label">Apellido</label>
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.last_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" 
+                               name="username" 
+                               id="id_username" 
+                               class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                               placeholder=" "
+                               value="{{ form.username.value|default_if_none:'' }}"
+                               required>
+                        <label for="id_username" class="form-label">Nombre de usuario</label>
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" 
+                               name="email" 
+                               id="id_email" 
+                               class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                               placeholder=" "
+                               value="{{ form.email.value|default_if_none:'' }}"
+                               required>
+                        <label for="id_email" class="form-label">Email</label>
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <input type="tel" 
+                               name="telefono" 
+                               id="id_telefono" 
+                               class="form-control {% if form.telefono.errors %}is-invalid{% endif %}"
+                               placeholder=" "
+                               value="{{ form.telefono.value|default_if_none:'' }}">
+                        <label for="id_telefono" class="form-label">Teléfono (opcional)</label>
+                        {% if form.telefono.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.telefono.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="password" 
+                                       name="password1" 
+                                       id="id_password1" 
+                                       class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                                       placeholder=" "
+                                       required>
+                                <label for="id_password1" class="form-label">Contraseña</label>
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password1.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="password" 
+                                       name="password2" 
+                                       id="id_password2" 
+                                       class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                                       placeholder=" "
+                                       required>
+                                <label for="id_password2" class="form-label">Confirmar contraseña</label>
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password2.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" 
+                               class="form-check-input" 
+                               id="terminos" 
+                               required>
+                        <label class="form-check-label" for="terminos">
+                            Acepto los <a href="#" style="color: var(--spa-coral);">términos y condiciones</a> y la <a href="#" style="color: var(--spa-coral);">política de privacidad</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-spa-primary">
+                        <i class="fas fa-user-plus"></i>
+                        Crear mi cuenta
+                    </button>
+
+                    <div class="login-link">
+                        <p>¿Ya tienes cuenta? <a href="{% url 'usuarios:login' %}">Inicia sesión aquí</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form input animations
+    document.querySelectorAll('.form-control').forEach(input => {
+        // Set initial state for filled inputs
+        if (input.value && input.value.trim() !== '') {
+            input.parentElement.classList.add('filled');
+        }
+
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+            if (this.value && this.value.trim() !== '') {
+                this.parentElement.classList.add('filled');
+            } else {
+                this.parentElement.classList.remove('filled');
+            }
+        });
+
+        input.addEventListener('input', function() {
+            if (this.value && this.value.trim() !== '') {
+                this.parentElement.classList.add('filled');
+            } else {
+                this.parentElement.classList.remove('filled');
+            }
+        });
+    });
+
+    // Form submission animation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            submitButton.style.transform = 'scale(1)';
+        }, 150);
+    });
+
+    // Password validation feedback
+    const password1 = document.getElementById('id_password1');
+    const password2 = document.getElementById('id_password2');
+    
+    if (password2) {
+        password2.addEventListener('input', function() {
+            if (password1.value && this.value && password1.value !== this.value) {
+                this.setCustomValidity('Las contraseñas no coinciden');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

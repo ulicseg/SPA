@@ -2,43 +2,300 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Turnos de {{ profesional.get_nombre_display }}</title>
+    <title>Turnos de {{ profesional.get_nombre_display }} - SPA Gestión</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 13px; }
-        h2 { color: #007bff; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #bbb; padding: 6px 8px; text-align: left; }
-        th { background: #e3f2fd; }
-        .estado-confirmado { color: #198754; font-weight: bold; }
-        .estado-pendiente { color: #ffc107; font-weight: bold; }
-        .estado-cancelado { color: #dc3545; font-weight: bold; }
-        .estado-completado { color: #6c757d; font-weight: bold; }
+        /* === VARIABLES SPA PARA PDF === */
+        :root {
+            --spa-sage: #9aa8a8;
+            --spa-forest: #466a44;
+            --spa-sand: #e0d5be;
+            --spa-coral: #e0908d;
+            --spa-berry: #c7495c;
+            --spa-white: #ffffff;
+            --spa-text-dark: #2c3e50;
+            --spa-text-light: #6c757d;
+        }
+        
+        /* === CONFIGURACIÓN GENERAL === */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-size: 12px; 
+            line-height: 1.4;
+            color: var(--spa-text-dark);
+            margin: 20px;
+            background: var(--spa-white);
+        }
+        
+        /* === ENCABEZADO === */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--spa-coral);
+        }
+        
+        .spa-logo {
+            color: var(--spa-forest);
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .report-title {
+            color: var(--spa-coral); 
+            font-size: 18px;
+            font-weight: 600;
+            margin: 10px 0 5px 0;
+        }
+        
+        .report-subtitle {
+            color: var(--spa-sage);
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .report-date {
+            background: linear-gradient(135deg, var(--spa-sand), var(--spa-coral));
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 600;
+            color: var(--spa-forest);
+            margin-top: 10px;
+        }
+        
+        /* === TABLA === */
+        .turnos-table {
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 25px;
+            background: var(--spa-white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .turnos-table th {
+            background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+            color: var(--spa-white);
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .turnos-table td {
+            border-bottom: 1px solid var(--spa-sand);
+            padding: 10px;
+            vertical-align: top;
+            font-size: 11px;
+        }
+        
+        .turnos-table tr:nth-child(even) {
+            background: rgba(224, 213, 190, 0.1);
+        }
+        
+        .turnos-table tr:hover {
+            background: rgba(224, 144, 141, 0.1);
+        }
+        
+        /* === ESTADOS DE TURNO === */
+        .estado-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            min-width: 70px;
+            text-align: center;
+        }
+        
+        .estado-confirmado { 
+            background: var(--spa-forest);
+            color: var(--spa-white);
+        }
+        
+        .estado-pendiente { 
+            background: var(--spa-sand);
+            color: var(--spa-forest);
+        }
+        
+        .estado-cancelado { 
+            background: var(--spa-berry);
+            color: var(--spa-white);
+        }
+        
+        .estado-completado { 
+            background: var(--spa-sage);
+            color: var(--spa-white);
+        }
+        
+        /* === COLUMNAS ESPECÍFICAS === */
+        .hora-column {
+            font-weight: 600;
+            color: var(--spa-forest);
+            background: rgba(70, 106, 68, 0.05);
+            border-left: 3px solid var(--spa-coral);
+        }
+        
+        .cliente-column {
+            font-weight: 500;
+            color: var(--spa-text-dark);
+        }
+        
+        .servicio-column {
+            color: var(--spa-sage);
+            font-style: italic;
+        }
+        
+        .notas-column {
+            color: var(--spa-text-light);
+            font-size: 10px;
+            max-width: 150px;
+        }
+        
+        /* === PIE DE PÁGINA === */
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--spa-sand);
+            text-align: center;
+            color: var(--spa-text-light);
+            font-size: 10px;
+        }
+        
+        .stats-summary {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: var(--spa-sand);
+            border-radius: 8px;
+            margin: 5px;
+            min-width: 100px;
+        }
+        
+        .stat-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--spa-forest);
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: var(--spa-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* === RESPONSIVE PARA IMPRESIÓN === */
+        @media print {
+            body {
+                margin: 0;
+                font-size: 11px;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+            }
+            
+            .turnos-table {
+                margin-top: 15px;
+            }
+            
+            .turnos-table th,
+            .turnos-table td {
+                padding: 8px 6px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>Turnos de {{ profesional.get_nombre_display }}<br><small>{{ profesional.especialidad }}</small></h2>
-    <p>Fecha: <strong>{{ turnos.0.fecha|date:"d/m/Y" }}</strong></p>
-    <table>
+    <!-- Encabezado del Reporte -->
+    <div class="header">
+        <div class="spa-logo">🌿 SPA GESTIÓN</div>
+        <h1 class="report-title">Agenda de Turnos</h1>
+        <h2 class="report-subtitle">{{ profesional.nombre_completo }}</h2>
+        <p style="color: var(--spa-sage); margin: 5px 0;">{{ profesional.especialidad|default:"Profesional del Spa" }}</p>
+        <div class="report-date">
+            📅 {{ fecha_turnos|date:"l, d \d\e F \d\e Y"|default:"Fecha no especificada" }}
+        </div>
+    </div>
+
+    <!-- Resumen Estadístico -->
+    {% if turnos %}
+    <div class="stats-summary">
+        <div class="stat-item">
+            <div class="stat-number">{{ turnos|length }}</div>
+            <div class="stat-label">Total Turnos</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">{% for turno in turnos %}{% if turno.estado == 'confirmado' %}{{ forloop.counter0|add:1 }}{% endif %}{% endfor %}</div>
+            <div class="stat-label">Confirmados</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">{% for turno in turnos %}{% if turno.estado == 'pendiente' %}{{ forloop.counter0|add:1 }}{% endif %}{% endfor %}</div>
+            <div class="stat-label">Pendientes</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">{% for turno in turnos %}{% if turno.estado == 'completado' %}{{ forloop.counter0|add:1 }}{% endif %}{% endfor %}</div>
+            <div class="stat-label">Completados</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tabla de Turnos -->
+    <table class="turnos-table">
         <thead>
             <tr>
-                <th>Hora</th>
-                <th>Cliente</th>
-                <th>Servicio</th>
-                <th>Estado</th>
-                <th>Notas</th>
+                <th width="12%">🕐 Hora</th>
+                <th width="25%">👤 Cliente</th>
+                <th width="25%">🌺 Servicio</th>
+                <th width="15%">📋 Estado</th>
+                <th width="23%">📝 Observaciones</th>
             </tr>
         </thead>
         <tbody>
             {% for turno in turnos %}
             <tr>
-                <td>{{ turno.hora_inicio|time:"H:i" }}</td>
-                <td>{{ turno.nombre }}</td>
-                <td>{{ turno.servicio.nombre }}</td>
-                <td class="estado-{{ turno.estado }}">{{ turno.get_estado_display }}</td>
-                <td>{{ turno.notas|default:'-' }}</td>
+                <td class="hora-column">{{ turno.hora_inicio|time:"H:i" }}</td>
+                <td class="cliente-column">{{ turno.nombre|default:"Cliente no especificado" }}</td>
+                <td class="servicio-column">{{ turno.servicio.nombre }}</td>
+                <td class="estado-column">
+                    <span class="estado-badge estado-{{ turno.estado }}">
+                        {{ turno.get_estado_display }}
+                    </span>
+                </td>
+                <td class="notas-column">{{ turno.notas|default:"Sin observaciones"|truncatewords:10 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 30px; color: var(--spa-sage); font-style: italic;">
+                    No hay turnos programados para esta fecha
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Pie de Página -->
+    <div class="footer">
+        <p><strong>SPA Gestión</strong> - Sistema de Gestión de Turnos</p>
+        <p>Reporte generado el {{ "now"|date:"d/m/Y \a \l\a\s H:i" }}</p>
+        <p style="margin-top: 10px; font-size: 9px; color: var(--spa-text-light);">
+            Este documento contiene información confidencial del establecimiento
+        </p>
+    </div>
 </body>
 </html>

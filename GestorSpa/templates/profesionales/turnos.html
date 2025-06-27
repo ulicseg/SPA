@@ -3,8 +3,7 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-calendar-day me-2"></i>Turnos asignados para mañana</h2>
-        <a href="{% url 'profesionales:turnos_pdf' %}" class="btn btn-outline-primary" target="_blank">
+        <h2><i class="fas fa-calendar-day me-2"></i>Turnos asignados para mañana</h2>        <a href="{% url 'turnos:turnos_profesional_pdf' %}" class="btn btn-outline-primary" target="_blank">
             <i class="fas fa-file-pdf me-2"></i>Imprimir PDF
         </a>
     </div>
@@ -12,14 +11,14 @@
         <div class="card-body">
             {% if turnos %}
             <div class="table-responsive">
-                <table class="table table-striped align-middle">
-                    <thead>
+                <table class="table table-striped align-middle">                    <thead>
                         <tr>
                             <th>Hora</th>
                             <th>Cliente</th>
                             <th>Servicio</th>
                             <th>Estado</th>
                             <th>Notas</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -29,11 +28,22 @@
                             <td>{{ turno.nombre }}</td>
                             <td>{{ turno.servicio.nombre }}</td>
                             <td>
-                                <span class="badge {% if turno.estado == 'confirmado' %}bg-success{% elif turno.estado == 'pendiente' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                <span class="badge {% if turno.estado == 'confirmado' %}bg-success{% elif turno.estado == 'pendiente' %}bg-warning{% elif turno.estado == 'completado' %}bg-info{% else %}bg-secondary{% endif %}">
                                     {{ turno.get_estado_display }}
                                 </span>
                             </td>
                             <td>{{ turno.notas|default:'-' }}</td>
+                            <td>
+                                {% if turno.puede_ser_completado and turno.estado == 'confirmado' %}
+                                    <a href="{% url 'turnos:cambiar_estado_turno' turno.pk %}?estado=completado" 
+                                       class="btn btn-sm btn-success" 
+                                       title="Marcar como completado">
+                                        <i class="fas fa-check"></i> Completar
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

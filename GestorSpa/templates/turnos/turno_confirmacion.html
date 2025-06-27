@@ -97,9 +97,16 @@
     <div class="confirmacion-card">
         <div class="confirmacion-icon">
             <i class="fas fa-check-circle"></i>
-        </div>
-        <h2 class="confirmacion-titulo">¡Reserva Confirmada!</h2>
+        </div>        <h2 class="confirmacion-titulo">¡Reserva Confirmada!</h2>
         <p class="lead">Su turno ha sido reservado exitosamente.</p>
+        
+        <!-- Alerta de email enviado -->
+        <div class="alert alert-success d-flex align-items-center mb-3" role="alert">
+            <i class="fas fa-envelope-check me-2"></i>
+            <div>
+                <strong>¡Email enviado!</strong> Te hemos enviado todos los detalles de tu reserva a <strong>{{ turno.email }}</strong>
+            </div>
+        </div>
         
         <div class="confirmacion-detalles">
             <div class="confirmacion-detalle">

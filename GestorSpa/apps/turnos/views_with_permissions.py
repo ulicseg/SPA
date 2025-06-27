@@ -28,9 +28,12 @@ class TurnoDetailViewWithPermissions(ProfesionalOrAdminRequiredMixin, DetailView
         
         # Si es profesional, solo puede ver sus propios turnos
         if user_role == 'profesional':
-            # Filtrar por profesional asignado cuando tengas ese campo
-            # queryset = queryset.filter(profesional=self.request.user)
-            pass
+            try:
+                profesional = self.request.user.profesional
+                queryset = queryset.filter(profesional=profesional)
+            except:
+                # Si no hay profesional asociado, mostrar queryset vacío
+                queryset = Turno.objects.none()
             
         return queryset
 
@@ -183,6 +186,7 @@ def reporte_turnos(request):
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="reporte_turnos.pdf"'
         return response
+        
     context = {
         'turnos': turnos,
         'totales_servicio': totales_servicio,
@@ -202,12 +206,18 @@ def reporte_turnos(request):
         total=Count('id')
     )
     
+    # Cálculos financieros
+    total_ingresos = sum(turno.total or 0 for turno in turnos)
+    promedio_turno = total_ingresos / turnos.count() if turnos.count() > 0 else 0
+    
     context.update({
         'total_turnos': total_turnos,
         'turnos_hoy': turnos_hoy,
         'turnos_pendientes': turnos_pendientes,
         'turnos_completados': turnos_completados,
         'turnos_por_estado': turnos_por_estado,
+        'total_ingresos': total_ingresos,
+        'promedio_turno': promedio_turno,
     })
     
     return render(request, 'turnos/reporte_turnos.html', context)

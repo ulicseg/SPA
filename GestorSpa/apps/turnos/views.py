@@ -105,9 +105,12 @@ class TurnoListView(ProfesionalOrAdminRequiredMixin, ListView):
         # Si es profesional, solo ve sus propios turnos
         user_role = RoleManager.get_user_role(self.request.user)
         if user_role == 'profesional':
-            # Aquí podrías filtrar por profesional asignado si tienes ese campo
-            # queryset = queryset.filter(profesional=self.request.user)
-            pass
+            try:
+                profesional = self.request.user.profesional
+                queryset = queryset.filter(profesional=profesional)
+            except:
+                # Si no hay profesional asociado, mostrar queryset vacío
+                queryset = Turno.objects.none()
         
         fecha_filtro = self.request.GET.get('fecha')
         if fecha_filtro:
@@ -136,9 +139,12 @@ class TurnoDetailView(ProfesionalOrAdminRequiredMixin, DetailView):
         
         # Si es profesional, solo puede ver sus propios turnos
         if user_role == 'profesional':
-            # Filtrar por profesional asignado cuando tengas ese campo
-            # queryset = queryset.filter(profesional=self.request.user)
-            pass
+            try:
+                profesional = self.request.user.profesional
+                queryset = queryset.filter(profesional=profesional)
+            except:
+                # Si no hay profesional asociado, mostrar queryset vacío
+                queryset = Turno.objects.none()
             
         return queryset
 
@@ -175,15 +181,6 @@ class TurnoDeleteView(AdministradorRequiredMixin, DeleteView):
         messages.success(request, 'Turno eliminado exitosamente.')
         return super().delete(request, *args, **kwargs)
 
-class TurnoDeleteView(LoginRequiredMixin, DeleteView):
-    model = Turno
-    template_name = 'turnos/turno_confirm_delete.html'
-    success_url = reverse_lazy('turnos:turno_list')
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Turno eliminado exitosamente.')
-        return super().delete(request, *args, **kwargs)
-
 @require_http_methods(["GET"])
 def verificar_disponibilidad(request):
     fecha = request.GET.get('fecha')
@@ -211,6 +208,7 @@ def verificar_disponibilidad(request):
 def get_horarios_disponibles(request):
     fecha = request.GET.get('fecha')
     servicio_id = request.GET.get('servicio_id')
+    profesional_id = request.GET.get('profesional_id')
     
     if not fecha or not servicio_id:
         return JsonResponse({'error': 'Fecha y servicio son requeridos'}, status=400)
@@ -225,12 +223,36 @@ def get_horarios_disponibles(request):
         hora_fin = timezone.datetime.combine(fecha, timezone.datetime.min.time().replace(hour=18))    # 6 PM
         
         while hora_inicio < hora_fin:
-            # Verificar si ya existe un turno para esta hora
-            turno_existente = Turno.objects.filter(
-                fecha=fecha,
-                hora_inicio=hora_inicio.time(),
-                servicio=servicio
-            ).exists()
+            # Verificar disponibilidad según profesional
+            if profesional_id:
+                # Si se especifica profesional, verificar solo para ese profesional
+                profesional = get_object_or_404(Profesional, id=profesional_id)
+                turno_existente = Turno.objects.filter(
+                    fecha=fecha,
+                    hora_inicio=hora_inicio.time(),
+                    profesional=profesional
+                ).exclude(estado='cancelado').exists()
+            else:
+                # Si no se especifica profesional, verificar si algún profesional está disponible
+                profesionales_servicio = Profesional.objects.filter(
+                    servicios_especialidad=servicio,
+                    estado='activo'
+                )
+                
+                # Verificar si al menos un profesional está disponible
+                alguno_disponible = False
+                for prof in profesionales_servicio:
+                    turno_existente = Turno.objects.filter(
+                        fecha=fecha,
+                        hora_inicio=hora_inicio.time(),
+                        profesional=prof
+                    ).exclude(estado='cancelado').exists()
+                    
+                    if not turno_existente:
+                        alguno_disponible = True
+                        break
+                
+                turno_existente = not alguno_disponible
             
             if not turno_existente:
                 horarios_disponibles.append({
@@ -284,26 +306,90 @@ class TurnoReservaUnificadaView(LoginRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['servicios'] = Servicio.objects.all()
-        
-        # Pre-llenar formulario con datos del usuario
+        context['servicios'] = Servicio.objects.all()        # Pre-llenar formulario con datos del usuario
         initial_data = {
             'nombre': f"{self.request.user.first_name} {self.request.user.last_name}".strip() or self.request.user.username,
             'email': self.request.user.email,
         }
+        
+        # Agregar teléfono si existe en el perfil
+        if hasattr(self.request.user, 'perfil') and self.request.user.perfil.telefono:
+            initial_data['telefono'] = self.request.user.perfil.telefono
+            
         context['form'] = TurnoForm(initial=initial_data)
         return context
         
     def post(self, request, *args, **kwargs):
         """Procesa la reserva con manejo robusto de encoding UTF-8"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        # DEBUG: Log específico para capturar problemas de la interfaz web
+        logger.error("🔍 DEBUG WEB INTERFACE - INICIO DE POST")
+        logger.error(f"🔍 DEBUG WEB: POST data recibido: {request.POST}")
+        logger.error(f"🔍 DEBUG WEB: Usuario: {request.user}")
+        logger.error(f"🔍 DEBUG WEB: Autenticado: {request.user.is_authenticated}")
+        
         try:
             # Configurar encoding para la request
             if hasattr(request, 'encoding'):
                 request.encoding = 'utf-8'
             
             form = TurnoForm(request.POST)
+            logger.error(f"🔍 DEBUG WEB: Formulario creado")
+            logger.error(f"🔍 DEBUG WEB: Formulario válido: {form.is_valid()}")
+            
+            if not form.is_valid():
+                logger.error(f"🔍 DEBUG WEB: Errores del formulario: {form.errors}")
+            
             if form.is_valid():
+                logger.error("🔍 DEBUG WEB: Formulario VÁLIDO - procesando...")
                 try:
+                    # Validación adicional en la vista para evitar conflictos
+                    fecha = form.cleaned_data.get('fecha')
+                    hora_inicio = form.cleaned_data.get('hora_inicio')
+                    profesional = form.cleaned_data.get('profesional')
+                    email = form.cleaned_data.get('email')
+                    
+                    # Verificar duplicados una vez más antes de guardar
+                    if fecha and hora_inicio and profesional:
+                        # Convertir hora si es string
+                        if isinstance(hora_inicio, str):
+                            from datetime import datetime
+                            hora_inicio = datetime.strptime(hora_inicio, '%H:%M').time()
+                        
+                        # Verificar si el profesional ya tiene un turno
+                        conflicto_profesional = Turno.objects.filter(
+                            fecha=fecha,
+                            hora_inicio=hora_inicio,
+                            profesional=profesional
+                        ).exclude(estado='cancelado').exists()
+                        
+                        if conflicto_profesional:
+                            messages.error(request, 
+                                f'Lo sentimos, el profesional {profesional.nombre_completo} ya tiene un turno agendado '
+                                f'para el {fecha.strftime("%d/%m/%Y")} a las {hora_inicio.strftime("%H:%M")}. '
+                                'Por favor, selecciona otro horario.')
+                            context = self.get_context_data()
+                            context['form'] = form
+                            return self.render_to_response(context)
+                        
+                        # Verificar si el cliente ya tiene un turno con ese profesional
+                        conflicto_cliente = Turno.objects.filter(
+                            fecha=fecha,
+                            hora_inicio=hora_inicio,
+                            profesional=profesional,
+                            email=email
+                        ).exclude(estado='cancelado').exists()
+                        
+                        if conflicto_cliente:
+                            messages.error(request, 
+                                f'Ya tienes un turno agendado con {profesional.nombre_completo} '
+                                f'para el {fecha.strftime("%d/%m/%Y")} a las {hora_inicio.strftime("%H:%M")}.')
+                            context = self.get_context_data()
+                            context['form'] = form
+                            return self.render_to_response(context)
+
                     turno = form.save(commit=False)
                     # Siempre asociar con el usuario logueado
                     turno.usuario = request.user
@@ -311,8 +397,23 @@ class TurnoReservaUnificadaView(LoginRequiredMixin, TemplateView):
                     turno.email = request.user.email
                     # Asegurar que el nombre sea el del usuario
                     if not turno.nombre.strip():
-                        turno.nombre = f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username
+                        turno.nombre = f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username                    # Asegurar que se incluya el teléfono del usuario
+                    if not turno.telefono and hasattr(request.user, 'perfil') and request.user.perfil.telefono:
+                        turno.telefono = request.user.perfil.telefono
+                    
                     turno.save()
+                    
+                    # Enviar email de confirmación inmediatamente
+                    try:
+                        logger.error(f"🔍 DEBUG WEB: Intentando enviar email para turno {turno.id}")
+                        result = turno.enviar_confirmacion_reserva()
+                        logger.error(f"🔍 DEBUG WEB: Email enviado exitosamente: {result}")
+                        messages.success(request, '¡Reserva confirmada! Te enviamos los detalles por email.')
+                    except Exception as e:
+                        logger.error(f"🔍 DEBUG WEB: ERROR al enviar email: {str(e)}")
+                        logger.error(f"Error al enviar email de confirmación: {str(e)}")
+                        messages.warning(request, 'Reserva confirmada, pero no pudimos enviar el email. Contacta al spa para confirmar.')
+                    
                     # Guardar el ID del turno en la sesión
                     request.session['turno_id'] = turno.id
                     logger.info(f"Turno creado exitosamente: {turno.id}")
@@ -387,18 +488,36 @@ def api_profesionales_por_servicio(request, servicio_id):
     """Devuelve los profesionales habilitados para un servicio (API)."""
     from GestorSpa.apps.usuarios.models import Profesional
     try:
+        # Obtener el servicio para verificar que existe
+        servicio = get_object_or_404(Servicio, id=servicio_id, activo=True)
+        
+        # Obtener profesionales que tienen este servicio en sus especialidades
         profesionales = Profesional.objects.filter(
-            servicios_especialidad=servicio_id,
+            servicios_especialidad=servicio,
             estado='activo'
-        )
+        ).distinct()
+        
         data = []
         for p in profesionales:
             try:
-                nombre = str(p)
+                nombre = p.get_nombre_display() if hasattr(p, 'get_nombre_display') else str(p)
             except UnicodeEncodeError:
                 nombre = p.nombre_completo if hasattr(p, 'nombre_completo') else f'Profesional {p.id}'
-            data.append({'id': p.id, 'nombre': nombre})
-        return JsonResponse(data, safe=False)
+            
+            data.append({
+                'id': p.id, 
+                'nombre': nombre,
+                'especialidad': p.especialidad
+            })
+            
+        return JsonResponse({
+            'profesionales': data,
+            'servicio': servicio.nombre,
+            'total': len(data)
+        })
+        
+    except Servicio.DoesNotExist:
+        return JsonResponse({'error': 'Servicio no encontrado'}, status=404)
     except Exception as e:
         try:
             error_msg = str(e)
@@ -407,33 +526,72 @@ def api_profesionales_por_servicio(request, servicio_id):
         return JsonResponse({'error': error_msg}, status=500)
 
 
-class TurnoDetailView(LoginRequiredMixin, DetailView):
-    """Vista de detalle para visualizar información completa de un turno"""    
-    model = Turno
-    template_name = 'turnos/turno_detail.html'
-    context_object_name = 'turno'
-    
-    def get_queryset(self):
-        """Filtrar turnos según el rol del usuario"""
-        user = self.request.user
-        role_manager = RoleManager()
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+import json
+
+@login_required
+@require_http_methods(["POST"])
+def cancelar_turno_cliente(request, turno_id):
+    """Vista para que los clientes puedan cancelar sus propios turnos"""
+    try:
+        # Obtener el turno
+        turno = get_object_or_404(Turno, id=turno_id)
         
-        # Administradores pueden ver todos los turnos
-        if role_manager.user_has_role(user, 'administrador'):
-            return Turno.objects.select_related('servicio', 'profesional', 'usuario').all()
+        # Verificar que el turno pertenece al usuario actual
+        if turno.usuario != request.user:
+            return JsonResponse({
+                'success': False, 
+                'message': 'No tienes permisos para cancelar este turno.'
+            }, status=403)
         
-        # Profesionales pueden ver sus turnos asignados
-        elif role_manager.user_has_role(user, 'profesional'):
-            return Turno.objects.select_related('servicio', 'profesional', 'usuario').filter(
-                profesional__user=user
-            )
+        # Verificar que el turno se puede cancelar (no está completado o ya cancelado)
+        if turno.estado in ['completado', 'cancelado']:
+            return JsonResponse({
+                'success': False,
+                'message': f'No se puede cancelar un turno que ya está {turno.estado}.'
+            }, status=400)
         
-        # Clientes solo pueden ver sus propios turnos        else:
-            return Turno.objects.select_related('servicio', 'profesional', 'usuario').filter(
-                usuario=user
-            )
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['user_role'] = RoleManager.get_user_role(self.request.user)
-        return context
+        # Verificar que el turno no es del pasado
+        from datetime import datetime, time
+        fecha_turno = datetime.combine(turno.fecha, turno.hora_inicio)
+        if fecha_turno < datetime.now():
+            return JsonResponse({
+                'success': False,
+                'message': 'No se puede cancelar un turno que ya pasó.'
+            }, status=400)
+        
+        # Opcional: Verificar política de cancelación (24 horas antes)
+        tiempo_hasta_turno = fecha_turno - datetime.now()
+        if tiempo_hasta_turno.total_seconds() < 24 * 3600:  # 24 horas en segundos
+            logger.warning(f"Cancelación tardía del turno {turno.id} por usuario {request.user.id}")
+        
+        # Cambiar el estado del turno a cancelado
+        turno.estado = 'cancelado'
+        
+        # Agregar una nota sobre la cancelación
+        motivo_original = turno.notas or ""
+        fecha_cancelacion = datetime.now().strftime("%d/%m/%Y %H:%M")
+        turno.notas = f"{motivo_original}\n\n[CANCELADO el {fecha_cancelacion} por el cliente]".strip()
+        
+        # Guardar los cambios
+        turno.save()
+        
+        logger.info(f"Turno {turno.id} cancelado exitosamente por el cliente {request.user.id}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Turno cancelado exitosamente. Puedes hacer una nueva reserva cuando gustes.'
+        })
+        
+    except Turno.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'El turno no existe.'
+        }, status=404)
+    except Exception as e:
+        logger.error(f"Error al cancelar turno {turno_id}: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': 'Error interno del servidor. Por favor, intenta nuevamente.'
+        }, status=500)

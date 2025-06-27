@@ -5,49 +5,116 @@
 
 {% block extra_css %}
 <style>
+    /* Variables del sistema spa */
+    :root {
+        --spa-primary: rgba(70, 106, 68, 0.8);
+        --spa-secondary: rgba(154, 168, 168, 0.8);
+        --spa-accent: rgba(224, 144, 141, 0.8);
+        --spa-light: rgba(224, 213, 190, 0.8);
+    }
+
+    /* Contenedor principal */
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--spa-light);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2.5rem;
+        color: var(--spa-primary);
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+    }
+
+    .page-subtitle {
+        color: var(--spa-secondary);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* Formularios estandarizados */
     .form-control, .form-select {
-        border-radius: 10px;
-        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        border: 1px solid rgba(154, 168, 168, 0.3);
         padding: 0.75rem 1rem;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 1rem;
     }
     
     .form-control:focus, .form-select:focus {
-        border-color: #2196f3;
-        box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+        border-color: var(--spa-primary);
+        box-shadow: 0 0 0 0.2rem rgba(70, 106, 68, 0.25);
+        outline: none;
     }
     
+    /* Botones estandarizados */
     .btn-primary {
-        background: linear-gradient(45deg, #2196f3, #1976d2);
+        background: linear-gradient(135deg, var(--spa-primary), var(--spa-secondary));
         border: none;
-        border-radius: 25px;
+        border-radius: 12px;
         padding: 0.75rem 2rem;
-        transition: transform 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
     .btn-primary:hover {
-        transform: translateY(-1px);
-        background: linear-gradient(45deg, #1976d2, #1565c0);
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, var(--spa-secondary), var(--spa-primary));
+        box-shadow: 0 4px 12px rgba(70, 106, 68, 0.3);
     }
     
+    /* Cards estandarizadas */
     .card {
-        border-radius: 15px;
+        border-radius: 12px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        border: none;
-        margin-bottom: 2rem;
+        border: 1px solid rgba(154, 168, 168, 0.2);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
     
+    /* Labels estandarizadas */
     .form-label {
         font-weight: 600;
-        color: #333;
+        color: var(--spa-primary);
         margin-bottom: 0.5rem;
+        font-size: 0.95rem;
     }
     
+    /* Navegación de tabs */
     .nav-tabs .nav-link {
-        border-radius: 10px 10px 0 0;
+        border-radius: 8px 8px 0 0;
         border: none;
-        padding: 1rem 2rem;
+        padding: 1rem 1.5rem;
         font-weight: 600;
+        color: var(--spa-secondary);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-tabs .nav-link.active {
+        background: var(--spa-primary);
+        color: white;
+    }
+
+    .nav-tabs .nav-link:hover:not(.active) {
+        background: var(--spa-light);
+        color: var(--spa-primary);
+    }
         color: #666;
         background: #f8f9fa;
         margin-right: 0.5rem;
@@ -81,17 +148,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- Header -->
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3">
-                    <i class="fas fa-user-circle me-2"></i>
-                    Mi Perfil - {{ user_role_display }}
-                </h1>
-            </div>
-        </div>
+<div class="page-container">
+    <!-- Header estándar -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-user-circle me-3"></i>
+            Mi Perfil
+        </h1>
+        <p class="page-subtitle">Gestiona tu información personal y configuración de cuenta</p>
     </div>
 
     <!-- Formularios de Edición Unificados -->

@@ -5,59 +5,275 @@
 
 {% block extra_css %}
 <style>
-    .card {
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease;
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
     }
-    
-    .btn {
-        border-radius: 8px;
-        padding: 0.5rem 1.5rem;
-        transition: all 0.3s ease;
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--spa-sand-light) 0%, #f1f5f4 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
     }
-    
-    .btn:hover {
-        transform: translateY(-1px);
-    }
-    
-    .client-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    .page-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
         color: white;
-        border-radius: 15px;
         padding: 2rem;
         margin-bottom: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
     }
-    
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1rem;
+        font-weight: 300;
+    }
+
+    .card {
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(70, 106, 68, 0.1);
+        transition: transform 0.2s ease;
+        border: 1px solid var(--spa-sand-light);
+        background: white;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.15);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--spa-sand-light), var(--spa-sage-light));
+        border-bottom: 2px solid var(--spa-sand);
+        color: var(--spa-forest);
+        font-family: 'Raleway', sans-serif;
+        font-weight: 500;
+        border-radius: 16px 16px 0 0 !important;
+    }
+
+    .btn-spa-primary {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(70, 106, 68, 0.2);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .btn-spa-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(70, 106, 68, 0.3);
+        color: white;
+    }
+
+    .btn-spa-secondary {
+        background: transparent;
+        color: var(--spa-forest);
+        border: 2px solid var(--spa-forest);
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .btn-spa-secondary:hover {
+        background: var(--spa-forest-light);
+        color: var(--spa-forest);
+        transform: translateY(-1px);
+    }
+
+    .badge-confirmado {
+        background: var(--spa-forest);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-pendiente {
+        background: var(--spa-coral);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-cancelado {
+        background: var(--spa-berry);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-completado {
+        background: var(--spa-sage);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        border: 2px solid var(--spa-sand);
+        border-radius: 12px;
+        padding: 1rem;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--spa-forest);
+        box-shadow: 0 0 0 3px var(--spa-forest-light);
+        outline: none;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--spa-forest);
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        font-family: 'Raleway', sans-serif;
+    }
+
     .edit-forms-section {
         display: none;
     }
     
     .edit-forms-section.active {
         display: block;
+        animation: fadeInUp 0.4s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .table {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .table th {
+        color: var(--spa-forest);
+        font-weight: 500;
+        border-color: var(--spa-sand);
+    }
+
+    .table td {
+        border-color: var(--spa-sand-light);
+    }
+
+    .stats-card {
+        background: linear-gradient(135deg, var(--spa-coral-light), var(--spa-sand-light));
+        border: 2px solid var(--spa-coral);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .stats-number {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--spa-forest);
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .stats-label {
+        color: var(--spa-forest);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .info-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--spa-sand-light);
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 500;
+        color: var(--spa-forest);
+        font-size: 0.9rem;
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .info-value {
+        color: #666;
+        font-size: 1rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- Mensaje de Depuración -->
-    <div style="background:orange;color:black;padding:10px;font-size:20px;">DEBUG: Renderizando perfil_cliente.html</div>
-
-    <!-- Encabezado de Cliente -->
-    <div class="client-header text-center">
+<div class="container py-5">
+    <!-- Header unificado -->
+    <div class="page-header" data-aos="fade-up">
         <div class="row align-items-center">
-            <div class="col-md-3">
-                <i class="fas fa-user fa-4x mb-3"></i>
+            <div class="col-md-3 text-center">
+                <i class="fas fa-user-circle fa-4x mb-3" style="opacity: 0.9;"></i>
             </div>
-            <div class="col-md-6">
-                <h1 class="h2 mb-2">{{ user_role_display }}</h1>
-                <p class="lead mb-0">Bienvenido/a al Spa</p>
-                <small class="text-light">Gestiona tus turnos y perfil personal</small>
+            <div class="col-md-6 text-center text-md-start">
+                <h1 class="page-title">{{ user_role_display }}</h1>
+                <p class="page-subtitle">Bienvenido/a al Spa</p>
+                <small style="opacity: 0.8;">Gestiona tus turnos y perfil personal</small>
             </div>
-            <div class="col-md-3">
-                <button onclick="toggleEditMode()" class="btn btn-light btn-lg" id="editButton">
-                    <i class="fas fa-edit me-2"></i>Editar Perfil
+            <div class="col-md-3 text-center">
+                <button onclick="toggleEditMode()" class="btn-spa-secondary" id="editButton">
+                    <i class="fas fa-edit"></i>Editar Perfil
                 </button>
             </div>
         </div>
@@ -65,7 +281,7 @@
 
     <!-- Dashboard para Cliente -->
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8" data-aos="fade-up">
             <div class="card">
                 <div class="card-header">
                     <h5><i class="fas fa-calendar-alt me-2"></i>Mis Últimos Turnos</h5>
@@ -78,6 +294,222 @@
                                     <tr>
                                         <th>Servicio</th>
                                         <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for turno in mis_turnos %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ turno.servicio.nombre }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ turno.servicio.duracion }} min</small>
+                                        </td>
+                                        <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                        <td>{{ turno.hora_inicio }}</td>
+                                        <td>
+                                            <span class="badge-{{ turno.estado }}">
+                                                {{ turno.get_estado_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'turnos:turno_detail' turno.pk %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'usuarios:mis_turnos' %}" class="btn-spa-primary">
+                                <i class="fas fa-calendar-alt"></i>
+                                Ver Todos Mis Turnos
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No tienes turnos registrados</h5>
+                            <p class="text-muted">¡Reserva tu primer turno y comienza a disfrutar nuestros servicios!</p>
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn-spa-primary">
+                                <i class="fas fa-plus"></i>
+                                Reservar Turno
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <!-- Estadísticas -->
+            <div class="stats-card">
+                <div class="stats-number">{{ mis_turnos|length }}</div>
+                <div class="stats-label">Turnos Totales</div>
+            </div>
+
+            <!-- Información Personal -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-user me-2"></i>Mi Información</h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Nombre Completo</div>
+                        <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ user.email }}</div>
+                    </div>
+                    {% if perfil_data.telefono %}
+                    <div class="info-item">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">{{ perfil_data.telefono }}</div>
+                    </div>
+                    {% endif %}
+                    {% if perfil_data.direccion %}
+                    <div class="info-item">
+                        <div class="info-label">Dirección</div>
+                        <div class="info-value">{{ perfil_data.direccion }}</div>
+                    </div>
+                    {% endif %}
+                    {% if perfil_data.fecha_nacimiento %}
+                    <div class="info-item">
+                        <div class="info-label">Fecha de Nacimiento</div>
+                        <div class="info-value">{{ perfil_data.fecha_nacimiento|date:"d/m/Y" }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Edición -->
+    <div class="edit-forms-section" id="editFormsSection" data-aos="fade-up">
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-edit me-2"></i>Editar Datos Personales</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'usuarios:editar_perfil' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="first_name" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                                           value="{{ user.first_name }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="last_name" class="form-label">Apellido</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                                           value="{{ user.last_name }}" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email }}" required>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn-spa-primary">
+                                    <i class="fas fa-save"></i>Guardar Datos
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cog me-2"></i>Información Adicional</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'usuarios:editar_perfil_detalle' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                           value="{{ perfil_form_data.telefono }}" placeholder="+54 11 1234-5678">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                                           value="{{ perfil_form_data.fecha_nacimiento|date:'Y-m-d' }}">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="foto" class="form-label">Foto de Perfil</label>
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                                {% if perfil_form_data.foto %}
+                                    <small class="text-muted">Actual: {{ perfil_form_data.foto.name }}</small>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="direccion" class="form-label">Dirección</label>
+                                <input type="text" class="form-control" id="direccion" name="direccion" 
+                                       value="{{ perfil_form_data.direccion }}" placeholder="Tu dirección completa">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="bio" class="form-label">Biografía</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                          placeholder="Cuéntanos un poco sobre ti...">{{ perfil_form_data.bio }}</textarea>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="button" onclick="toggleEditMode()" class="btn-spa-secondary me-2">
+                                    <i class="fas fa-times"></i>Cancelar
+                                </button>
+                                <button type="submit" class="btn-spa-primary">
+                                    <i class="fas fa-save"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para activar/desactivar el modo de edición
+function toggleEditMode() {
+    const editSection = document.getElementById('editFormsSection');
+    const editButton = document.getElementById('editButton');
+    
+    if (editSection.classList.contains('active')) {
+        // Ocultar formularios
+        editSection.classList.remove('active');
+        editButton.innerHTML = '<i class="fas fa-edit"></i>Editar Perfil';
+        editButton.className = 'btn-spa-secondary';
+    } else {
+        // Mostrar formularios
+        editSection.classList.add('active');
+        editButton.innerHTML = '<i class="fas fa-times"></i>Cancelar Edición';
+        editButton.className = 'btn-spa-primary';
+        
+        // Scroll hacia los formularios
+        editSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+</script>
+{% endblock %}
                                         <th>Hora</th>
                                         <th>Estado</th>
                                     </tr>

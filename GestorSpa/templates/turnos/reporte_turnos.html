@@ -1,97 +1,735 @@
 {% extends 'base/base.html' %}
-{% block title %}Reporte de Turnos y Pagos{% endblock %}
+{% load static %}
+
+{% block title %}Dashboard - Reportes y Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+        --primary-gradient: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        --success-gradient: linear-gradient(135deg, var(--spa-forest), #10b981);
+        --warning-gradient: linear-gradient(135deg, var(--spa-coral), #f59e0b);
+        --info-gradient: linear-gradient(135deg, var(--spa-sage), #3b82f6);
+        --danger-gradient: linear-gradient(135deg, var(--spa-berry), #dc2626);
+        --shadow-soft: 0 8px 32px rgba(70, 106, 68, 0.1);
+        --border-radius: 16px;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--spa-sand-light) 0%, #f1f5f4 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .dashboard-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
+    }
+
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        font-family: 'Raleway', sans-serif;
+        letter-spacing: 1px;
+    }    .dashboard-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        font-weight: 300;
+    }    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Para pantallas muy pequeñas, cambiar a 2 filas */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+    }
+
+    /* Para pantallas extra pequeñas, cambiar a 1 columna */
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }    .stat-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        min-width: 0; /* Para evitar overflow en grid */
+    }
+
+    /* Ajustes para tarjetas más compactas en desktop */
+    @media (min-width: 769px) {
+        .stat-card {
+            padding: 1.25rem;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+        }
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-gradient);
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card.success::before { background: var(--success-gradient); }
+    .stat-card.warning::before { background: var(--warning-gradient); }
+    .stat-card.info::before { background: var(--info-gradient); }
+    .stat-card.danger::before { background: var(--danger-gradient); }
+
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        background: var(--primary-gradient);
+    }
+
+    .stat-icon.success { background: var(--success-gradient); }
+    .stat-icon.warning { background: var(--warning-gradient); }
+    .stat-icon.info { background: var(--info-gradient); }
+    .stat-icon.danger { background: var(--danger-gradient); }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filters-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .filters-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .btn-modern {
+        border-radius: 10px;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary-modern {
+        background: var(--primary-gradient);
+        color: white;
+    }
+
+    .btn-primary-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(224, 144, 141, 0.4);
+        color: white;
+    }
+
+    .btn-secondary-modern {
+        background: #6b7280;
+        color: white;
+    }
+
+    .btn-secondary-modern:hover {
+        background: #4b5563;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: #374151;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .table-modern {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .table-modern .table {
+        margin: 0;
+        border-radius: var(--border-radius);
+    }
+
+    .table-modern .table thead th {
+        background: #f8fafc;
+        border: none;
+        color: #374151;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+    }
+
+    .table-modern .table tbody td {
+        border: none;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    .table-modern .table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .badge-modern {
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-success { background: #dcfce7; color: #166534; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+
+    .progress-bar-modern {
+        height: 8px;
+        border-radius: 4px;
+        background: #f1f5f9;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--primary-gradient);
+        border-radius: 4px;
+        transition: width 1s ease;
+    }
+
+    .export-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .export-buttons {
+            justify-content: center;
+        }
+
+        .filters-card .row {
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+        }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #6b7280;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4">Reporte de Turnos y Pagos</h2>
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-3">
-            <label for="fecha_inicio" class="form-label">Desde</label>
-            <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="{{ fecha_inicio|default:'' }}">
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-chart-line me-3"></i>Dashboard de Reportes
+                </h1>
+                <p class="dashboard-subtitle">
+                    Analytics y estadísticas completas de turnos y pagos
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <div class="text-end">
+                        <small class="d-block opacity-75">Última actualización</small>
+                        <strong>{% now "d/m/Y H:i" %}</strong>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3">
-            <label for="fecha_fin" class="form-label">Hasta</label>
-            <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="{{ fecha_fin|default:'' }}">
+    </div>
+    <!-- Estadísticas Principales -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_turnos|default:0 }}</div>
+            <div class="stat-label">Total de Turnos</div>
+            <div class="progress-bar-modern">
+                <div class="progress-fill" style="width: 100%;"></div>
+            </div>
         </div>
-        <div class="col-md-3 align-self-end">
-            <button type="submit" class="btn btn-primary">Filtrar</button>
+
+        <div class="stat-card success">
+            <div class="stat-header">
+                <div class="stat-icon success">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>            <div class="stat-value">{{ turnos_hoy|default:0 }}</div>
+            <div class="stat-label">Turnos Hoy</div>
+            <div class="progress-bar-modern">
+                <div class="progress-fill" style="width: {% if total_turnos and total_turnos > 0 %}{% widthratio turnos_hoy total_turnos 100 %}{% else %}0{% endif %}%;"></div>
+            </div>
         </div>
-        <div class="col-md-3 align-self-end text-end">
-            <a href="?export=csv&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" class="btn btn-secondary">Exportar CSV</a>
-            <a href="?export=pdf&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" class="btn btn-secondary">Exportar PDF</a>
+
+        <div class="stat-card warning">
+            <div class="stat-header">
+                <div class="stat-icon warning">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+            </div>            <div class="stat-value">{{ turnos_pendientes|default:0 }}</div>
+            <div class="stat-label">Pendientes</div>
+            <div class="progress-bar-modern">
+                <div class="progress-fill" style="width: {% if total_turnos and total_turnos > 0 %}{% widthratio turnos_pendientes total_turnos 100 %}{% else %}0{% endif %}%;"></div>
+            </div>
         </div>
-    </form>
-    <h4>Totales por Servicio</h4>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Servicio</th>
-                <th>Cantidad de Turnos</th>
-                <th>Total Pagado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in totales_servicio %}
-            <tr>
-                <td>{{ row.servicio__nombre }}</td>
-                <td>{{ row.cantidad }}</td>
-                <td>${{ row.total_pagado|floatformat:2 }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3" class="text-center">No hay datos</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <h4>Totales por Profesional</h4>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Profesional</th>
-                <th>Cantidad de Turnos</th>
-                <th>Total Pagado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in totales_profesional %}
-            <tr>
-                <td>{{ row.profesional__nombre_completo }}</td>
-                <td>{{ row.cantidad }}</td>
-                <td>${{ row.total_pagado|floatformat:2 }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3" class="text-center">No hay datos</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <h4>Turnos Detallados</h4>
-    <table class="table table-striped table-sm">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Servicio</th>
-                <th>Profesional</th>
-                <th>Cliente</th>
-                <th>Método de Pago</th>
-                <th>Total</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for turno in turnos %}
-            <tr>
-                <td>{{ turno.fecha }}</td>
-                <td>{{ turno.hora_inicio }}</td>
-                <td>{{ turno.servicio.nombre }}</td>
-                <td>{{ turno.profesional }}</td>
-                <td>{{ turno.nombre }}</td>
-                <td>{{ turno.get_metodo_pago_display }}</td>
-                <td>${{ turno.total|floatformat:2 }}</td>
-                <td>{{ turno.get_estado_display }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="8" class="text-center">No hay turnos en el período seleccionado.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+        <div class="stat-card info">
+            <div class="stat-header">
+                <div class="stat-icon info">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>            <div class="stat-value">{{ turnos_completados|default:0 }}</div>
+            <div class="stat-label">Completados</div>
+            <div class="progress-bar-modern">
+                <div class="progress-fill" style="width: {% if total_turnos and total_turnos > 0 %}{% widthratio turnos_completados total_turnos 100 %}{% else %}0{% endif %}%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-card">
+        <h5 class="filters-title">
+            <i class="fas fa-filter"></i>
+            Filtros de Búsqueda
+        </h5>
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="fecha_inicio" class="form-label">
+                    <i class="fas fa-calendar-alt me-1"></i>Fecha Inicio
+                </label>
+                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" 
+                       value="{{ fecha_inicio|default:'' }}">
+            </div>
+            <div class="col-md-3">
+                <label for="fecha_fin" class="form-label">
+                    <i class="fas fa-calendar-alt me-1"></i>Fecha Fin
+                </label>
+                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" 
+                       value="{{ fecha_fin|default:'' }}">
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary-modern w-100">
+                    <i class="fas fa-search me-2"></i>Filtrar
+                </button>
+            </div>
+            <div class="col-md-3 align-self-end">
+                <div class="export-buttons">
+                    <a href="?export=csv&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" 
+                       class="btn btn-secondary-modern">
+                        <i class="fas fa-file-csv me-1"></i>CSV
+                    </a>
+                    <a href="?export=pdf&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" 
+                       class="btn btn-secondary-modern">
+                        <i class="fas fa-file-pdf me-1"></i>PDF
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Gráficos y Tablas Resumen -->
+    <div class="content-grid">
+        <!-- Totales por Servicio -->
+        <div class="chart-card">
+            <h5 class="chart-title">
+                <i class="fas fa-spa"></i>
+                Servicios Más Solicitados
+            </h5>
+            {% if totales_servicio %}
+                {% for row in totales_servicio %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-semibold">{{ row.servicio__nombre|default:"Sin nombre" }}</span>
+                        <div class="text-end">
+                            <span class="badge badge-info">{{ row.cantidad }} turnos</span>
+                            <small class="text-muted d-block">${{ row.total_pagado|default:0|floatformat:2 }}</small>
+                        </div>
+                    </div>                    <div class="progress-bar-modern">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <p>No hay datos de servicios para mostrar</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Totales por Profesional -->
+        <div class="chart-card">
+            <h5 class="chart-title">
+                <i class="fas fa-user-tie"></i>
+                Desempeño por Profesional
+            </h5>
+            {% if totales_profesional %}
+                {% for row in totales_profesional %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-semibold">{{ row.profesional__nombre_completo|default:"Sin asignar" }}</span>
+                        <div class="text-end">
+                            <span class="badge badge-success">{{ row.cantidad }} turnos</span>
+                            <small class="text-muted d-block">${{ row.total_pagado|default:0|floatformat:2 }}</small>
+                        </div>
+                    </div>
+                    <div class="progress-bar-modern">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <p>No hay datos de profesionales para mostrar</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tabla de Turnos Detallados -->
+    <div class="table-modern">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 class="chart-title mb-0">
+                <i class="fas fa-list-alt"></i>
+                Turnos Detallados
+            </h5>
+            <span class="badge badge-info">{{ turnos.count }} registro{{ turnos.count|pluralize }}</span>
+        </div>
+        
+        {% if turnos %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar me-1"></i>Fecha</th>
+                        <th><i class="fas fa-clock me-1"></i>Hora</th>
+                        <th><i class="fas fa-spa me-1"></i>Servicio</th>
+                        <th><i class="fas fa-user-tie me-1"></i>Profesional</th>
+                        <th><i class="fas fa-user me-1"></i>Cliente</th>
+                        <th><i class="fas fa-credit-card me-1"></i>Pago</th>
+                        <th><i class="fas fa-dollar-sign me-1"></i>Total</th>
+                        <th><i class="fas fa-info-circle me-1"></i>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for turno in turnos %}
+                    <tr>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <strong>{{ turno.fecha|date:"d/m/Y" }}</strong>
+                                <small class="text-muted">{{ turno.fecha|date:"l" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-info">{{ turno.hora_inicio|time:"H:i" }}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">
+                                    <div class="stat-icon" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                        <i class="fas fa-spa"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <strong>{{ turno.servicio.nombre }}</strong>
+                                    {% if turno.servicio.duracion %}
+                                    <small class="d-block text-muted">{{ turno.servicio.duracion }} min</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if turno.profesional %}
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2">
+                                        <div class="stat-icon success" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                    </div>
+                                    <span>{{ turno.profesional }}</span>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Sin asignar</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <strong>{{ turno.nombre }}</strong>
+                                {% if turno.email %}
+                                <small class="text-muted">{{ turno.email }}</small>
+                                {% endif %}
+                                {% if turno.telefono %}
+                                <small class="text-muted">{{ turno.telefono }}</small>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if turno.metodo_pago %}
+                                <span class="badge badge-warning">{{ turno.get_metodo_pago_display }}</span>
+                            {% else %}
+                                <span class="text-muted">No especificado</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <strong class="text-success">${{ turno.total|default:0|floatformat:2 }}</strong>
+                                {% if turno.servicio.precio %}
+                                <small class="text-muted">Base: ${{ turno.servicio.precio|floatformat:2 }}</small>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% if turno.estado == 'completado' %}
+                                <span class="badge badge-success">{{ turno.get_estado_display }}</span>
+                            {% elif turno.estado == 'pendiente' %}
+                                <span class="badge badge-warning">{{ turno.get_estado_display }}</span>
+                            {% elif turno.estado == 'confirmado' %}
+                                <span class="badge badge-info">{{ turno.get_estado_display }}</span>
+                            {% elif turno.estado == 'cancelado' %}
+                                <span class="badge badge-danger">{{ turno.get_estado_display }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ turno.get_estado_display|default:"Sin estado" }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}        <div class="empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <h4>No hay turnos</h4>
+            <p>No se encontraron turnos en el período seleccionado.</p>
+            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-secondary-modern" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                <i class="fas fa-plus me-2"></i>Crear primer turno
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Información adicional -->
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="chart-card">                <h6 class="chart-title">
+                    <i class="fas fa-info-circle"></i>
+                    Resumen del Período
+                </h6>
+                <div class="row text-center">
+                    <div class="col-3">
+                        <div class="text-muted">Ingresos Totales</div>
+                        <h4 class="text-success">${{ total_ingresos|default:0|floatformat:2 }}</h4>
+                    </div>
+                    <div class="col-3">
+                        <div class="text-muted">Promedio por Turno</div>
+                        <h4 class="text-info">${{ promedio_turno|default:0|floatformat:2 }}</h4>
+                    </div>
+                    <div class="col-3">
+                        <div class="text-muted">Servicios Únicos</div>
+                        <h4 class="text-warning">{{ totales_servicio.count|default:0 }}</h4>
+                    </div>
+                    <div class="col-3">
+                        <div class="text-muted">Profesionales Activos</div>
+                        <h4 class="text-primary">{{ totales_profesional.count|default:0 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="chart-card">
+                <h6 class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Estados de Turnos
+                </h6>
+                {% for estado in turnos_por_estado %}                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>{{ estado.estado|capfirst }}</span>
+                    <span class="badge badge-info">{{ estado.total }}</span>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">No hay datos disponibles</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de las barras de progreso
+    const progressBars = document.querySelectorAll('.progress-fill');
+    progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 500);
+    });
+
+    // Auto-actualización cada 5 minutos
+    setInterval(() => {
+        if (!document.hidden) {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('fecha_inicio') && !urlParams.has('fecha_fin')) {
+                location.reload();
+            }
+        }
+    }, 300000); // 5 minutos
+});
+</script>
 {% endblock %}

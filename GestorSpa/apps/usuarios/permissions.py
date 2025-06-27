@@ -6,11 +6,10 @@ from django.db import transaction
 
 class RoleManager:
     """Gestor de roles y permisos del sistema"""
-    
-    # Definición de roles
+      # Definición de roles
     ROLES = {
         'cliente': {
-            'name': 'Cliente',
+            'name': 'cliente',
             'description': 'Puede reservar turnos y ver su historial',
             'permissions': [
                 'turnos.add_turno',
@@ -18,7 +17,7 @@ class RoleManager:
             ]
         },
         'profesional': {
-            'name': 'Profesional',
+            'name': 'profesional',
             'description': 'Puede consultar turnos asignados y ver detalles',
             'permissions': [
                 'turnos.view_turno',
@@ -27,7 +26,7 @@ class RoleManager:
             ]
         },
         'administrador': {
-            'name': 'Dr/a. Ana Felicidad (Administrador)',
+            'name': 'administrador',
             'description': 'Puede gestionar turnos y servicios (CRUD completo)',
             'permissions': [
                 'turnos.add_turno',

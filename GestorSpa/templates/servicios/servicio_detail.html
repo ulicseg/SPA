@@ -3,55 +3,238 @@
 
 {% block title %}{{ object.nombre }} - GestorSpa{% endblock %}
 
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--spa-sand-light);
+        overflow: hidden;
+    }
+
+    .service-image {
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .service-image:hover {
+        transform: scale(1.02);
+    }
+
+    .service-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+        margin: 0.25rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-duration { background: linear-gradient(135deg, var(--spa-coral), var(--spa-sand)); color: white; }
+    .badge-active { background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage)); color: white; }
+    .badge-inactive { background: linear-gradient(135deg, var(--spa-berry), #dc3545); color: white; }
+
+    .price-display {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 400;
+        color: var(--spa-forest);
+        margin: 1rem 0;
+    }
+
+    .btn-spa-primary {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 500;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(70, 106, 68, 0.2);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-spa-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(70, 106, 68, 0.3);
+        color: white;
+    }
+
+    .btn-spa-secondary {
+        background: linear-gradient(135deg, var(--spa-coral), var(--spa-sand));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(224, 144, 141, 0.2);
+        text-decoration: none;
+    }
+
+    .btn-spa-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(224, 144, 141, 0.3);
+        color: white;
+    }
+
+    .btn-spa-danger {
+        background: linear-gradient(135deg, var(--spa-berry), #dc3545);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(199, 73, 92, 0.2);
+        text-decoration: none;
+    }
+
+    .btn-spa-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(199, 73, 92, 0.3);
+        color: white;
+    }
+
+    .breadcrumb {
+        background: var(--spa-sand-light);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+    }
+
+    .breadcrumb-item a {
+        color: var(--spa-forest);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .breadcrumb-item a:hover {
+        color: var(--spa-sage);
+    }
+
+    .description-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: var(--spa-forest);
+        margin: 1.5rem 0;
+    }
+
+    .empty-image {
+        background: linear-gradient(135deg, var(--spa-sand-light), var(--spa-coral-light));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 400px;
+        color: var(--spa-sage);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <nav aria-label="breadcrumb" data-aos="fade-right">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'servicios:servicio_list' %}" class="text-decoration-none">Servicios</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'servicios:servicio_list' %}">Servicios</a></li>
             <li class="breadcrumb-item active">{{ object.nombre }}</li>
         </ol>
     </nav>
 
+    <!-- Header unificado -->
+    <div class="page-header" data-aos="fade-up">
+        <div class="text-center">
+            <h1 class="page-title">
+                <i class="fas fa-spa me-3"></i>
+                {{ object.nombre }}
+            </h1>
+            <p class="page-subtitle">Descubre nuestro servicio premium de spa y relajación</p>
+        </div>
+    </div>
+
     <div class="row g-4">
         <div class="col-lg-6" data-aos="fade-right">
             {% if object.imagen %}
-            <img src="{{ object.imagen.url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ object.nombre }}">
+            <img src="{{ object.imagen.url }}" class="img-fluid service-image" alt="{{ object.nombre }}">
             {% else %}
-            <div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="height: 400px;">
-                <i class="fas fa-spa fa-5x text-muted"></i>
+            <div class="empty-image">
+                <i class="fas fa-spa fa-5x"></i>
             </div>
             {% endif %}
         </div>
         <div class="col-lg-6" data-aos="fade-left">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <h1 class="display-5 mb-4">{{ object.nombre }}</h1>
-                    
-                    <div class="d-flex gap-3 mb-4">
-                        <span class="badge bg-primary d-flex align-items-center">
-                            <i class="far fa-clock me-2"></i>
+            <div class="service-card h-100">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <span class="service-badge badge-duration">
+                            <i class="far fa-clock"></i>
                             {{ object.duracion }} minutos
                         </span>
-                        <span class="badge {% if object.activo %}bg-success{% else %}bg-danger{% endif %} d-flex align-items-center">
-                            <i class="fas {% if object.activo %}fa-check-circle{% else %}fa-times-circle{% endif %} me-2"></i>
+                        <span class="service-badge {% if object.activo %}badge-active{% else %}badge-inactive{% endif %}">
+                            <i class="fas {% if object.activo %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
                             {% if object.activo %}Activo{% else %}Inactivo{% endif %}
                         </span>
                     </div>
 
-                    <h3 class="h2 mb-3">${{ object.precio }}</h3>
+                    <div class="price-display">${{ object.precio }}</div>
                     
-                    <p class="lead mb-4">{{ object.descripcion }}</p>
+                    <p class="description-text">{{ object.descripcion }}</p>
 
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'turnos:turno_reserva_unificada' %}?servicio={{ object.id }}" class="btn btn-primary btn-lg flex-grow-1">
-                            <i class="fas fa-calendar-plus me-2"></i>Reservar ahora
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="{% url 'turnos:turno_reserva_unificada' %}?servicio={{ object.id }}" class="btn-spa-primary">
+                            <i class="fas fa-calendar-plus"></i>Reservar ahora
                         </a>
                         {% if user.is_staff %}
-                        <a href="{% url 'servicios:servicio_update' object.id %}" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-edit"></i>
+                        <a href="{% url 'servicios:servicio_update' object.id %}" class="btn-spa-secondary">
+                            <i class="fas fa-edit"></i>Editar
                         </a>
-                        <a href="{% url 'servicios:servicio_delete' object.id %}" class="btn btn-outline-danger btn-lg">
-                            <i class="fas fa-trash"></i>
+                        <a href="{% url 'servicios:servicio_delete' object.id %}" class="btn-spa-danger">
+                            <i class="fas fa-trash"></i>Eliminar
                         </a>
                         {% endif %}
                     </div>
@@ -60,4 +243,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

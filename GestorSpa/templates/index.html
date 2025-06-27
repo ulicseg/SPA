@@ -162,16 +162,14 @@
     @keyframes float {
         0%, 100% { transform: translateY(0px) rotate(0deg); }
         50% { transform: translateY(-20px) rotate(5deg); }
-    }
-
-    /* SERVICES SECTION MODERNIZADA */
+    }    /* SERVICES SECTION MODERNIZADA */
     .services-modern {
         padding: 6rem 0;
         background: linear-gradient(180deg, 
-            var(--color-sand-light) 0%, /* Usando variable de base.html */
-            rgba(224, 213, 190, 0.2) 30%, /* Transición más suave */
-            rgba(224, 213, 190, 0.25) 70%, 
-            var(--color-sand-light) 100%);
+            rgba(120, 140, 120, 0.3) 0%, /* Verde más oscuro */
+            rgba(110, 130, 110, 0.4) 30%, /* Transición más oscura */
+            rgba(110, 130, 110, 0.45) 70%, 
+            rgba(120, 140, 120, 0.3) 100%);
         position: relative;
         overflow: hidden;
     }
@@ -390,15 +388,14 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(70, 106, 68, 0.3);
         color: white;
-    }
-
-    /* FEATURES SECTION MODERNIZADA */
+    }    /* FEATURES SECTION MODERNIZADA */
     .features-modern {
         padding: 6rem 0;
-        background: linear-gradient(135deg, 
-            var(--color-sage-light) 0%, /* Usando variable de base.html */
-            var(--color-forest-light) 50%, /* Usando variable de base.html */
-            var(--color-sage-light) 100%);
+        background: linear-gradient(180deg, 
+            rgba(120, 140, 120, 0.3) 0%, /* Verde más oscuro - igual que servicios */
+            rgba(110, 130, 110, 0.4) 30%, /* Transición más oscura */
+            rgba(110, 130, 110, 0.45) 70%, 
+            rgba(120, 140, 120, 0.3) 100%);
         position: relative;
     }
 
@@ -452,18 +449,16 @@
 
     .feature-card-modern:hover .feature-icon-modern {
         transform: scale(1.1) rotate(5deg);
-    }
-
-    .feature-title-modern {
+    }    .feature-title-modern {
         font-family: 'Raleway', sans-serif;
         font-size: 1.3rem;
         font-weight: 400;
-        color: var(--color-forest);
+        color: white; /* Cambiado a blanco */
         margin-bottom: 1rem;
     }
 
     .feature-text-modern {
-        color: var(--color-sage);
+        color: rgba(255, 255, 255, 0.9); /* Cambiado a blanco con ligera transparencia */
         line-height: 1.6;
         font-size: 0.95rem;
     }
@@ -511,12 +506,10 @@
 
     .cta-subtitle-modern {
         font-family: 'Poppins', sans-serif;
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;        color: rgba(255, 255, 255, 0.9);
         margin-bottom: 2.5rem;
         line-height: 1.6;
     }
-
     /* RESPONSIVE DESIGN */
     @media (max-width: 768px) {
         .hero-content-modern {
@@ -546,6 +539,19 @@
 
         .floating-element {
             display: none;
+        }
+
+        .chat-window {
+            width: 90%;
+            right: 5%;
+            left: 5%;
+            height: 80vh;
+            bottom: 80px;
+        }
+        
+        .virtual-assistant {
+            bottom: 20px;
+            right: 20px;
         }
     }
 
@@ -751,11 +757,12 @@
                     <i class="fas fa-user-plus me-2"></i>
                     Crear cuenta
                 </a>
-                {% endif %}
-            </div>
+                {% endif %}            </div>
         </div>
     </div>
 </section>
+
+
 
 <!-- SCROLL ANIMATION SCRIPT -->
 <script>
@@ -799,13 +806,398 @@ document.addEventListener('DOMContentLoaded', function() {
         const hero = document.querySelector('.hero-modern');
         if (hero) {
             hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-        }
-    });
+        }    });
 
     // Animación de entrada inicial
     setTimeout(() => {
         document.querySelector('.hero-content-modern')?.classList.add('visible');
     }, 300);
 });
+</script>
+
+<!-- ASISTENTE VIRTUAL FLOTANTE -->
+<div id="asistente-virtual" class="hidden fixed z-50 bottom-6 right-6 flex flex-col items-end">
+    <!-- Panel de chat -->
+    <div id="chat-panel" class="hidden mb-4 w-80 md:w-96 bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out origin-bottom-right scale-0 max-h-[80vh] flex flex-col">
+        <!-- Encabezado del chat -->
+        <div class="bg-gradient-to-r from-green-700 to-green-300 p-4 rounded-t-2xl flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="bg-white bg-opacity-20 rounded-full p-2 mr-3">
+                    <i class="fas fa-spa text-white"></i>
+                </div>
+                <div>
+                    <h3 class="text-white font-semibold text-lg">Asistente SPA</h3>
+                    <p class="text-white text-opacity-80 text-xs">En línea | Respuesta inmediata</p>
+                </div>
+            </div>
+            <button id="close-chat" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-300">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <!-- Contenido del chat -->
+        <div id="chat-messages" class="p-4 overflow-y-auto flex-grow space-y-4 max-h-[50vh] min-h-[300px]">
+            <!-- Mensaje de bienvenida -->
+            <div class="flex items-start">
+                <div class="bg-green-700 bg-opacity-20 rounded-full p-2 mr-2">
+                    <i class="fas fa-spa text-green-700"></i>
+                </div>
+                <div class="bg-gray-100 p-3 rounded-tr-xl rounded-bl-xl rounded-br-xl max-w-[80%]">
+                    <p class="text-gray-800">¡Hola! Soy el asistente virtual de Spa "Sentirse Bien". ¿En qué puedo ayudarte hoy?</p>
+                </div>
+            </div>
+            <!-- Opciones rápidas iniciales -->
+            <div class="flex flex-wrap gap-2 mt-3 justify-center">
+                <button class="option-btn bg-green-700 bg-opacity-10 hover:bg-opacity-20 text-green-800 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 border border-green-700 border-opacity-20">
+                    <i class="fas fa-calendar-plus mr-2"></i>Reservar turno
+                </button>
+                <button class="option-btn bg-green-700 bg-opacity-10 hover:bg-opacity-20 text-green-800 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 border border-green-700 border-opacity-20">
+                    <i class="fas fa-question-circle mr-2"></i>Preguntas frecuentes
+                </button>
+                <button class="option-btn bg-green-700 bg-opacity-10 hover:bg-opacity-20 text-green-800 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 border border-green-700 border-opacity-20">
+                    <i class="fas fa-user-plus mr-2"></i>Crear usuario
+                </button>
+            </div>
+        </div>
+        <!-- Sección de preguntas frecuentes (inicialmente oculta) -->
+        <div id="faq-section" class="hidden p-4 bg-gray-50 rounded-xl m-3 border border-gray-200">
+            <h4 class="font-medium text-green-800 mb-3 pb-2 border-b border-gray-200">
+                <i class="fas fa-question-circle mr-2"></i>Preguntas Frecuentes
+            </h4>
+            <div class="space-y-2 max-h-[200px] overflow-y-auto">
+                <button class="faq-question w-full text-left p-2 hover:bg-gray-100 rounded-lg text-sm transition-all duration-200">
+                    <i class="fas fa-angle-right mr-2 text-pink-400"></i>¿Cómo puedo reservar un turno?
+                </button>
+                <button class="faq-question w-full text-left p-2 hover:bg-gray-100 rounded-lg text-sm transition-all duration-200">
+                    <i class="fas fa-angle-right mr-2 text-pink-400"></i>¿Qué servicios ofrecen?
+                </button>
+                <button class="faq-question w-full text-left p-2 hover:bg-gray-100 rounded-lg text-sm transition-all duration-200">
+                    <i class="fas fa-angle-right mr-2 text-pink-400"></i>¿Cómo puedo cancelar mi reserva?
+                </button>
+                <button class="faq-question w-full text-left p-2 hover:bg-gray-100 rounded-lg text-sm transition-all duration-200">
+                    <i class="fas fa-angle-right mr-2 text-pink-400"></i>¿Necesito crear una cuenta para reservar?
+                </button>
+                <button class="faq-question w-full text-left p-2 hover:bg-gray-100 rounded-lg text-sm transition-all duration-200">
+                    <i class="fas fa-angle-right mr-2 text-pink-400"></i>¿Cómo puedo ver mis turnos reservados?
+                </button>
+            </div>
+            <button id="close-faq" class="mt-3 text-sm text-green-800 hover:underline">
+                <i class="fas fa-arrow-left mr-1"></i>Volver al chat
+            </button>
+        </div>
+        <!-- Input para escribir mensaje -->
+        <div class="p-3 border-t border-gray-200">
+            <div class="flex items-center bg-gray-100 rounded-xl px-3 py-2">
+                <input id="user-message" type="text" placeholder="Escribe tu mensaje..." class="bg-transparent flex-grow focus:outline-none text-gray-700">
+                <button id="send-message" class="ml-2 text-green-800 hover:text-green-400 transition-colors">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Botón flotante del asistente -->
+    <button id="toggle-chat" class="bg-gradient-to-r from-green-700 to-green-300 p-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-white flex items-center justify-center relative">
+        <i id="chat-icon" class="fas fa-comments text-xl"></i>
+        <span id="notification-badge" class="absolute -top-1 -right-1 bg-pink-400 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center opacity-0 transition-opacity duration-300">1</span>
+    </button>
+</div>
+
+<!-- JavaScript para el asistente virtual -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Referencias a elementos del DOM
+        const asistenteVirtual = document.getElementById('asistente-virtual');
+        const toggleChatBtn = document.getElementById('toggle-chat');
+        const chatPanel = document.getElementById('chat-panel');
+        const closeChat = document.getElementById('close-chat');
+        const chatMessages = document.getElementById('chat-messages');
+        const userMessage = document.getElementById('user-message');
+        const sendMessage = document.getElementById('send-message');
+        const chatIcon = document.getElementById('chat-icon');
+        const notificationBadge = document.getElementById('notification-badge');
+        const faqSection = document.getElementById('faq-section');
+        const closeFaq = document.getElementById('close-faq');
+        
+        // Mostrar el asistente después de 3 segundos
+        setTimeout(() => {
+            asistenteVirtual.classList.remove('hidden');
+            // Mostrar notificación después de 5 segundos
+            setTimeout(() => {
+                notificationBadge.classList.add('opacity-100');
+            }, 5000);
+        }, 3000);
+        
+        // Alternar la visualización del panel de chat
+        toggleChatBtn.addEventListener('click', () => {
+            if (chatPanel.classList.contains('hidden')) {
+                // Abrir chat
+                chatPanel.classList.remove('hidden');
+                setTimeout(() => {
+                    chatPanel.classList.add('scale-100');
+                    chatIcon.classList.remove('fa-comments');
+                    chatIcon.classList.add('fa-times');
+                }, 10);
+                notificationBadge.classList.remove('opacity-100');
+            } else {
+                // Cerrar chat
+                chatPanel.classList.remove('scale-100');
+                setTimeout(() => {
+                    chatPanel.classList.add('hidden');
+                    chatIcon.classList.remove('fa-times');
+                    chatIcon.classList.add('fa-comments');
+                }, 300);
+            }
+        });
+        
+        // Cerrar chat con botón X
+        closeChat.addEventListener('click', () => {
+            chatPanel.classList.remove('scale-100');
+            setTimeout(() => {
+                chatPanel.classList.add('hidden');
+                chatIcon.classList.remove('fa-times');
+                chatIcon.classList.add('fa-comments');
+            }, 300);
+        });
+        
+        // Función para agregar mensajes
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start ' + (isUser ? 'justify-end' : '');
+            
+            if (isUser) {
+                messageDiv.innerHTML = `
+                    <div class="bg-green-700 text-white p-3 rounded-tl-xl rounded-bl-xl rounded-br-xl max-w-[80%]">
+                        <p>${message}</p>
+                    </div>
+                    <div class="bg-green-700 rounded-full p-2 ml-2">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="bg-green-700 bg-opacity-20 rounded-full p-2 mr-2">
+                        <i class="fas fa-spa text-green-700"></i>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded-tr-xl rounded-bl-xl rounded-br-xl max-w-[80%]">
+                        <p class="text-gray-800">${message}</p>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Enviar mensaje al presionar Enter
+        userMessage.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && userMessage.value.trim() !== '') {
+                handleUserMessage();
+            }
+        });
+        
+        // Enviar mensaje al hacer clic en el botón
+        sendMessage.addEventListener('click', () => {
+            if (userMessage.value.trim() !== '') {
+                handleUserMessage();
+            }
+        });
+        
+        // Procesar el mensaje del usuario
+        function handleUserMessage() {
+            const message = userMessage.value.trim();
+            addMessage(message, true);
+            
+            // Limpiar el input
+            userMessage.value = '';
+            
+            // Simular respuesta del asistente (podría conectarse a un sistema más complejo)
+            setTimeout(() => {
+                let response;
+                
+                // Respuestas simples basadas en palabras clave
+                if (message.toLowerCase().includes('hola') || message.toLowerCase().includes('buenos días') || message.toLowerCase().includes('buenas')) {
+                    response = "¡Hola! ¿En qué puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios o cómo reservar un turno.";
+                } else if (message.toLowerCase().includes('reserva') || message.toLowerCase().includes('turno') || message.toLowerCase().includes('cita')) {
+                    response = "Para reservar un turno puedes:<br>1. Hacer clic en el botón 'Reservar turno' de este chat<br>2. O ir a la sección 'Reservar Turno' en la barra de navegación<br>3. Seleccionar el servicio y profesional de tu preferencia";
+                    
+                    // Agregar botones de acción después de la respuesta
+                    setTimeout(() => {
+                        const actionBtns = document.createElement('div');
+                        actionBtns.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                        actionBtns.innerHTML = `
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                <i class="fas fa-calendar-plus mr-2"></i>Ir a reservas
+                            </a>
+                        `;
+                        chatMessages.appendChild(actionBtns);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 500);
+                } else if (message.toLowerCase().includes('servicio') || message.toLowerCase().includes('tratamiento')) {
+                    response = "Ofrecemos una variedad de servicios de spa incluyendo masajes, tratamientos faciales, terapias corporales y más. Puedes ver todos nuestros servicios en la sección 'Servicios' de nuestra página principal.";
+                } else if (message.toLowerCase().includes('precio') || message.toLowerCase().includes('costo') || message.toLowerCase().includes('tarifa')) {
+                    response = "Los precios varían según el servicio seleccionado. Puedes ver los precios detallados en la sección de servicios o al momento de hacer tu reserva.";
+                } else if (message.toLowerCase().includes('cancelar') || message.toLowerCase().includes('anular')) {
+                    response = "Para cancelar una reserva, debes iniciar sesión en tu cuenta, ir a 'Mis Turnos' y seleccionar la opción de cancelar. La cancelación debe realizarse con al menos 24 horas de anticipación.";
+                } else if (message.toLowerCase().includes('cuenta') || message.toLowerCase().includes('usuario') || message.toLowerCase().includes('registr')) {
+                    response = "Crear una cuenta es muy sencillo y te permitirá gestionar tus reservas más fácilmente. ¿Te gustaría que te guíe en el proceso de registro?";
+                    
+                    // Agregar botones de acción después de la respuesta
+                    setTimeout(() => {
+                        const actionBtns = document.createElement('div');
+                        actionBtns.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                        actionBtns.innerHTML = `
+                            <a href="{% url 'usuarios:registro_cliente' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                <i class="fas fa-user-plus mr-2"></i>Crear cuenta
+                            </a>
+                            <a href="{% url 'login' %}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-gray-300">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Iniciar sesión
+                            </a>
+                        `;
+                        chatMessages.appendChild(actionBtns);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 500);
+                } else {
+                    response = "Gracias por tu mensaje. ¿Hay algo específico en lo que te pueda ayudar sobre nuestros servicios de spa o el proceso de reserva?";
+                }
+                
+                addMessage(response);
+            }, 1000);
+        }
+        
+        // Manejar opciones rápidas
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const option = this.textContent.trim();
+                
+                if (option.includes('Reservar turno')) {
+                    addMessage("Quiero reservar un turno", true);
+                    setTimeout(() => {
+                        addMessage("Para reservar un turno, sigue estos pasos:<br>1. Selecciona el servicio que deseas<br>2. Elige el profesional de tu preferencia<br>3. Selecciona fecha y hora disponible<br>4. Confirma tu reserva");
+                        
+                        setTimeout(() => {
+                            const actionBtns = document.createElement('div');
+                            actionBtns.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                            actionBtns.innerHTML = `
+                                <a href="{% url 'turnos:turno_reserva_unificada' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                    <i class="fas fa-calendar-plus mr-2"></i>Ir a reservas
+                                </a>
+                            `;
+                            chatMessages.appendChild(actionBtns);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 500);
+                    }, 1000);
+                } else if (option.includes('Preguntas frecuentes')) {
+                    // Mostrar sección de FAQ
+                    chatMessages.classList.add('hidden');
+                    faqSection.classList.remove('hidden');
+                } else if (option.includes('Crear usuario')) {
+                    addMessage("¿Cómo puedo crear un usuario?", true);
+                    setTimeout(() => {
+                        addMessage("Crear una cuenta te permitirá gestionar tus reservas y acceder a tu historial. Sigue estos pasos:<br>1. Haz clic en 'Crear cuenta'<br>2. Completa el formulario con tus datos<br>3. Verifica tu correo electrónico<br>4. ¡Listo! Ya puedes iniciar sesión");
+                        
+                        setTimeout(() => {
+                            const actionBtns = document.createElement('div');
+                            actionBtns.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                            actionBtns.innerHTML = `
+                                <a href="{% url 'usuarios:registro_cliente' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                    <i class="fas fa-user-plus mr-2"></i>Crear cuenta
+                                </a>
+                            `;
+                            chatMessages.appendChild(actionBtns);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 500);
+                    }, 1000);
+                }
+            });
+        });
+        
+        // Cerrar sección de FAQ
+        closeFaq.addEventListener('click', () => {
+            faqSection.classList.add('hidden');
+            chatMessages.classList.remove('hidden');
+        });
+        
+        // Manejar preguntas frecuentes
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const questionText = this.textContent.trim();
+                faqSection.classList.add('hidden');
+                chatMessages.classList.remove('hidden');
+                addMessage(questionText, true);
+                let answer = '';
+                if (questionText.includes('¿Cómo puedo reservar un turno?')) {
+                    answer = "Para reservar un turno, sigue estos pasos:<br>1. Haz clic en 'Reservar Turno' en el menú principal<br>2. Selecciona el servicio que deseas<br>3. Elige al profesional de tu preferencia<br>4. Selecciona la fecha y hora disponible<br>5. Confirma tu reserva";
+                    setTimeout(() => {
+                        const actionBtn = document.createElement('div');
+                        actionBtn.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                        actionBtn.innerHTML = `
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                <i class="fas fa-calendar-plus mr-2"></i>Ir a reservas
+                            </a>
+                        `;
+                        chatMessages.appendChild(actionBtn);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 500);
+                } else if (questionText.includes('¿Qué servicios ofrecen?')) {
+                    answer = "Ofrecemos una amplia variedad de servicios de spa y bienestar:<br>- Masajes terapéuticos y relajantes<br>- Tratamientos faciales<br>- Terapias corporales<br>- Tratamientos de belleza<br>- Servicios de manicura y pedicura<br><br>Puedes ver todos nuestros servicios en detalle en la sección de servicios de nuestra página principal.";
+                    setTimeout(() => {
+                        const actionBtn = document.createElement('div');
+                        actionBtn.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                        actionBtn.innerHTML = `
+                            <a href="#servicios" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                <i class="fas fa-spa mr-2"></i>Ver servicios
+                            </a>
+                        `;
+                        chatMessages.appendChild(actionBtn);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 500);
+                } else if (questionText.includes('¿Cómo puedo cancelar mi reserva?')) {
+                    answer = "Para cancelar una reserva:<br>1. Inicia sesión en tu cuenta<br>2. Ve a 'Mis Turnos' en el menú de usuario<br>3. Busca la reserva que deseas cancelar<br>4. Haz clic en 'Cancelar Reserva'<br><br>Recuerda que las cancelaciones deben realizarse con al menos 24 horas de anticipación para evitar cargos.";
+                    setTimeout(() => {
+                        const actionBtn = document.createElement('div');
+                        actionBtn.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                        actionBtn.innerHTML = `
+                            <a href="{% url 'usuarios:mis_turnos' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                <i class="fas fa-calendar-times mr-2"></i>Ir a Mis Turnos
+                            </a>
+                        `;
+                        chatMessages.appendChild(actionBtn);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 500);
+                } else if (questionText.includes('¿Necesito crear una cuenta para reservar?')) {
+                    answer = "No es obligatorio crear una cuenta para hacer una reserva, pero te recomendamos hacerlo ya que te brinda varias ventajas:<br>- Gestionar fácilmente tus reservas<br>- Ver tu historial de servicios<br>- Recibir notificaciones sobre tus próximas citas<br>- Acceder a promociones exclusivas para usuarios registrados";
+                    setTimeout(() => {
+                        const actionBtns = document.createElement('div');
+                        actionBtns.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                        actionBtns.innerHTML = `
+                            <a href="{% url 'usuarios:registro_cliente' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                <i class="fas fa-user-plus mr-2"></i>Crear cuenta
+                            </a>
+                            <a href="{% url 'turnos:turno_reserva_unificada' %}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-gray-300">
+                                <i class="fas fa-calendar-plus mr-2"></i>Reservar sin cuenta
+                            </a>
+                        `;
+                        chatMessages.appendChild(actionBtns);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 500);
+                } else if (questionText.includes('¿Cómo puedo ver mis turnos reservados?')) {
+                    answer = "Para ver tus turnos reservados:<br>1. Inicia sesión en tu cuenta<br>2. Haz clic en tu nombre de usuario en la barra de navegación<br>3. Selecciona 'Mis Turnos' en el menú desplegable<br><br>Allí podrás ver todas tus reservas actuales y pasadas, así como gestionarlas.";
+                    setTimeout(() => {
+                        const actionBtn = document.createElement('div');
+                        actionBtn.className = 'flex flex-wrap gap-2 mt-3 justify-center';
+                        actionBtn.innerHTML = `
+                            <a href="{% url 'usuarios:mis_turnos' %}" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-opacity-90">
+                                <i class="fas fa-calendar-check mr-2"></i>Ver mis turnos
+                            </a>
+                        `;
+                        chatMessages.appendChild(actionBtn);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 500);
+                }
+                setTimeout(() => {
+                    addMessage(answer);
+                }, 1000);
+            });
+        });
+    });
 </script>
 {% endblock %}

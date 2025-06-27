@@ -67,8 +67,7 @@ class ProfesionalForm(forms.ModelForm):
         widget=forms.SelectMultiple(attrs={
             'class': 'form-select',
             'size': 8,
-        }),
-        label="Servicios que puede realizar",
+        }),        label="Servicios que puede realizar",
         help_text="Seleccione los servicios para los que está capacitado."
     )
 
@@ -85,7 +84,7 @@ class ProfesionalForm(forms.ModelForm):
             'nombre_completo', 'especialidad', 'especialidades_secundarias',
             'contacto', 'telefono_profesional', 'numero_matricula', 
             'colegio_profesional', 'biografia', 'experiencia_anos',
-            'foto_profesional', 'disponibilidad_notas', 'servicios_especialidad'
+            'disponibilidad_notas', 'servicios_especialidad'
         ]
         widgets = {
             'nombre_completo': forms.TextInput(attrs={
@@ -282,8 +281,7 @@ class ClienteRegistroForm(UserCreationForm):
     
     telefono = forms.CharField(
         max_length=20,
-        required=False,
-        label='Teléfono (opcional)',
+        required=False,        label='Teléfono (opcional)',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': '+54 11 1234-5678'
@@ -311,7 +309,8 @@ class ClienteRegistroForm(UserCreationForm):
             'class': 'form-control',
             'placeholder': 'Confirma tu contraseña'
         })
-          # Personalizar labels
+        
+        # Personalizar labels
         self.fields['username'].label = 'Nombre de usuario'
         self.fields['password1'].label = 'Contraseña'
         self.fields['password2'].label = 'Confirmar contraseña'
@@ -323,6 +322,8 @@ class ClienteRegistroForm(UserCreationForm):
         return email
 
     def save(self, commit=True):
+        from django.contrib.auth.models import Group
+        
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
@@ -334,5 +335,83 @@ class ClienteRegistroForm(UserCreationForm):
             perfil = user.perfil
             perfil.telefono = self.cleaned_data.get('telefono', '')
             perfil.tipo_usuario = 'cliente'
+            perfil.rol = 'cliente'  # Asignar rol de cliente
             perfil.save()
+            
+            # Asignar al grupo de Cliente automáticamente
+            try:
+                grupo_cliente = Group.objects.get(name='cliente')
+                user.groups.add(grupo_cliente)
+            except Group.DoesNotExist:
+                # Si el grupo no existe, crearlo usando RoleManager
+                from .permissions import RoleManager
+                RoleManager.create_groups_and_permissions()
+                grupo_cliente = Group.objects.get(name='cliente')
+                user.groups.add(grupo_cliente)
+        return user
+
+
+class UserForm(UserCreationForm):
+    """Formulario para crear usuarios (profesionales)"""
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'email@ejemplo.com'
+        })
+    )
+    first_name = forms.CharField(
+        max_length=30,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nombre'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=30,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Apellido'
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre de usuario'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs.update({'class': 'form-control'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control'})
+
+    def save(self, commit=True):
+        from django.contrib.auth.models import Group
+        
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        
+        if commit:
+            user.save()
+            
+            # Asignar automáticamente el grupo de Profesional
+            try:
+                grupo_profesional = Group.objects.get(name='profesional')
+                user.groups.add(grupo_profesional)
+            except Group.DoesNotExist:
+                # Si el grupo no existe, crearlo usando RoleManager
+                from .permissions import RoleManager
+                RoleManager.create_groups_and_permissions()
+                grupo_profesional = Group.objects.get(name='profesional')
+                user.groups.add(grupo_profesional)
+                
         return user

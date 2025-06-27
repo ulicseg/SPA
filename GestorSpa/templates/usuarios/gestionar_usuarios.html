@@ -3,18 +3,223 @@
 
 {% block title %}Gestionar Usuarios{% endblock %}
 
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--spa-sand-light) 0%, #f1f5f4 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .card {
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(70, 106, 68, 0.1);
+        border: 1px solid var(--spa-sand-light);
+        background: white;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background: var(--spa-sand-light);
+        color: var(--spa-forest);
+        font-weight: 600;
+        border-bottom: 2px solid var(--spa-sand);
+        font-family: 'Raleway', sans-serif;
+        padding: 1rem;
+    }
+
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .table-hover tbody tr:hover {
+        background: var(--spa-sand-light);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(70, 106, 68, 0.2);
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(70, 106, 68, 0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--spa-coral), #f4a261);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(224, 144, 141, 0.3);
+    }
+
+    .btn-outline-danger {
+        border-color: var(--spa-berry);
+        color: var(--spa-berry);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-danger:hover {
+        background: var(--spa-berry);
+        border-color: var(--spa-berry);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(199, 73, 92, 0.3);
+    }
+
+    .modal-header.bg-danger {
+        background: linear-gradient(135deg, var(--spa-berry), #dc3545) !important;
+    }
+
+    .badge {
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .badge-administrador {
+        background: var(--spa-coral-light);
+        color: var(--spa-coral);
+        border: 1px solid var(--spa-coral);
+    }
+
+    .badge-profesional {
+        background: var(--spa-forest-light);
+        color: var(--spa-forest);
+        border: 1px solid var(--spa-forest);
+    }
+
+    .badge-cliente {
+        background: var(--spa-sage-light);
+        color: var(--spa-sage);
+        border: 1px solid var(--spa-sage);
+    }
+
+    .badge-success {
+        background: var(--spa-forest-light);
+        color: var(--spa-forest);
+        border: 1px solid var(--spa-forest);
+    }
+
+    .badge-secondary {
+        background: var(--spa-berry-light);
+        color: var(--spa-berry);
+        border: 1px solid var(--spa-berry);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--spa-sand);
+    }
+
+    .user-avatar-placeholder {
+        width: 40px;
+        height: 40px;
+        background: var(--spa-sage-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--spa-sand);
+    }    .user-avatar-placeholder i {
+        color: var(--spa-sage);
+    }
+
+    /* Asegurar que los modales estén siempre por encima */
+    .modal {
+        z-index: 9999 !important;
+    }
+    
+    .modal-backdrop {
+        z-index: 9998 !important;
+    }
+    
+    /* Asegurar que el modal se muestre correctamente */
+    .modal-dialog {
+        position: relative;
+        z-index: 10000 !important;
+        margin: 1.75rem auto;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3">
+<div class="container my-4" style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+    <!-- Header del Perfil -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">
                     <i class="fas fa-users me-2"></i>
                     Gestionar Usuarios
                 </h1>
-                <a href="{% url 'admin:auth_user_add' %}" class="btn btn-success">
-                    <i class="fas fa-plus me-1"></i>Nuevo Usuario
-                </a>
+                <p class="mb-0 opacity-75">
+                    Administra los usuarios del sistema y sus roles
+                </p>
+            </div>
+            <div>
             </div>
         </div>
     </div>
@@ -23,27 +228,25 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
-                    <thead>
-                        <tr>
+                    <thead>                        <tr>
                             <th>Usuario</th>
                             <th>Nombre Completo</th>
                             <th>Email</th>
                             <th>Rol Actual</th>
                             <th>Tipo Usuario</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for usuario in usuarios %}
-                        <tr>
-                            <td>
+                        <tr>                            <td>
                                 <div class="d-flex align-items-center">
                                     {% if usuario.perfil.foto %}
-                                        <img src="{{ usuario.perfil.foto.url }}" alt="Foto" class="rounded-circle me-2" width="30" height="30">
+                                        <img src="{{ usuario.perfil.foto.url }}" alt="Foto" class="user-avatar me-3">
                                     {% else %}
-                                        <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                                            <i class="fas fa-user text-white"></i>
+                                        <div class="user-avatar-placeholder me-3">
+                                            <i class="fas fa-user"></i>
                                         </div>
                                     {% endif %}
                                     <strong>{{ usuario.username }}</strong>
@@ -64,68 +267,20 @@
                                         {{ usuario.perfil.get_tipo_usuario_display }}
                                     </span>
                                 {% endif %}
-                            </td>
-                            <td>
+                            </td>                            <td>
                                 {% if usuario.is_active %}
                                     <span class="badge bg-success">Activo</span>
                                 {% else %}
                                     <span class="badge bg-secondary">Inactivo</span>
                                 {% endif %}
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <!-- Botón para asignar rol -->
-                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalRol{{ usuario.id }}">
-                                        <i class="fas fa-user-tag me-1"></i>Rol
-                                    </button>
-                                    
-                                    <!-- Editar usuario -->
-                                    <a href="{% url 'admin:auth_user_change' usuario.id %}" class="btn btn-sm btn-outline-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                </div>
-
-                                <!-- Modal para asignar rol -->
-                                <div class="modal fade" id="modalRol{{ usuario.id }}" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Asignar Rol - {{ usuario.username }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <form method="post" action="{% url 'usuarios:asignar_rol_usuario' usuario.id %}">
-                                                {% csrf_token %}
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label for="rol{{ usuario.id }}" class="form-label">Seleccionar Rol:</label>
-                                                        <select class="form-select" id="rol{{ usuario.id }}" name="rol" required>
-                                                            <option value="">-- Seleccionar Rol --</option>
-                                                            {% for rol_key, rol_name in roles_disponibles %}
-                                                                <option value="{{ rol_key }}">{{ rol_name }}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                    <div class="alert alert-info">
-                                                        <small>
-                                                            <strong>Roles disponibles:</strong><br>
-                                                            • <strong>Cliente:</strong> Puede reservar turnos y ver su historial<br>
-                                                            • <strong>Profesional:</strong> Puede consultar turnos asignados<br>
-                                                            • <strong>Administrador:</strong> Gestión completa del sistema
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                    <button type="submit" class="btn btn-primary">Asignar Rol</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                            </td>                            <td>
+                                <!-- Botón para eliminar usuario -->
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalEliminar{{ usuario.id }}">
+                                    <i class="fas fa-trash me-1"></i>Eliminar
+                                </button>
                             </td>
                         </tr>
-                        {% empty %}
-                        <tr>
+                        {% empty %}                        <tr>
                             <td colspan="7" class="text-center text-muted">No hay usuarios registrados.</td>
                         </tr>
                         {% endfor %}
@@ -172,7 +327,87 @@
                     </div>
                 </div>
             </div>
+        </div>    </div>
+
+    <!-- Modales para confirmar eliminación -->
+    {% for usuario in usuarios %}
+    <div class="modal fade" id="modalEliminar{{ usuario.id }}" tabindex="-1" aria-labelledby="modalEliminarLabel{{ usuario.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalEliminarLabel{{ usuario.id }}">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+                    </div>
+                    <p>¿Estás seguro de que quieres eliminar al usuario <strong>{{ usuario.username }}</strong>?</p>
+                    <div class="user-info mt-3">
+                        <p><strong>Nombre:</strong> {{ usuario.first_name }} {{ usuario.last_name|default:"Sin nombre" }}</p>
+                        <p><strong>Email:</strong> {{ usuario.email|default:"Sin email" }}</p>
+                        <p><strong>Rol:</strong> {{ usuario.perfil.get_tipo_usuario_display|default:"Sin rol" }}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <form method="post" action="{% url 'usuarios:eliminar_usuario' usuario.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>Eliminar Usuario
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
+    </div>    {% endfor %}
 </div>
+
+{% block extra_js %}
+<script>
+    // Asegurar que los modales se posicionen correctamente
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejar la apertura de modales
+        const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+        modalButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetModal = document.querySelector(this.getAttribute('data-bs-target'));
+                if (targetModal) {
+                    // Asegurar que el modal tenga el z-index correcto
+                    targetModal.style.zIndex = '9999';
+                    
+                    // Asegurar que el backdrop tenga el z-index correcto
+                    setTimeout(() => {
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.style.zIndex = '9998';
+                        }
+                    }, 100);
+                }
+            });
+        });
+
+        // Manejar el cierre de modales
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('hidden.bs.modal', function() {
+                // Limpiar cualquier backdrop residual
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+                
+                // Restaurar el scroll del body
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+            });
+        });
+    });
+</script>
+{% endblock %}
 {% endblock %}

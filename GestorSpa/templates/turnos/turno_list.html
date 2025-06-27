@@ -5,149 +5,245 @@
 
 {% block extra_css %}
 <style>
-    .calendar-header {
-        background-color: var(--color-primary);
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
+    /* Variables del sistema spa */
+    :root {
+        --spa-primary: rgba(70, 106, 68, 0.8);
+        --spa-secondary: rgba(154, 168, 168, 0.8);
+        --spa-accent: rgba(224, 144, 141, 0.8);
+        --spa-light: rgba(224, 213, 190, 0.8);
+    }    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.5rem 1rem 2rem;
+    }    .page-header {
+        text-align: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--spa-light);
     }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2.5rem;
+        color: var(--spa-primary);
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+    }
+
+    .page-subtitle {
+        color: var(--spa-secondary);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* Botones estandarizados */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--spa-primary), var(--spa-secondary));
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, var(--spa-secondary), var(--spa-primary));
+        box-shadow: 0 4px 12px rgba(70, 106, 68, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--spa-secondary);
+        border: none;
+        border-radius: 12px;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: var(--spa-primary);
+        transform: translateY(-2px);
+    }
+
+    /* Header del calendario */
+    .calendar-header {
+        background: linear-gradient(135deg, var(--spa-primary), var(--spa-secondary));
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(70, 106, 68, 0.2);
+    }
+
     .calendar-title {
         font-size: 1.5rem;
         margin: 0;
+    }    /* Selector de fecha */
+    .fecha-selector {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border: 1px solid rgba(154, 168, 168, 0.2);
     }
+
+    /* Tabla */
+    .table {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
     .table th {
-        background-color: var(--color-primary);
+        background: var(--spa-primary);
         color: white;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
     }
+
+    .table td {
+        padding: 1rem;
+        border-color: rgba(154, 168, 168, 0.2);
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(70, 106, 68, 0.05);
+    }
+
+    /* Estados de turnos */
     .badge-estado {
         padding: 8px 12px;
         border-radius: 20px;
         font-weight: 500;
     }
+
     .estado-pendiente {
         background-color: #ffc107;
         color: #000;
     }
+
     .estado-confirmado {
         background-color: #28a745;
         color: white;
     }
+
     .estado-cancelado {
         background-color: #dc3545;
         color: white;
     }
+
     .estado-completado {
         background-color: #17a2b8;
         color: white;
     }
+
+    /* Botones de acción */
     .btn-action {
         padding: 0.25rem 0.5rem;
         margin: 0 0.2rem;
-    }
-    .fecha-selector {
-        background-color: white;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .fecha-selector .form-label {
-        font-weight: 500;
-        color: var(--color-primary);
-    }
-    .fecha-selector .form-control {
         border-radius: 8px;
-        border: 1px solid #ced4da;
-        padding: 10px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .fecha-selector .form-control:focus {
-        border-color: var(--color-primary);
-        box-shadow: 0 0 0 0.2rem rgba(70, 106, 68, 0.25);
-    }
-    .fecha-selector .btn {
-        border-radius: 8px;
-        padding: 10px 20px;
-        font-weight: 500;
-    }
-    .fecha-selector .btn-primary {
-        background-color: var(--color-primary);
-        border-color: var(--color-primary);
-    }
-    .fecha-selector .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
-    .fecha-selector .btn:hover {
-        transform: translateY(-2px);
-        transition: transform 0.2s;
-    }
-    .table-responsive {
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .table {
-        margin-bottom: 0;
-    }
-    .table th {
-        padding: 15px;
-        font-weight: 500;
-    }
-    .table td {
-        padding: 12px 15px;
-        vertical-align: middle;
-    }
-    .table tbody tr:hover {
-        background-color: rgba(70, 106, 68, 0.05);
-    }
-    .btn-group .btn {
-        border-radius: 6px;
-        margin: 0 2px;
-        padding: 6px 12px;
-    }
+
     .btn-group .btn:hover {
         transform: translateY(-2px);
-        transition: transform 0.2s;
     }
+
     .btn-outline-primary {
-        color: var(--color-primary);
-        border-color: var(--color-primary);
+        color: var(--spa-primary);
+        border-color: var(--spa-primary);
     }
+
     .btn-outline-primary:hover {
-        background-color: var(--color-primary);
+        background-color: var(--spa-primary);
         color: white;
     }
+
     .btn-outline-danger:hover {
         background-color: #dc3545;
         color: white;
     }
+
+    /* Información de contacto */
     .contacto-info {
         font-size: 0.9rem;
         color: #6c757d;
     }
+
     .contacto-info i {
         margin-right: 5px;
-        color: var(--color-primary);
+        color: var(--spa-primary);
     }
+
+    /* Estado vacío */
     .empty-state {
         padding: 40px;
         text-align: center;
         color: #6c757d;
     }
+
     .empty-state i {
         font-size: 3rem;
         margin-bottom: 15px;
-        color: var(--color-primary);
+        color: var(--spa-primary);
+    }
+
+    /* Cards principales */
+    .card {
+        border-radius: 12px;
+        border: 1px solid rgba(154, 168, 168, 0.2);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    /* Estilos del formulario de filtros */
+    .form-label {
+        font-weight: 500;
+        color: var(--spa-primary);
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 10px;
+    }
+    
+    .form-control:focus {
+        border-color: var(--spa-primary);
+        box-shadow: 0 0 0 0.2rem rgba(70, 106, 68, 0.25);
+    }
+
+    /* Botón compacto para estado vacío */
+    .btn-compact {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        font-weight: 500;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Gestión de Turnos</h1>
+<div class="page-container">
+    <!-- Header estándar -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-calendar-alt me-3"></i>
+            Gestión de Turnos
+        </h1>
+        <p class="page-subtitle">Administra y controla todos los turnos del spa</p>
+    </div>
+
+    <!-- Botón nuevo turno -->
+    <div class="text-end mb-4">
         <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Nuevo Turno
+            <i class="fas fa-plus me-2"></i> Nuevo Turno
         </a>
     </div>
 
@@ -198,19 +294,61 @@
                             <td class="contacto-info">
                                 <div><i class="fas fa-envelope"></i> {{ turno.email }}</div>
                                 <div><i class="fas fa-phone"></i> {{ turno.telefono }}</div>
-                            </td>
-                            <td>
+                            </td>                            <td>
                                 <div class="btn-group">
-                                    <a href="{% url 'turnos:turno_update' turno.pk %}" 
-                                       class="btn btn-sm btn-outline-primary" 
-                                       title="Editar turno">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{% url 'turnos:turno_delete' turno.pk %}" 
-                                       class="btn btn-sm btn-outline-danger"
-                                       title="Eliminar turno">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    {% if user.perfil.is_administrador %}
+                                        <!-- Administradores pueden hacer todo -->
+                                        <a href="{% url 'turnos:turno_update' turno.pk %}" 
+                                           class="btn btn-sm btn-outline-primary" 
+                                           title="Editar turno">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'turnos:turno_delete' turno.pk %}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           title="Eliminar turno">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                        <!-- Botón para cambiar estado -->
+                                        {% if turno.puede_cambiar_estado %}
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-warning dropdown-toggle" 
+                                                        data-bs-toggle="dropdown" title="Cambiar estado">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    {% if turno.estado != 'confirmado' %}
+                                                        <li><a class="dropdown-item" href="{% url 'turnos:cambiar_estado_turno' turno.pk %}?estado=confirmado">Confirmar</a></li>
+                                                    {% endif %}
+                                                    {% if turno.estado != 'completado' and turno.puede_ser_completado %}
+                                                        <li><a class="dropdown-item" href="{% url 'turnos:cambiar_estado_turno' turno.pk %}?estado=completado">Completar</a></li>
+                                                    {% endif %}
+                                                    {% if turno.estado != 'cancelado' and turno.puede_ser_cancelado %}
+                                                        <li><a class="dropdown-item" href="{% url 'turnos:cambiar_estado_turno' turno.pk %}?estado=cancelado">Cancelar</a></li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    {% elif user.perfil.is_profesional %}
+                                        <!-- Profesionales solo pueden completar sus turnos del día -->
+                                        {% if turno.profesional.usuario == user and turno.puede_ser_completado %}
+                                            <a href="{% url 'turnos:cambiar_estado_turno' turno.pk %}?estado=completado" 
+                                               class="btn btn-sm btn-outline-success"
+                                               title="Marcar como completado">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% elif user.perfil.is_cliente %}
+                                        <!-- Clientes solo pueden ver detalles de sus propios turnos -->
+                                        {% if turno.usuario == user %}
+                                            <a href="{% url 'turnos:turno_detail' turno.pk %}" 
+                                               class="btn btn-sm btn-outline-info"
+                                               title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                    <!-- PDF disponible para todos los roles -->
                                     <a href="{% url 'turnos:turno_pdf' turno.pk %}" 
                                        class="btn btn-sm btn-outline-success"
                                        title="Descargar PDF">
@@ -241,8 +379,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Establecer la fecha mínima como hoy
     const fechaInput = document.getElementById('fecha');
-    const today = new Date().toISOString().split('T')[0];
-    fechaInput.min = today;
+    const today = new Date().toISOString().split('T')[0];    fechaInput.min = today;
 });
 </script>
-{% endblock %} 
+{% endblock %}

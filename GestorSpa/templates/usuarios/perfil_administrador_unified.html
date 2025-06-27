@@ -1,0 +1,564 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Panel de Administración{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--spa-sand-light) 0%, #f1f5f4 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1rem;
+        font-weight: 300;
+    }
+
+    .admin-panel {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .metric-box {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 24px rgba(70, 106, 68, 0.1);
+        border: 1px solid var(--spa-sand-light);
+        transition: transform 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .metric-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.15);
+    }
+
+    .metric-box i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--spa-coral);
+        background: var(--spa-coral-light);
+        border-radius: 50%;
+        padding: 1rem;
+        width: 4rem;
+        height: 4rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .metric-box h4 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--spa-forest);
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .metric-box p {
+        margin: 0.5rem 0 0 0;
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .action-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        border: 2px solid var(--spa-sand);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--spa-forest);
+    }
+
+    .action-card:hover {
+        border-color: var(--spa-forest);
+        background: var(--spa-forest-light);
+        transform: translateY(-2px);
+        color: var(--spa-forest);
+        text-decoration: none;
+    }
+
+    .action-card i {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        color: var(--spa-coral);
+        display: block;
+    }
+
+    .action-card .title {
+        font-weight: 500;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .action-card .subtitle {
+        font-size: 0.875rem;
+        color: #666;
+    }
+
+    .card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(70, 106, 68, 0.1);
+        border: 1px solid var(--spa-sand-light);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--spa-sand-light), var(--spa-sage-light));
+        border-bottom: 2px solid var(--spa-sand);
+        color: var(--spa-forest);
+        font-family: 'Raleway', sans-serif;
+        font-weight: 500;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 1.5rem;
+    }
+
+    .table {
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 0;
+    }
+
+    .table th {
+        color: var(--spa-forest);
+        font-weight: 500;
+        border-color: var(--spa-sand);
+        font-size: 0.9rem;
+    }
+
+    .table td {
+        border-color: var(--spa-sand-light);
+        vertical-align: middle;
+    }
+
+    .badge-confirmado {
+        background: var(--spa-forest);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-pendiente {
+        background: var(--spa-coral);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-cancelado {
+        background: var(--spa-berry);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-completado {
+        background: var(--spa-sage);
+        color: white;
+        border-radius: 8px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .btn-action {
+        border: 2px solid var(--spa-sand);
+        border-radius: 8px;
+        padding: 0.25rem 0.5rem;
+        margin: 0 0.125rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        font-size: 0.875rem;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-action.view {
+        color: var(--spa-forest);
+        border-color: var(--spa-forest);
+    }
+
+    .btn-action.view:hover {
+        background: var(--spa-forest-light);
+        color: var(--spa-forest);
+    }
+
+    .btn-action.edit {
+        color: var(--spa-coral);
+        border-color: var(--spa-coral);
+    }
+
+    .btn-action.edit:hover {
+        background: var(--spa-coral-light);
+        color: var(--spa-coral);
+    }
+
+    .admin-link-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .admin-link-box {
+        background: white;
+        border: 2px solid var(--spa-sand);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .admin-link-box:hover {
+        border-color: var(--spa-forest);
+        background: var(--spa-forest-light);
+    }
+
+    .admin-link-box .link-title {
+        font-weight: 500;
+        color: var(--spa-forest);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .admin-link-box .link-subtitle {
+        color: #666;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    .admin-link-box .btn-link {
+        color: var(--spa-coral);
+        font-weight: 500;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border: 2px solid var(--spa-coral);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .admin-link-box .btn-link:hover {
+        background: var(--spa-coral);
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+        
+        .admin-link-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animations */
+    .metric-box,
+    .action-card,
+    .card {
+        animation: fadeInUp 0.4s ease-out;
+    }
+
+    .metric-box:nth-child(2) { animation-delay: 0.1s; }
+    .metric-box:nth-child(3) { animation-delay: 0.2s; }
+    .metric-box:nth-child(4) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header unificado -->
+    <div class="page-header" data-aos="fade-up">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                <i class="fas fa-user-shield fa-4x mb-3" style="opacity: 0.9;"></i>
+            </div>
+            <div class="col-md-6 text-center text-md-start">
+                <h1 class="page-title">Panel de Administración</h1>
+                <p class="page-subtitle">Control total del sistema GestorSPA</p>
+                <small style="opacity: 0.8;">Gestiona usuarios, servicios, turnos y configuraciones</small>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="text-white">
+                    <i class="fas fa-clock me-2"></i>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <!-- Métricas principales -->
+        <div class="row" data-aos="fade-up">
+            <div class="col-md-3 col-sm-6">
+                <div class="metric-box">
+                    <i class="fas fa-calendar-check"></i>
+                    <h4>{{ total_turnos }}</h4>
+                    <p>Turnos Totales</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="metric-box">
+                    <i class="fas fa-users"></i>
+                    <h4>{{ total_clientes }}</h4>
+                    <p>Clientes Activos</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="metric-box">
+                    <i class="fas fa-spa"></i>
+                    <h4>{{ total_servicios }}</h4>
+                    <p>Servicios Disponibles</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="metric-box">
+                    <i class="fas fa-user-md"></i>
+                    <h4>{{ total_profesionales }}</h4>
+                    <p>Profesionales</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="quick-actions" data-aos="fade-up" data-aos-delay="200">
+            <a href="{% url 'turnos:turno_form' %}" class="action-card">
+                <i class="fas fa-plus-circle"></i>
+                <div class="title">Nuevo Turno</div>
+                <div class="subtitle">Crear turno para cliente</div>
+            </a>
+            <a href="{% url 'servicios:servicio_create' %}" class="action-card">
+                <i class="fas fa-spa"></i>
+                <div class="title">Nuevo Servicio</div>
+                <div class="subtitle">Agregar servicio al catálogo</div>
+            </a>
+            <a href="{% url 'usuarios:crear_profesional' %}" class="action-card">
+                <i class="fas fa-user-plus"></i>
+                <div class="title">Nuevo Profesional</div>
+                <div class="subtitle">Registrar profesional</div>
+            </a>
+            <a href="{% url 'turnos:turno_list' %}" class="action-card">
+                <i class="fas fa-list-alt"></i>
+                <div class="title">Ver Turnos</div>
+                <div class="subtitle">Gestionar todos los turnos</div>
+            </a>
+        </div>
+
+        <!-- Últimos turnos -->
+        <div class="card" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-header">
+                <h5><i class="fas fa-calendar-alt me-2"></i>Últimos Turnos Registrados</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Servicio</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for turno in ultimos_turnos %}
+                            <tr>
+                                <td>
+                                    <strong>{{ turno.nombre|default:turno.usuario.get_full_name }}</strong>
+                                    {% if turno.email %}
+                                    <br><small class="text-muted">{{ turno.email }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ turno.servicio.nombre }}</strong>
+                                    <br><small class="text-muted">{{ turno.servicio.duracion }} min</small>
+                                </td>
+                                <td>{{ turno.fecha|date:"d/m/Y" }}</td>
+                                <td>{{ turno.hora_inicio|time:"H:i" }}</td>
+                                <td>
+                                    <span class="badge-{{ turno.estado }}">
+                                        {{ turno.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'turnos:turno_detail' turno.pk %}" 
+                                       class="btn-action view" 
+                                       title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'turnos:turno_update' turno.pk %}" 
+                                       class="btn-action edit" 
+                                       title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                                    <br>No hay turnos registrados.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de administración avanzada -->
+        <div class="card" data-aos="fade-up" data-aos-delay="400">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs me-2"></i>Herramientas de Administración</h5>
+            </div>
+            <div class="card-body">
+                <div class="admin-link-grid">
+                    <div class="admin-link-box">
+                        <div class="link-title">
+                            <i class="fas fa-cog me-2"></i>Django Admin
+                        </div>
+                        <div class="link-subtitle">
+                            Gestión avanzada del sistema y base de datos
+                        </div>
+                        <a href="/admin/" class="btn-link" target="_blank">
+                            <i class="fas fa-external-link-alt me-1"></i>Acceder
+                        </a>
+                    </div>
+                    
+                    <div class="admin-link-box">
+                        <div class="link-title">
+                            <i class="fas fa-user-md me-2"></i>Gestionar Profesionales
+                        </div>
+                        <div class="link-subtitle">
+                            Horarios, especialidades y estado de profesionales
+                        </div>
+                        <a href="{% url 'usuarios:gestionar_profesionales' %}" class="btn-link">
+                            <i class="fas fa-arrow-right me-1"></i>Gestionar
+                        </a>
+                    </div>
+                    
+                    <div class="admin-link-box">
+                        <div class="link-title">
+                            <i class="fas fa-file-excel me-2"></i>Reporte de Turnos
+                        </div>
+                        <div class="link-subtitle">
+                            Exportar datos de turnos en Excel/CSV
+                        </div>
+                        <a href="#" class="btn-link" onclick="alert('Función en desarrollo')">
+                            <i class="fas fa-download me-1"></i>Descargar
+                        </a>
+                    </div>
+                    
+                    <div class="admin-link-box">
+                        <div class="link-title">
+                            <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                        </div>
+                        <div class="link-subtitle">
+                            Gráficos y métricas del negocio
+                        </div>
+                        <a href="#" class="btn-link" onclick="alert('Función en desarrollo')">
+                            <i class="fas fa-chart-line me-1"></i>Ver Estadísticas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Actualizar hora actual
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('es-AR', { 
+        hour: '2-digit', 
+        minute: '2-digit'
+    });
+    const timeElement = document.getElementById('currentTime');
+    if (timeElement) {
+        timeElement.textContent = timeString;
+    }
+}
+
+// Actualizar cada minuto
+updateTime();
+setInterval(updateTime, 60000);
+
+// Auto-refresh de métricas cada 5 minutos
+setInterval(function() {
+    location.reload();
+}, 300000);
+</script>
+{% endblock %}

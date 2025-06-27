@@ -5,47 +5,128 @@
 
 {% block extra_css %}
 <style>
-    .professionals-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 15px;
-        padding: 2rem;
+    /* Variables del sistema spa */
+    :root {
+        --spa-primary: rgba(70, 106, 68, 0.8);
+        --spa-secondary: rgba(154, 168, 168, 0.8);
+        --spa-accent: rgba(224, 144, 141, 0.8);
+        --spa-light: rgba(224, 213, 190, 0.8);
+    }
+
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .page-header {
+        text-align: center;
         margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--spa-light);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2.5rem;
+        color: var(--spa-primary);
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+    }
+
+    .page-subtitle {
+        color: var(--spa-secondary);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* Header de estadísticas */
+    .professionals-header {
+        background: linear-gradient(135deg, var(--spa-primary) 0%, var(--spa-secondary) 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(70, 106, 68, 0.2);
     }
     
+    /* Cards de estadísticas */
     .stats-card {
         background: white;
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 1.5rem;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(154, 168, 168, 0.2);
     }
     
     .stats-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
     
+    /* Cards de profesionales */
     .professional-card {
         background: white;
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(154, 168, 168, 0.2);
     }
     
     .professional-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
     
+    /* Avatar de profesional */
     .professional-avatar {
         width: 60px;
         height: 60px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #e3f2fd;
+        border: 3px solid var(--spa-light);
+    }
+
+    /* Botones estandarizados */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--spa-primary), var(--spa-secondary));
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, var(--spa-secondary), var(--spa-primary));
+        box-shadow: 0 4px 12px rgba(70, 106, 68, 0.3);
+    }
+
+    .btn-outline-success {
+        color: var(--spa-primary);
+        border: 2px solid var(--spa-primary);
+        border-radius: 8px;
+    }
+
+    .btn-outline-success:hover {
+        background: var(--spa-primary);
+        border-color: var(--spa-primary);
+    }
+
+    .btn-outline-warning {
+        color: var(--spa-accent);
+        border: 2px solid var(--spa-accent);
+        border-radius: 8px;
+    }
+
+    .btn-outline-warning:hover {
+        background: var(--spa-accent);
+        border-color: var(--spa-accent);
     }
     
     .status-badge {
@@ -99,49 +180,62 @@
         transform: translateY(-50%);
         color: #666;
     }
-    
-    .filter-tabs {
+      .filter-tabs {
         background: white;
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1.5rem;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }    .filter-tabs .nav-link {
+        border-radius: 15px !important;
+        color: var(--spa-primary) !important;
+        border: 1px solid var(--spa-light) !important;
+        margin-right: 0.3rem;
+        margin-bottom: 0.3rem;
+        font-weight: 500;
+        background: white !important;
+        transition: all 0.3s ease;
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.85rem;
+        text-decoration: none !important;
     }
     
-    .filter-tabs .nav-link {
-        border-radius: 20px;
-        color: #666;
-        border: none;
-        margin-right: 0.5rem;
+    .filter-tabs .nav-link:hover {
+        background: var(--spa-light) !important;
+        color: var(--spa-primary) !important;
+        border-color: var(--spa-primary) !important;
+        text-decoration: none !important;
     }
     
     .filter-tabs .nav-link.active {
-        background-color: #2196f3;
-        color: white;
+        background: var(--spa-primary) !important;
+        border-color: var(--spa-primary) !important;
+        color: white !important;
+        text-decoration: none !important;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="professionals-header">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h2 class="mb-2"><i class="fas fa-users-cog me-2"></i>Gestión de Profesionales</h2>
-                <p class="mb-0">Administra la información y estados de todos los profesionales del spa</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <button class="btn btn-light btn-lg">
-                    <i class="fas fa-user-plus me-2"></i>Nuevo Profesional
-                </button>
-            </div>
-        </div>
+<div class="page-container">
+    <!-- Header estándar -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-users-cog me-3"></i>
+            Gestión de Profesionales
+        </h1>
+        <p class="page-subtitle">Administra la información y estados de todos los profesionales del spa</p>
+    </div>
+
+    <!-- Botón crear profesional -->
+    <div class="text-end mb-4">
+        <a href="{% url 'usuarios:crear_profesional' %}" class="btn btn-primary">
+            <i class="fas fa-user-plus me-2"></i>Nuevo Profesional
+        </a>
     </div>
 
     <!-- Estadísticas -->
-    <div class="row mb-4">
-        <div class="col-md-3">
+    <div class="row mb-4">        <div class="col-md-6">
             <div class="stats-card">
                 <div class="mb-2">
                     <i class="fas fa-users fa-2x text-primary"></i>
@@ -150,7 +244,7 @@
                 <small class="text-muted">Total Profesionales</small>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
             <div class="stats-card">
                 <div class="mb-2">
                     <i class="fas fa-user-check fa-2x text-success"></i>
@@ -159,31 +253,12 @@
                 <small class="text-muted">Activos</small>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card">
-                <div class="mb-2">
-                    <i class="fas fa-user-clock fa-2x text-warning"></i>
-                </div>
-                <h3 class="mb-1">{{ profesionales.count|add:"-"|add:profesionales_activos }}</h3>
-                <small class="text-muted">Inactivos/Licencia</small>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card">
-                <div class="mb-2">
-                    <i class="fas fa-calendar-week fa-2x text-info"></i>
-                </div>
-                <h3 class="mb-1">--</h3>
-                <small class="text-muted">Turnos Hoy</small>
-            </div>
-        </div>
     </div>
 
     <!-- Filtros y Búsqueda -->
     <div class="filter-tabs">
         <div class="row align-items-center">
-            <div class="col-md-6">
-                <ul class="nav nav-pills" id="filterTabs">
+            <div class="col-md-6">                <ul class="nav nav-pills" id="filterTabs">
                     <li class="nav-item">
                         <a class="nav-link active" href="#" data-filter="all">Todos</a>
                     </li>
@@ -192,12 +267,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-filter="inactivo">Inactivos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-filter="vacaciones">En Vacaciones</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-filter="licencia">En Licencia</a>
                     </li>
                 </ul>
             </div>
@@ -247,60 +316,19 @@
                             <small class="text-muted">
                                 <i class="fas fa-calendar me-1"></i>{{ profesional.experiencia_anos }} años exp.
                             </small>
-                        </div>
-                    </div>
+                        </div>                    </div>
                     <div class="col-auto">
                         <div class="btn-group-vertical">
                             <a href="{% url 'usuarios:detalle_profesional' profesional.id %}" 
                                class="btn btn-outline-primary btn-action mb-1">
                                 <i class="fas fa-eye me-1"></i>Ver
                             </a>
-                            <a href="{% url 'usuarios:cambiar_estado_profesional' profesional.id %}" 
-                               class="btn btn-outline-warning btn-action mb-1">
-                                <i class="fas fa-edit me-1"></i>Estado
-                            </a>
                             <button class="btn btn-outline-danger btn-action" 
                                     onclick="confirmDeactivate('{{ profesional.nombre_completo }}', {{ profesional.id }})">
                                 <i class="fas fa-ban me-1"></i>Desactivar
                             </button>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Información adicional expandible -->
-                <div class="collapse" id="info-{{ profesional.id }}">
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <small class="text-muted">
-                                <strong>Email:</strong> {{ profesional.contacto }}<br>
-                                <strong>Colegio:</strong> {{ profesional.colegio_profesional|default:"No especificado" }}<br>
-                                <strong>Inicio:</strong> {{ profesional.fecha_inicio|date:"d/m/Y" }}
-                            </small>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted">
-                                <strong>Horarios:</strong><br>
-                                {% for dia, horario in profesional.get_horarios_semana.items %}
-                                    {% if horario != "No disponible" %}
-                                        {{ dia|capfirst }}: {{ horario }}<br>
-                                    {% endif %}
-                                {% endfor %}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="text-center mt-2">
-                        <button class="btn btn-link btn-sm" data-bs-toggle="collapse" data-bs-target="#info-{{ profesional.id }}">
-                            Ocultar detalles <i class="fas fa-chevron-up"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-2">
-                    <button class="btn btn-link btn-sm" data-bs-toggle="collapse" data-bs-target="#info-{{ profesional.id }}">
-                        Ver más detalles <i class="fas fa-chevron-down"></i>
-                    </button>
-                </div>
+                    </div>                </div>
             </div>
         </div>
         {% empty %}

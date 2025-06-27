@@ -3,218 +3,554 @@
 
 {% block title %}Mis Turnos{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3">
-                    <i class="fas fa-calendar-alt me-2"></i>
-                    {% if is_cliente %}Mis Turnos{% else %}Todos los Turnos{% endif %}
-                </h1>
-                {% if is_cliente %}
-                    <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-success">
-                        <i class="fas fa-plus me-1"></i>Reservar Nuevo Turno
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+    }
 
-    {% if turnos %}
-        <div class="card">
-            <div class="card-body">
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--spa-sand-light) 0%, #f1f5f4 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .btn-spa-primary {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(70, 106, 68, 0.2);
+        text-decoration: none;
+    }
+
+    .btn-spa-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(70, 106, 68, 0.3);
+        color: white;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--spa-sand-light);
+        overflow: hidden;
+    }    .table thead th {
+        background: linear-gradient(135deg, var(--spa-sand-light), var(--spa-coral-light));
+        color: var(--spa-forest);
+        font-weight: 600;
+        border: none;
+        padding: 0.75rem 0.5rem;
+        font-family: 'Raleway', sans-serif;
+        font-size: 0.85rem;
+    }
+
+    .table tbody td {
+        border-color: var(--spa-sand-light);
+        vertical-align: middle;
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .table tbody tr:hover {
+        background: var(--spa-sand-light);
+    }    /* Columna de cliente compacta para profesionales */
+    .cliente-compact {
+        line-height: 1.4;
+        padding: 0.6rem 0.5rem !important;
+        min-width: 160px;
+    }
+
+    .cliente-compact .cliente-nombre {
+        font-weight: 600;
+        color: var(--spa-forest);
+        font-size: 0.9rem;
+        margin-bottom: 3px;
+        display: block;
+    }
+
+    .cliente-compact .cliente-info {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-bottom: 2px;
+        display: block;
+    }
+
+    .cliente-compact .cliente-tel {
+        font-size: 0.75rem;
+    }
+
+    .cliente-compact .cliente-tel a {
+        color: var(--spa-coral);
+        text-decoration: none;
+    }
+
+    /* Columna de servicio compacta */
+    .servicio-compact {
+        padding: 0.6rem 0.5rem !important;
+        min-width: 180px;
+    }
+
+    .servicio-compact .servicio-nombre {
+        font-weight: 600;
+        color: var(--spa-forest);
+        font-size: 0.85rem;
+        margin-bottom: 3px;
+        display: block;
+    }
+
+    .servicio-compact .servicio-desc {
+        font-size: 0.7rem;
+        color: #6c757d;
+        display: block;
+    }    /* Fechas y horas compactas */
+    .fecha-compact, .hora-compact {
+        padding: 0.6rem 0.5rem !important;
+        line-height: 1.3;
+        min-width: 90px;
+        text-align: center;
+    }
+
+    .fecha-compact .fecha-principal, .hora-compact .hora-principal {
+        font-weight: 600;
+        color: var(--spa-forest);
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .fecha-compact .fecha-dia, .hora-compact .hora-fin {
+        font-size: 0.7rem;
+        color: #6c757d;
+        display: block;
+    }
+
+    /* Celdas compactas adicionales */
+    .duracion-compact, .precio-compact, .estado-compact {
+        padding: 0.6rem 0.5rem !important;
+        text-align: center;
+        min-width: 80px;
+    }
+
+    .precio-compact .precio-valor {
+        font-weight: 600;
+        color: var(--spa-forest);
+        font-size: 0.85rem;
+    }
+
+    .estado-compact .status-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+    }
+
+    .duracion-compact .duracion-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        background: linear-gradient(135deg, var(--spa-coral), var(--spa-sand));
+        color: white;
+        font-weight: 500;
+    }    /* Acciones compactas */
+    .acciones-compact {
+        padding: 0.6rem 0.5rem !important;
+        min-width: 100px;
+    }
+
+    .acciones-compact .btn {
+        padding: 0.4rem 0.7rem;
+        margin: 0 2px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+
+    /* Responsive improvements para profesionales */
+    @media (max-width: 1200px) {
+        .servicio-compact .servicio-desc {
+            display: none; /* Ocultar descripción en pantallas medianas */
+        }
+        
+        .cliente-compact .cliente-tel {
+            display: none; /* Ocultar teléfono en pantallas medianas */
+        }
+    }
+
+    @media (max-width: 992px) {
+        .fecha-compact .fecha-dia {
+            display: none; /* Ocultar día de la semana en pantallas pequeñas */
+        }
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pendiente { background: linear-gradient(135deg, #ffc107, #ffb300); color: #000; }
+    .status-confirmado { background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage)); color: white; }
+    .status-cancelado { background: linear-gradient(135deg, var(--spa-berry), #dc3545); color: white; }
+    .status-completado { background: linear-gradient(135deg, var(--spa-coral), var(--spa-sand)); color: white; }
+
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--spa-sand-light);
+        margin-bottom: 1rem;
+    }
+
+    .stats-card .card-header {
+        background: linear-gradient(135deg, var(--spa-sand-light), var(--spa-coral-light));
+        color: var(--spa-forest);
+        border: none;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--spa-sand-light);
+        text-align: center;
+        padding: 3rem;
+        color: var(--spa-forest);
+    }
+
+    .empty-state i {
+        color: var(--spa-sage);
+        margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--spa-coral-light);
+    }
+
+    .info-card .card-header {
+        background: linear-gradient(135deg, var(--spa-coral), var(--spa-sand));
+        color: white;
+        border: none;
+        font-weight: 600;
+    }
+    .info-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(70, 106, 68, 0.1);
+        border: 1px solid var(--spa-sand-light);
+        margin-top: 2rem;
+    }
+
+    .info-card .card-header {
+        background: linear-gradient(135deg, var(--spa-sand-light), var(--spa-sage-light));
+        border-bottom: 2px solid var(--spa-sand);
+        color: var(--spa-forest);
+        font-family: 'Raleway', sans-serif;
+        font-weight: 500;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 1.5rem;
+    }
+
+    .info-card .card-body {
+        padding: 2rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .main-container {
+            padding: 0 0.5rem;
+        }
+        
+        .page-header {
+            padding: 1.5rem;
+        }
+        
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="main-container">
+    <!-- Header unificado -->
+    <div class="page-header" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>                <h1 class="page-title">
+                    <i class="fas fa-calendar-alt me-3"></i>
+                    {% if is_cliente %}
+                        Mis Turnos
+                    {% elif is_profesional %}
+                        Mis Turnos Asignados
+                    {% else %}
+                        Todos los Turnos
+                    {% endif %}
+                </h1>
+                <p class="mb-0" style="opacity: 0.9;">
+                    {% if is_cliente %}
+                        Gestiona tus citas y reservas
+                    {% elif is_profesional %}
+                        Turnos asignados a tu agenda profesional
+                    {% else %}
+                        Panel de control de turnos
+                    {% endif %}
+                </p>
+            </div>
+            {% if is_cliente %}
+                <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn-spa-primary">
+                    <i class="fas fa-plus me-2"></i>Reservar Nuevo Turno
+                </a>
+            {% endif %}
+        </div>
+    </div>{% if turnos %}
+        <div class="table-card" data-aos="fade-up">
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
+                    <table class="table table-hover mb-0">                        <thead>
                             <tr>
-                                {% if not is_cliente %}
-                                    <th>Cliente</th>
-                                    <th>Email</th>
-                                    <th>Teléfono</th>
+                                {% if not is_cliente and not is_profesional %}
+                                    <th style="min-width: 140px;"><i class="fas fa-user me-2"></i>Cliente</th>
+                                    <th style="min-width: 180px;"><i class="fas fa-envelope me-2"></i>Email</th>
+                                    <th style="min-width: 120px;"><i class="fas fa-phone me-2"></i>Teléfono</th>
+                                {% elif is_profesional %}
+                                    <th style="min-width: 160px;"><i class="fas fa-user me-2"></i>Cliente</th>
                                 {% endif %}
-                                <th>Servicio</th>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Duración</th>
-                                <th>Estado</th>
-                                <th>Precio</th>
-                                {% if not is_cliente %}
-                                    <th>Acciones</th>
-                                {% endif %}
+                                <th style="min-width: 180px;"><i class="fas fa-spa me-2"></i>Servicio</th>
+                                <th style="min-width: 100px;"><i class="fas fa-calendar me-2"></i>Fecha</th>
+                                <th style="min-width: 80px;"><i class="fas fa-clock me-2"></i>Hora</th>
+                                <th style="min-width: 90px;"><i class="fas fa-hourglass-half me-2"></i>Duración</th>
+                                <th style="min-width: 100px;"><i class="fas fa-info-circle me-2"></i>Estado</th>
+                                <th style="min-width: 90px;"><i class="fas fa-dollar-sign me-2"></i>Precio</th>
+                                <th style="min-width: 120px;"><i class="fas fa-cogs me-2"></i>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for turno in turnos %}
+                        <tbody>                            {% for turno in turnos %}
                             <tr>
-                                {% if not is_cliente %}
+                                {% if not is_cliente and not is_profesional %}
                                     <td>
-                                        <strong>{{ turno.nombre }}</strong>
+                                        <strong style="color: var(--spa-forest);">{{ turno.nombre }}</strong>
                                     </td>
                                     <td>
-                                        <a href="mailto:{{ turno.email }}">{{ turno.email }}</a>
+                                        <a href="mailto:{{ turno.email }}" style="color: var(--spa-coral);">{{ turno.email }}</a>
                                     </td>
                                     <td>
                                         {% if turno.telefono %}
-                                            <a href="tel:{{ turno.telefono }}">{{ turno.telefono }}</a>
+                                            <a href="tel:{{ turno.telefono }}" style="color: var(--spa-coral);">{{ turno.telefono }}</a>
                                         {% else %}
                                             <span class="text-muted">-</span>
                                         {% endif %}
+                                    </td>                                {% elif is_profesional %}
+                                    <td class="cliente-compact">
+                                        <div class="cliente-nombre">{{ turno.nombre }}</div>
+                                        <div class="cliente-info">{{ turno.email }}</div>
+                                        {% if turno.telefono %}
+                                            <div class="cliente-tel"><a href="tel:{{ turno.telefono }}">{{ turno.telefono }}</a></div>
+                                        {% endif %}
                                     </td>
-                                {% endif %}
-                                <td>
+                                {% endif %}                                <td class="servicio-compact">
                                     <div class="d-flex align-items-center">
-                                        <i class="{{ turno.servicio.icono }} me-2 text-primary"></i>
+                                        <i class="{{ turno.servicio.icono }} me-2" style="color: var(--spa-coral); font-size: 0.9rem;"></i>
                                         <div>
-                                            <strong>{{ turno.servicio.nombre }}</strong>
+                                            <div class="servicio-nombre">{{ turno.servicio.nombre }}</div>
                                             {% if turno.servicio.descripcion %}
-                                                <br><small class="text-muted">{{ turno.servicio.descripcion|truncatewords:8 }}</small>
+                                                <div class="servicio-desc">{{ turno.servicio.descripcion|truncatewords:4 }}</div>
                                             {% endif %}
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <strong>{{ turno.fecha|date:"d/m/Y" }}</strong>
-                                    <br><small class="text-muted">{{ turno.fecha|date:"l" }}</small>
-                                </td>
-                                <td>
-                                    <strong>{{ turno.hora_inicio|time:"H:i" }}</strong>
+                                </td>                                <td class="fecha-compact">
+                                    <div class="fecha-principal">{{ turno.fecha|date:"d/m/Y" }}</div>
+                                    <div class="fecha-dia">{{ turno.fecha|date:"D" }}</div>
+                                </td>                                <td class="hora-compact">
+                                    <div class="hora-principal">{{ turno.hora_inicio|time:"H:i" }}</div>
                                     {% if turno.hora_fin %}
-                                        <br><small class="text-muted">hasta {{ turno.hora_fin|time:"H:i" }}</small>
+                                        <div class="hora-fin">{{ turno.hora_fin|time:"H:i" }}</div>
                                     {% endif %}
+                                </td>                                <td class="duracion-compact">
+                                    <span class="duracion-badge">{{ turno.servicio.duracion }} min</span>
                                 </td>
-                                <td>
-                                    <span class="badge bg-info">{{ turno.servicio.duracion }} min</span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-{% if turno.estado == 'confirmado' %}success{% elif turno.estado == 'pendiente' %}warning{% elif turno.estado == 'completado' %}info{% elif turno.estado == 'cancelado' %}danger{% else %}secondary{% endif %}">
+                                <td class="estado-compact">
+                                    <span class="status-badge status-{{ turno.estado }}">
                                         {{ turno.get_estado_display }}
                                     </span>
                                 </td>
-                                <td>
-                                    <strong>${{ turno.servicio.precio }}</strong>
-                                </td>
-                                {% if not is_cliente %}
-                                    <td>
-                                        <div class="btn-group" role="group" aria-label="Acciones">
-                                            <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                <td class="precio-compact">
+                                    <div class="precio-valor">${{ turno.servicio.precio }}</div>
+                                </td>                                <td class="acciones-compact">
+                                    {% if is_cliente %}
+                                        <div class="d-flex gap-1">
+                                            <!-- Ver PDF -->
+                                            <a href="{% url 'turnos:turno_pdf' turno.pk %}" class="btn btn-sm" style="background: var(--spa-sage-light); color: var(--spa-forest);" title="Ver comprobante" target="_blank">
+                                                <i class="fas fa-file-pdf" style="font-size: 0.8rem;"></i>
+                                            </a>
+                                            <!-- Cancelar turno (solo si está pendiente o confirmado) -->
+                                            {% if turno.estado == 'pendiente' or turno.estado == 'confirmado' %}
+                                                <button type="button" class="btn btn-sm" style="background: var(--spa-berry-light); color: var(--spa-berry);" title="Cancelar turno" onclick="cancelarTurno({{ turno.pk }}, '{{ turno.servicio.nombre }}', '{{ turno.fecha|date:'d/m/Y' }}', '{{ turno.hora_inicio|time:'H:i' }}')">
+                                                    <i class="fas fa-times" style="font-size: 0.8rem;"></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    {% elif is_profesional %}
+                                        <div class="d-flex gap-1">
+                                            <!-- Solo ver detalles y PDF para profesionales -->
+                                            <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm" style="background: var(--spa-sage-light); color: var(--spa-forest);" title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{% url 'turnos:turno_update' turno.pk %}" class="btn btn-sm btn-outline-warning" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'turnos:turno_pdf' turno.pk %}" class="btn btn-sm btn-outline-info" title="Descargar PDF" target="_blank">
+                                            <a href="{% url 'turnos:turno_pdf' turno.pk %}" class="btn btn-sm" style="background: var(--spa-sand-light); color: var(--spa-forest);" title="PDF" target="_blank">
                                                 <i class="fas fa-file-pdf"></i>
                                             </a>
                                         </div>
-                                    </td>
-                                {% endif %}
+                                    {% else %}
+                                        <!-- Administradores tienen acceso completo -->
+                                        <div class="d-flex gap-1">
+                                            <a href="{% url 'turnos:turno_detail' turno.pk %}" class="btn btn-sm" style="background: var(--spa-sage-light); color: var(--spa-forest);" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'turnos:turno_update' turno.pk %}" class="btn btn-sm" style="background: var(--spa-coral-light); color: var(--spa-forest);" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'turnos:turno_pdf' turno.pk %}" class="btn btn-sm" style="background: var(--spa-sand-light); color: var(--spa-forest);" title="PDF" target="_blank">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-
-        <!-- Resumen de turnos -->
-        <div class="row mt-4">
+        </div>        <!-- Estadísticas para no clientes -->
+        {% if not is_cliente %}
+        <div class="row mt-4" data-aos="fade-up">
             <div class="col-md-12">
-                <div class="card">
+                <div class="stats-card">
                     <div class="card-header">
-                        <h5><i class="fas fa-chart-pie me-2"></i>Resumen</h5>
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Resumen de Turnos</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row text-center">
+                    <div class="card-body">                        <div class="row text-center">
                             <div class="col-md-3">
-                                <div class="border-end">
-                                    <h4 class="text-primary">{{ turnos|length }}</h4>
-                                    <p class="text-muted mb-0">Total de Turnos</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="border-end">
-                                    <h4 class="text-warning">
-                                        {% for turno in turnos %}
-                                            {% if turno.estado == 'pendiente' %}{{ forloop.counter0|add:1 }}{% endif %}
-                                        {% endfor %}
-                                    </h4>
-                                    <p class="text-muted mb-0">Pendientes</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="border-end">
-                                    <h4 class="text-success">
-                                        {% for turno in turnos %}
-                                            {% if turno.estado == 'confirmado' %}{{ forloop.counter0|add:1 }}{% endif %}
-                                        {% endfor %}
-                                    </h4>
-                                    <p class="text-muted mb-0">Confirmados</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <h4 class="text-info">
-                                    {% for turno in turnos %}
-                                        {% if turno.estado == 'completado' %}{{ forloop.counter0|add:1 }}{% endif %}
-                                    {% endfor %}
+                                <h4 style="color: var(--spa-forest); font-size: 2rem; font-weight: 600;">
+                                    {{ total_turnos }}
                                 </h4>
-                                <p class="text-muted mb-0">Completados</p>
+                                <p class="text-muted mb-0" style="font-size: 0.9rem;">Total</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 style="color: #ffc107; font-size: 2rem; font-weight: 600;">
+                                    {{ pendientes }}
+                                </h4>
+                                <p class="text-muted mb-0" style="font-size: 0.9rem;">Pendientes</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 style="color: var(--spa-sage); font-size: 2rem; font-weight: 600;">
+                                    {{ confirmados }}
+                                </h4>
+                                <p class="text-muted mb-0" style="font-size: 0.9rem;">Confirmados</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 style="color: var(--spa-coral); font-size: 2rem; font-weight: 600;">
+                                    {{ completados }}
+                                </h4>
+                                <p class="text-muted mb-0" style="font-size: 0.9rem;">Completados</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {% endif %}
 
     {% else %}
         <!-- Sin turnos -->
-        <div class="card">
-            <div class="card-body text-center py-5">
-                <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
-                <h4 class="text-muted">
-                    {% if is_cliente %}
-                        No tienes turnos registrados
-                    {% else %}
-                        No hay turnos en el sistema
-                    {% endif %}
-                </h4>
-                <p class="text-muted mb-4">
-                    {% if is_cliente %}
-                        ¡Reserva tu primer turno y disfruta de nuestros servicios!
-                    {% else %}
-                        Los turnos aparecerán aquí cuando los clientes hagan reservas.
-                    {% endif %}
-                </p>
+        <div class="empty-state" data-aos="fade-up">
+            <i class="fas fa-calendar-times fa-4x"></i>
+            <h4>
                 {% if is_cliente %}
-                    <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn btn-success btn-lg">
-                        <i class="fas fa-plus me-2"></i>Reservar Mi Primer Turno
-                    </a>
+                    No tienes turnos registrados
+                {% else %}
+                    No hay turnos en el sistema
                 {% endif %}
-            </div>
+            </h4>
+            <p class="mb-4">
+                {% if is_cliente %}
+                    ¡Reserva tu primer turno y disfruta de nuestros servicios!
+                {% else %}
+                    Los turnos aparecerán aquí cuando los clientes hagan reservas.
+                {% endif %}
+            </p>
+            {% if is_cliente %}
+                <a href="{% url 'turnos:turno_reserva_unificada' %}" class="btn-spa-primary">
+                    <i class="fas fa-plus me-2"></i>Reservar Mi Primer Turno
+                </a>
+            {% endif %}
         </div>
     {% endif %}
 
     <!-- Información adicional para clientes -->
     {% if is_cliente %}
-        <div class="row mt-4">
+        <div class="row mt-4" data-aos="fade-up">
             <div class="col-md-12">
-                <div class="card border-primary">
-                    <div class="card-header bg-primary text-white">
+                <div class="info-card">
+                    <div class="card-header">
                         <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información Importante</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <h6><i class="fas fa-clock me-1"></i>Política de Cancelación</h6>
-                                <ul class="small">
+                                <h6 style="color: var(--spa-forest);"><i class="fas fa-clock me-2"></i>Política de Cancelación</h6>
+                                <ul class="small" style="color: var(--spa-forest);">
                                     <li>Cancela tu turno con al menos 24 horas de anticipación</li>
                                     <li>Puedes reprogramar hasta 2 horas antes</li>
                                     <li>Llegadas tardías de más de 15 minutos pueden ser canceladas</li>
                                 </ul>
                             </div>
                             <div class="col-md-6">
-                                <h6><i class="fas fa-spa me-1"></i>Preparación para tu Cita</h6>
-                                <ul class="small">
+                                <h6 style="color: var(--spa-forest);"><i class="fas fa-spa me-2"></i>Preparación para tu Cita</h6>
+                                <ul class="small" style="color: var(--spa-forest);">
                                     <li>Llega 10 minutos antes de tu cita</li>
                                     <li>Trae una identificación válida</li>
                                     <li>Informa sobre alergias o condiciones médicas</li>
@@ -227,4 +563,147 @@
         </div>
     {% endif %}
 </div>
+<!-- Fin del contenedor principal -->
+
+<!-- Modal de confirmación para cancelar turno -->
+<div class="modal fade" id="cancelarTurnoModal" tabindex="-1" aria-labelledby="cancelarTurnoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--spa-berry-light), var(--spa-coral-light)); border-bottom: 2px solid var(--spa-berry); border-radius: 16px 16px 0 0;">
+                <h5 class="modal-title" id="cancelarTurnoModalLabel" style="color: var(--spa-berry); font-family: 'Raleway', sans-serif; font-weight: 600;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Cancelar Turno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <div class="text-center mb-3">
+                    <i class="fas fa-calendar-times fa-3x" style="color: var(--spa-berry); margin-bottom: 1rem;"></i>
+                    <h5 style="color: var(--spa-forest);">¿Estás seguro que quieres cancelar este turno?</h5>
+                </div>
+                <div id="turnoDetails" style="background: var(--spa-sand-light); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">
+                    <!-- Los detalles del turno se llenarán dinámicamente -->
+                </div>
+                <div class="alert" style="background: var(--spa-coral-light); border: 1px solid var(--spa-coral); border-radius: 8px; margin-top: 1rem;">
+                    <small style="color: var(--spa-forest);">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <strong>Nota:</strong> Esta acción no se puede deshacer. Si necesitas reprogramar, puedes hacer una nueva reserva después de cancelar.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--spa-sand-light); padding: 1.5rem;">
+                <button type="button" class="btn" style="background: var(--spa-sage-light); color: var(--spa-forest); border-radius: 8px; padding: 0.75rem 1.5rem;" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> No, Mantener Turno
+                </button>
+                <button type="button" class="btn" style="background: var(--spa-berry); color: white; border-radius: 8px; padding: 0.75rem 1.5rem;" onclick="confirmarCancelacion()">
+                    <i class="fas fa-check me-1"></i> Sí, Cancelar Turno
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let turnoACancelar = null;
+
+function cancelarTurno(turnoId, servicioNombre, fecha, hora) {
+    turnoACancelar = turnoId;
+    
+    // Llenar los detalles del turno en el modal
+    document.getElementById('turnoDetails').innerHTML = `
+        <div class="row">
+            <div class="col-6">
+                <strong style="color: var(--spa-forest);">Servicio:</strong><br>
+                <span style="color: var(--spa-coral);">${servicioNombre}</span>
+            </div>
+            <div class="col-6">
+                <strong style="color: var(--spa-forest);">Fecha:</strong><br>
+                <span style="color: var(--spa-coral);">${fecha}</span>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-6">
+                <strong style="color: var(--spa-forest);">Hora:</strong><br>
+                <span style="color: var(--spa-coral);">${hora}</span>
+            </div>
+        </div>
+    `;
+    
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('cancelarTurnoModal'));
+    modal.show();
+}
+
+function confirmarCancelacion() {
+    if (!turnoACancelar) return;
+    
+    // Mostrar indicador de carga
+    const botonConfirmar = document.querySelector('#cancelarTurnoModal .modal-footer .btn[onclick="confirmarCancelacion()"]');
+    const textoOriginal = botonConfirmar.innerHTML;
+    botonConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Cancelando...';
+    botonConfirmar.disabled = true;
+    
+    // Realizar petición AJAX para cancelar el turno
+    fetch(`/turnos/cancelar/${turnoACancelar}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'motivo': 'Cancelado por el cliente'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('cancelarTurnoModal'));
+            modal.hide();
+            
+            // Mostrar mensaje de éxito
+            showAlert('success', data.message || 'Turno cancelado exitosamente');
+            
+            // Recargar la página después de un breve delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showAlert('error', data.message || 'Error al cancelar el turno');
+            botonConfirmar.innerHTML = textoOriginal;
+            botonConfirmar.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Error de conexión. Por favor, intenta nuevamente.');
+        botonConfirmar.innerHTML = textoOriginal;
+        botonConfirmar.disabled = false;
+    });
+}
+
+function showAlert(type, message) {
+    // Crear y mostrar un alert temporal
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+    alertDiv.style.position = 'fixed';
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.style.minWidth = '300px';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 5000);
+}
+</script>
 {% endblock %}

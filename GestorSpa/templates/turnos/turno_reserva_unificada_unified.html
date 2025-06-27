@@ -1,0 +1,898 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Reservar Turno - SPA Gestión{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_green.css">
+<style>
+/* === VARIABLES SPA UNIFICADAS === */
+:root {
+    --spa-sage: #9aa8a8;
+    --spa-forest: #466a44;
+    --spa-sand: #e0d5be;
+    --spa-coral: #e0908d;
+    --spa-berry: #c7495c;
+    --spa-sage-light: rgba(154, 168, 168, 0.1);
+    --spa-forest-light: rgba(70, 106, 68, 0.1);
+    --spa-sand-light: rgba(224, 213, 190, 0.15);
+    --spa-coral-light: rgba(224, 144, 141, 0.1);
+    --spa-berry-light: rgba(199, 73, 92, 0.1);
+    --spa-white: #ffffff;
+    --spa-text-dark: #2c3e50;
+    --spa-text-light: #6c757d;
+    --spa-border-radius: 16px;
+    --spa-border-radius-lg: 24px;
+    --spa-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --spa-shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.15);
+    --spa-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === CONTENEDOR PRINCIPAL === */
+.container-turnos {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* === ENCABEZADOS === */
+.section-title {
+    color: var(--spa-forest);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    font-family: 'Raleway', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title i {
+    color: var(--spa-coral);
+    font-size: 1.6rem;
+}
+
+.section-subtitle {
+    color: var(--spa-forest);
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+    font-family: 'Raleway', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* === PASOS DE RESERVA === */
+.step-container {
+    background: var(--spa-white);
+    border-radius: var(--spa-border-radius-lg);
+    box-shadow: var(--spa-shadow);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--spa-sand);
+    transition: var(--spa-transition);
+}
+
+.step-container.hidden {
+    display: none;
+}
+
+.step-container.visible {
+    display: block;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === GRID DE SERVICIOS === */
+.servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.servicio-card {
+    background: var(--spa-white);
+    border-radius: var(--spa-border-radius);
+    box-shadow: var(--spa-shadow);
+    padding: 2rem;
+    cursor: pointer;
+    transition: var(--spa-transition);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.servicio-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--spa-coral), var(--spa-berry));
+    transform: scaleX(0);
+    transition: var(--spa-transition);
+}
+
+.servicio-card:hover::before {
+    transform: scaleX(1);
+}
+
+.servicio-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--spa-shadow-hover);
+    border-color: var(--spa-coral);
+}
+
+.servicio-card.selected {
+    border-color: var(--spa-forest);
+    background: linear-gradient(135deg, var(--spa-forest-light), var(--spa-sage-light));
+    transform: translateY(-8px);
+    box-shadow: var(--spa-shadow-hover);
+}
+
+.servicio-card.selected::before {
+    transform: scaleX(1);
+}
+
+.servicio-icon {
+    font-size: 3rem;
+    color: var(--spa-coral);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: var(--spa-coral-light);
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    transition: var(--spa-transition);
+}
+
+.servicio-card:hover .servicio-icon {
+    background: var(--spa-coral);
+    color: var(--spa-white);
+    transform: scale(1.1);
+}
+
+.servicio-card.selected .servicio-icon {
+    background: var(--spa-forest);
+    color: var(--spa-white);
+    transform: scale(1.1);
+}
+
+.servicio-nombre {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--spa-forest);
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+}
+
+.servicio-detalles {
+    font-size: 1rem;
+    color: var(--spa-text-light);
+    text-align: center;
+    line-height: 1.6;
+}
+
+.servicio-detalles div {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.servicio-detalles i {
+    color: var(--spa-sage);
+    font-size: 0.9rem;
+}
+
+/* === SELECCIÓN DE PROFESIONAL === */
+.form-control {
+    border: 2px solid var(--spa-sand);
+    border-radius: var(--spa-border-radius);
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    transition: var(--spa-transition);
+    background: var(--spa-white);
+    color: var(--spa-text-dark);
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-control:focus {
+    border-color: var(--spa-forest);
+    box-shadow: 0 0 0 0.25rem var(--spa-forest-light);
+    outline: none;
+}
+
+.form-control:disabled {
+    background: var(--spa-sand-light);
+    color: var(--spa-text-light);
+    opacity: 0.7;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--spa-forest);
+    margin-bottom: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* === CALENDARIO Y HORARIOS === */
+.calendario-wrapper {
+    background: var(--spa-sand-light);
+    border-radius: var(--spa-border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.horario-btn {
+    background: var(--spa-white);
+    border: 2px solid var(--spa-sand);
+    border-radius: var(--spa-border-radius);
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--spa-transition);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--spa-forest);
+    box-shadow: var(--spa-shadow);
+    font-family: 'Poppins', sans-serif;
+}
+
+.horario-btn:hover {
+    border-color: var(--spa-coral);
+    transform: translateY(-4px);
+    box-shadow: var(--spa-shadow-hover);
+    background: var(--spa-coral-light);
+}
+
+.horario-btn.selected {
+    background: linear-gradient(135deg, var(--spa-coral), var(--spa-berry));
+    color: var(--spa-white);
+    border-color: var(--spa-berry);
+    transform: translateY(-4px);
+    box-shadow: var(--spa-shadow-hover);
+}
+
+.horario-btn:disabled {
+    background: var(--spa-sage-light);
+    color: var(--spa-text-light);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.horario-btn:disabled:hover {
+    transform: none;
+    box-shadow: var(--spa-shadow);
+}
+
+/* === BOTONES === */
+.btn-spa-primary {
+    background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+    border: none;
+    border-radius: var(--spa-border-radius);
+    padding: 1rem 2rem;
+    font-weight: 600;
+    color: var(--spa-white);
+    font-size: 1rem;
+    transition: var(--spa-transition);
+    box-shadow: var(--spa-shadow);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-spa-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--spa-shadow-hover);
+    background: linear-gradient(135deg, var(--spa-sage), var(--spa-forest));
+}
+
+.btn-spa-primary:disabled {
+    background: var(--spa-sage-light);
+    color: var(--spa-text-light);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-spa-secondary {
+    background: var(--spa-white);
+    border: 2px solid var(--spa-sage);
+    border-radius: var(--spa-border-radius);
+    padding: 1rem 2rem;
+    font-weight: 600;
+    color: var(--spa-sage);
+    font-size: 1rem;
+    transition: var(--spa-transition);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-spa-secondary:hover {
+    background: var(--spa-sage);
+    color: var(--spa-white);
+    transform: translateY(-3px);
+    box-shadow: var(--spa-shadow);
+}
+
+/* === CONTROLES DE NAVEGACIÓN === */
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--spa-sand);
+}
+
+/* === INDICADOR DE PROGRESO === */
+.progress-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3rem;
+    gap: 1rem;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--spa-border-radius);
+    background: var(--spa-sage-light);
+    color: var(--spa-text-light);
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--spa-transition);
+}
+
+.progress-step.active {
+    background: linear-gradient(135deg, var(--spa-coral), var(--spa-berry));
+    color: var(--spa-white);
+    box-shadow: var(--spa-shadow);
+}
+
+.progress-step.completed {
+    background: var(--spa-forest);
+    color: var(--spa-white);
+}
+
+.progress-arrow {
+    color: var(--spa-sage);
+    font-size: 1.2rem;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .container-turnos {
+        padding: 1rem;
+        margin: 1rem;
+    }
+    
+    .servicios-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .horarios-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .step-navigation {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn-spa-primary,
+    .btn-spa-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .progress-indicator {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .progress-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .step-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .horarios-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .servicio-card {
+        padding: 1.5rem;
+    }
+    
+    .servicio-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-turnos">
+    <!-- Título Principal -->
+    <h1 class="section-title">
+        <i class="fas fa-spa"></i>
+        Reservar Turno
+    </h1>
+
+    <!-- Indicador de Progreso -->
+    <div class="progress-indicator">
+        <div class="progress-step active" id="progress-step-1">
+            <i class="fas fa-list"></i>
+            <span>Servicio</span>
+        </div>
+        <i class="fas fa-chevron-right progress-arrow"></i>
+        <div class="progress-step" id="progress-step-2">
+            <i class="fas fa-user-md"></i>
+            <span>Profesional</span>
+        </div>
+        <i class="fas fa-chevron-right progress-arrow"></i>
+        <div class="progress-step" id="progress-step-3">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Fecha y Hora</span>
+        </div>
+        <i class="fas fa-chevron-right progress-arrow"></i>
+        <div class="progress-step" id="progress-step-4">
+            <i class="fas fa-check"></i>
+            <span>Confirmación</span>
+        </div>
+    </div>
+
+    <!-- Paso 1: Selección de Servicio -->
+    <div id="paso1" class="step-container visible">
+        <h2 class="section-subtitle">
+            <i class="fas fa-list"></i>
+            Paso 1: Seleccione un Servicio
+        </h2>
+        <div class="servicios-grid">
+            {% for servicio in servicios %}
+            <div class="servicio-card" onclick="seleccionarServicio({{ servicio.id }}, '{{ servicio.nombre }}')">
+                <div class="servicio-icon">
+                    <i class="{{ servicio.icono|default:'fas fa-spa' }}"></i>
+                </div>
+                <div class="servicio-nombre">{{ servicio.nombre }}</div>
+                <div class="servicio-detalles">
+                    <div>
+                        <i class="fas fa-clock"></i>
+                        <span>{{ servicio.duracion }} minutos</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-tag"></i>
+                        <span>${{ servicio.precio }}</span>
+                    </div>
+                    {% if servicio.descripcion %}
+                    <div style="margin-top: 1rem; font-style: italic;">
+                        {{ servicio.descripcion|truncatewords:15 }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Paso 2: Selección de Profesional -->
+    <div id="paso2" class="step-container hidden">
+        <h2 class="section-subtitle">
+            <i class="fas fa-user-md"></i>
+            Paso 2: Seleccione un Profesional
+        </h2>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mb-4">
+                    <label for="profesional" class="form-label">Profesional Disponible</label>
+                    <select id="profesional" class="form-control" disabled>
+                        <option value="">Seleccione un profesional</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="step-navigation">
+            <button type="button" class="btn-spa-secondary" onclick="volverAPaso1()">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Servicio
+            </button>
+            <button type="button" class="btn-spa-primary" onclick="avanzarAPaso3()" id="btnAvanzarPaso3" disabled>
+                Continuar a Fecha
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Paso 3: Selección de Fecha y Hora -->
+    <div id="paso3" class="step-container hidden">
+        <h2 class="section-subtitle">
+            <i class="fas fa-calendar-alt"></i>
+            Paso 3: Seleccione Fecha y Hora
+        </h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="calendario-wrapper">
+                    <label class="form-label">Seleccione la Fecha</label>
+                    <input type="text" id="calendario" class="form-control" placeholder="Haga clic para seleccionar fecha">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <label class="form-label">Horarios Disponibles</label>
+                    <div class="horarios-grid" id="horariosDisponibles">
+                        <!-- Se llenarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="step-navigation">
+            <button type="button" class="btn-spa-secondary" onclick="volverAPaso2()">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Profesional
+            </button>
+            <button type="button" class="btn-spa-primary" onclick="avanzarAPaso4()" id="btnAvanzarPaso4" disabled>
+                Continuar a Confirmación
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Paso 4: Formulario de Datos y Confirmación -->
+    <div id="paso4" class="step-container hidden">
+        <h2 class="section-subtitle">
+            <i class="fas fa-check"></i>
+            Paso 4: Confirme su Reserva
+        </h2>
+        
+        <!-- Resumen de la reserva -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="step-container" style="margin-bottom: 0; background: var(--spa-sand-light);">
+                    <h4 style="color: var(--spa-forest); margin-bottom: 1rem;">Resumen de su Reserva</h4>
+                    <div id="resumenReserva">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form id="formularioReserva" action="{% url 'turnos:turno_reserva_unificada' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="servicioSeleccionado" name="servicio_id" value="">
+                    <input type="hidden" id="profesionalSeleccionado" name="profesional_id" value="">
+                    <input type="hidden" id="fechaSeleccionada" name="fecha" value="">
+                    <input type="hidden" id="horaSeleccionada" name="hora" value="">
+                    
+                    {% if not user.is_authenticated %}
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre Completo *</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Teléfono *</label>
+                        <input type="tel" id="telefono" name="telefono" class="form-control" required>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones (Opcional)</label>
+                        <textarea id="observaciones" name="observaciones" class="form-control" rows="3" 
+                                  placeholder="Comentarios adicionales sobre su reserva..."></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="step-navigation">
+            <button type="button" class="btn-spa-secondary" onclick="volverAPaso3()">
+                <i class="fas fa-arrow-left"></i>
+                Volver a Fecha
+            </button>
+            <button type="button" class="btn-spa-primary" onclick="confirmarReserva()">
+                <i class="fas fa-check"></i>
+                Confirmar Reserva
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts necesarios -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+<script>
+// Variables globales
+let servicioActual = null;
+let profesionalActual = null;
+let fechaActual = null;
+let horaActual = null;
+let calendarioInstance = null;
+
+// Inicializar cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarCalendario();
+});
+
+function seleccionarServicio(servicioId, servicioNombre) {
+    // Remover selección anterior
+    document.querySelectorAll('.servicio-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // Seleccionar nuevo servicio
+    event.target.closest('.servicio-card').classList.add('selected');
+    servicioActual = servicioId;
+    
+    // Cargar profesionales disponibles
+    cargarProfesionales(servicioId);
+    
+    // Avanzar al paso 2
+    setTimeout(() => {
+        mostrarPaso(2);
+        actualizarProgreso(2);
+    }, 300);
+}
+
+function cargarProfesionales(servicioId) {
+    const profesionalSelect = document.getElementById('profesional');
+    
+    // Mostrar loading
+    profesionalSelect.innerHTML = '<option value="">Cargando profesionales...</option>';
+    profesionalSelect.disabled = true;
+    
+    // Llamada AJAX para obtener profesionales
+    fetch(`/turnos/api/servicio/${servicioId}/profesionales/`)
+        .then(response => response.json())
+        .then(data => {
+            profesionalSelect.innerHTML = '<option value="">Seleccione un profesional</option>';
+            
+            data.profesionales.forEach(profesional => {
+                const option = document.createElement('option');
+                option.value = profesional.id;
+                option.textContent = profesional.nombre;
+                profesionalSelect.appendChild(option);
+            });
+            
+            profesionalSelect.disabled = false;
+            
+            // Habilitar el select change
+            profesionalSelect.onchange = function() {
+                profesionalActual = this.value;
+                document.getElementById('btnAvanzarPaso3').disabled = !this.value;
+            };
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            profesionalSelect.innerHTML = '<option value="">Error al cargar profesionales</option>';
+        });
+}
+
+function inicializarCalendario() {
+    calendarioInstance = flatpickr("#calendario", {
+        locale: "es",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        maxDate: new Date().fp_incr(30), // 30 días desde hoy
+        onChange: function(selectedDates, dateStr, instance) {
+            fechaActual = dateStr;
+            cargarHorariosDisponibles(dateStr);
+        }
+    });
+}
+
+function cargarHorariosDisponibles(fecha) {
+    const horariosContainer = document.getElementById('horariosDisponibles');
+    horariosContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--spa-text-light);">Cargando horarios disponibles...</div>';
+    
+    // Simular carga de horarios (aquí iría la llamada AJAX real)
+    setTimeout(() => {
+        const horarios = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
+        horariosContainer.innerHTML = '';
+        
+        horarios.forEach(horario => {
+            const btn = document.createElement('button');
+            btn.className = 'horario-btn';
+            btn.textContent = horario;
+            btn.onclick = () => seleccionarHorario(horario, btn);
+            horariosContainer.appendChild(btn);
+        });
+    }, 500);
+}
+
+function seleccionarHorario(horario, btn) {
+    // Remover selección anterior
+    document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
+    
+    // Seleccionar nuevo horario
+    btn.classList.add('selected');
+    horaActual = horario;
+    
+    // Habilitar botón de avanzar
+    document.getElementById('btnAvanzarPaso4').disabled = false;
+}
+
+function mostrarPaso(numero) {
+    // Ocultar todos los pasos
+    document.querySelectorAll('.step-container').forEach(paso => {
+        paso.classList.remove('visible');
+        paso.classList.add('hidden');
+    });
+    
+    // Mostrar el paso actual
+    const pasoActual = document.getElementById(`paso${numero}`);
+    pasoActual.classList.remove('hidden');
+    pasoActual.classList.add('visible');
+}
+
+function actualizarProgreso(paso) {
+    // Resetear todos los pasos
+    document.querySelectorAll('.progress-step').forEach(step => {
+        step.classList.remove('active', 'completed');
+    });
+    
+    // Marcar pasos completados
+    for (let i = 1; i < paso; i++) {
+        document.getElementById(`progress-step-${i}`).classList.add('completed');
+    }
+    
+    // Marcar paso actual
+    document.getElementById(`progress-step-${paso}`).classList.add('active');
+}
+
+// Funciones de navegación
+function volverAPaso1() {
+    mostrarPaso(1);
+    actualizarProgreso(1);
+    profesionalActual = null;
+    document.getElementById('btnAvanzarPaso3').disabled = true;
+}
+
+function avanzarAPaso3() {
+    mostrarPaso(3);
+    actualizarProgreso(3);
+}
+
+function volverAPaso2() {
+    mostrarPaso(2);
+    actualizarProgreso(2);
+    fechaActual = null;
+    horaActual = null;
+    document.getElementById('btnAvanzarPaso4').disabled = true;
+}
+
+function avanzarAPaso4() {
+    mostrarResumen();
+    mostrarPaso(4);
+    actualizarProgreso(4);
+}
+
+function volverAPaso3() {
+    mostrarPaso(3);
+    actualizarProgreso(3);
+}
+
+function mostrarResumen() {
+    const resumenContainer = document.getElementById('resumenReserva');
+    const servicioNombre = document.querySelector('.servicio-card.selected .servicio-nombre').textContent;
+    const profesionalNombre = document.getElementById('profesional').selectedOptions[0].textContent;
+    
+    resumenContainer.innerHTML = `
+        <div style="margin-bottom: 1rem;">
+            <strong style="color: var(--spa-forest);">Servicio:</strong><br>
+            <span style="color: var(--spa-text-dark);">${servicioNombre}</span>
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <strong style="color: var(--spa-forest);">Profesional:</strong><br>
+            <span style="color: var(--spa-text-dark);">${profesionalNombre}</span>
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <strong style="color: var(--spa-forest);">Fecha:</strong><br>
+            <span style="color: var(--spa-text-dark);">${fechaActual}</span>
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <strong style="color: var(--spa-forest);">Hora:</strong><br>
+            <span style="color: var(--spa-text-dark);">${horaActual}</span>
+        </div>
+    `;
+    
+    // Llenar campos ocultos
+    document.getElementById('servicioSeleccionado').value = servicioActual;
+    document.getElementById('profesionalSeleccionado').value = profesionalActual;
+    document.getElementById('fechaSeleccionada').value = fechaActual;
+    document.getElementById('horaSeleccionada').value = horaActual;
+}
+
+function confirmarReserva() {
+    const form = document.getElementById('formularioReserva');
+    
+    // Validar campos requeridos
+    const requiredFields = form.querySelectorAll('[required]');
+    let allValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.style.borderColor = 'var(--spa-berry)';
+            allValid = false;
+        } else {
+            field.style.borderColor = 'var(--spa-sand)';
+        }
+    });
+    
+    if (allValid) {
+        // Mostrar confirmación
+        if (confirm('¿Está seguro de que desea confirmar esta reserva?')) {
+            form.submit();
+        }
+    } else {
+        alert('Por favor complete todos los campos requeridos.');
+    }
+}
+
+// Efectos visuales adicionales
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de entrada para las tarjetas de servicio
+    const servicioCards = document.querySelectorAll('.servicio-card');
+    servicioCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}

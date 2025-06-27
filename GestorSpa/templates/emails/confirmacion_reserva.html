@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Reserva - Spa Sentirse Bien</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .email-header {
+            background: linear-gradient(135deg, #466a44, #9aa8a8);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .spa-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .email-body {
+            padding: 2rem;
+        }
+        
+        .greeting {
+            font-size: 1.2rem;
+            color: #466a44;
+            margin-bottom: 1rem;
+        }
+        
+        .message {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+        
+        .reservation-card {
+            background: linear-gradient(135deg, #e0d5be, #f8f6f0);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid #466a44;
+        }
+        
+        .reservation-title {
+            font-size: 1.3rem;
+            color: #466a44;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .price-highlight {
+            background: linear-gradient(135deg, #466a44, #9aa8a8);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        
+        .price-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .price-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+        
+        .discount-notice {
+            background: #e0908d;
+            color: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #9aa8a8;
+        }
+        
+        .instructions-title {
+            font-weight: 600;
+            color: #466a44;
+            margin-bottom: 0.8rem;
+        }
+        
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .instructions li {
+            padding: 0.3rem 0;
+            color: #555;
+        }
+        
+        .instructions li:before {
+            content: '✓ ';
+            color: #466a44;
+            font-weight: bold;
+        }
+        
+        .contact-info {
+            background: #466a44;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .contact-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-details {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .footer a {
+            color: #9aa8a8;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 600px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-details {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .email-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="email-header">
+            <div class="logo">🌸</div>
+            <div class="spa-name">Spa Sentirse Bien</div>
+            <div class="tagline">Tu momento de relajación y bienestar</div>
+        </div>
+        
+        <!-- Body -->
+        <div class="email-body">
+            <div class="greeting">¡Hola {{ turno.nombre }}!</div>
+            
+            <div class="message">
+                Nos complace confirmar tu reserva en nuestro spa. Hemos reservado tu tiempo especial para disfrutar de nuestros servicios de relajación y bienestar.
+            </div>
+            
+            <!-- Reservation Details -->
+            <div class="reservation-card">
+                <div class="reservation-title">
+                    📅 Detalles de tu Reserva
+                </div>
+                
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Servicio</div>
+                        <div class="detail-value">{{ turno.servicio.nombre }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Profesional</div>
+                        <div class="detail-value">{{ turno.profesional.nombre_completo }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Fecha</div>
+                        <div class="detail-value">{{ turno.fecha|date:"l, d F Y" }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Hora</div>
+                        <div class="detail-value">{{ turno.hora_inicio|time:"H:i" }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Duración</div>
+                        <div class="detail-value">{{ turno.servicio.duracion }} minutos</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Estado</div>
+                        <div class="detail-value">{{ turno.get_estado_display }}</div>
+                    </div>
+                    
+                    {% if turno.servicio.descripcion %}
+                    <div class="detail-item full-width">
+                        <div class="detail-label">Descripción del Servicio</div>
+                        <div class="detail-value">{{ turno.servicio.descripcion }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Price Information -->
+            <div class="price-highlight">
+                <div class="price-label">Total a Pagar</div>
+                <div class="price-value">${{ turno.total|floatformat:2 }}</div>
+            </div>
+            
+            {% if turno.descuento_aplicado %}
+            <div class="discount-notice">
+                🎉 ¡Felicitaciones! Se aplicó un 15% de descuento por pago con tarjeta de débito anticipado
+            </div>
+            {% endif %}
+            
+            <!-- Instructions -->
+            <div class="instructions">
+                <div class="instructions-title">Información Importante:</div>
+                <ul>
+                    <li>Llega 10 minutos antes de tu cita</li>
+                    <li>Trae ropa cómoda y suelta</li>
+                    <li>Si necesitas cancelar, hazlo con 24hs de anticipación</li>
+                    <li>El pago se realizará al finalizar el servicio</li>
+                    <li>Disfruta de nuestras instalaciones de relajación</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Contact Info -->
+        <div class="contact-info">
+            <div class="contact-title">¿Necesitas contactarnos?</div>
+            <div class="contact-details">
+                <div class="contact-item">
+                    📍 Av. San Martín 123, Resistencia
+                </div>
+                <div class="contact-item">
+                    📞 +54 3624-567890
+                </div>
+                <div class="contact-item">
+                    ✉️ info@gestorspa.com
+                </div>
+                <div class="contact-item">
+                    💬 WhatsApp: +54 9 3624-567890
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>© {{ current_year }} Spa Sentirse Bien - Todos los derechos reservados</p>
+            <p>Este email fue enviado automáticamente, por favor no responder.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -5,43 +5,111 @@
 
 {% block extra_css %}
 <style>
+    /* Variables del sistema spa */
+    :root {
+        --spa-primary: rgba(70, 106, 68, 0.8);
+        --spa-secondary: rgba(154, 168, 168, 0.8);
+        --spa-accent: rgba(224, 144, 141, 0.8);
+        --spa-light: rgba(224, 213, 190, 0.8);
+    }
+
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--spa-light);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2.5rem;
+        color: var(--spa-primary);
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+    }
+
+    .page-subtitle {
+        color: var(--spa-secondary);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* Botones estandarizados */
     .btn-primary {
-        background-color: #79927d;
-        border-color: #79927d;
+        background: linear-gradient(135deg, var(--spa-primary), var(--spa-secondary));
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
+    
     .btn-primary:hover {
-        background-color: #5c7161;
-        border-color: #5c7161;
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, var(--spa-secondary), var(--spa-primary));
+        box-shadow: 0 4px 12px rgba(70, 106, 68, 0.3);
     }
+    
     .btn-outline-primary {
-        color: #79927d;
-        border-color: #79927d;
+        color: var(--spa-primary);
+        border: 2px solid var(--spa-primary);
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    
     .btn-outline-primary:hover {
-        background-color: #79927d;
-        border-color: #79927d;
+        background: var(--spa-primary);
+        border-color: var(--spa-primary);
+        color: white;
+        transform: translateY(-2px);
     }
+    
+    /* Alertas */
     .bg-primary {
-        background-color: #79927d !important;
+        background: var(--spa-primary) !important;
+    }
+
+    /* Cards de servicios */
+    .service-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 12px;
+        border: 1px solid rgba(154, 168, 168, 0.2);
+    }
+
+    .service-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(70, 106, 68, 0.15);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row mb-4 align-items-center">
-        <div class="col-md-8">
-            <h1 class="display-4 mb-0" data-aos="fade-right">Nuestros Servicios</h1>
-            <p class="lead text-muted mt-2" data-aos="fade-right" data-aos-delay="100">Descubre nuestra variedad de tratamientos</p>
-        </div>
-        {% if user.is_staff %}
-        <div class="col-md-4 text-md-end" data-aos="fade-left">
-            <a href="{% url 'servicios:servicio_create' %}" class="btn btn-primary">
-                <i class="fas fa-plus-circle me-2"></i>Nuevo Servicio
-            </a>
-        </div>
-        {% endif %}
+<div class="page-container">
+    <!-- Header estándar -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-spa me-3"></i>
+            Nuestros Servicios
+        </h1>
+        <p class="page-subtitle">Descubre nuestra variedad de tratamientos de bienestar y relajación</p>
     </div>
+
+    <!-- Botón para administradores -->
+    {% if user.is_staff %}
+    <div class="text-end mb-4" data-aos="fade-left">
+        <a href="{% url 'servicios:servicio_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>Nuevo Servicio
+        </a>
+    </div>
+    {% endif %}
 
     {% if messages %}
     <div class="row mb-4">

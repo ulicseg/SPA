@@ -19,12 +19,15 @@ wheels/
 *.egg-info/
 .installed.cfg
 
-# Tests antiguos (mantener solo los organizados)
-test_complete_system.py
-test_email_encoding.py
-test_email_fixed.py
-test_encoding.py
-test_system_simple.py
+# Scripts de prueba y utilidades temporales
+test_*.py
+fix_*.py
+*_prueba.py
+monitor_*.py
+toggle_*.py
+sync_*.py
+asignar_*.py
+init_*.py
 
 # Logs
 logs/
@@ -36,15 +39,21 @@ logs/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-
+*.sqlite3
 
 # Virtual Environment
 entorno/
 venv/
 ENV/
+env/
 
 # Environment variables
 .env
+
+# Media files (uploads de usuarios)
+media/perfiles/
+media/profesionales/
+media/servicios/
 
 # IDE
 .idea/
@@ -57,4 +66,30 @@ ENV/
 Thumbs.db
 
 # Static files
-staticfiles/ 
+staticfiles/
+static_root/
+
+# Backup files
+*.bak
+*.backup
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# Security
+.env.local
+.env.production 

@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from . import views_profesional
-from .views_with_permissions import reporte_turnos
+from .views_with_permissions import reporte_turnos, cambiar_estado_turno
 
 app_name = 'turnos'
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path('pdf/<int:pk>/', views.turno_pdf, name='turno_pdf'),
     path('profesional/turnos-manana/', views_profesional.TurnosDelProfesionalView.as_view(), name='turnos_profesional_manana'),
     path('profesional/turnos-manana/pdf/', views_profesional.TurnosProfesionalPDFView.as_view(), name='turnos_profesional_pdf'),
-    path('reporte/', reporte_turnos, name='reporte_turnos'),
-    path('api/servicio/<int:servicio_id>/profesionales/', views.api_profesionales_por_servicio, name='api_profesionales_por_servicio'),
+    path('reporte/', reporte_turnos, name='reporte_turnos'),    path('api/servicio/<int:servicio_id>/profesionales/', views.api_profesionales_por_servicio, name='api_profesionales_por_servicio'),
+    path('cambiar-estado-turno/<int:turno_id>/', cambiar_estado_turno, name='cambiar_estado_turno'),
+    path('cancelar/<int:turno_id>/', views.cancelar_turno_cliente, name='cancelar_turno_cliente'),
 ]

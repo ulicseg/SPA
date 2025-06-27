@@ -1,0 +1,576 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Crear Nuevo Profesional - GestorSpa{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --spa-sage: rgba(154, 168, 168, 0.8);
+        --spa-forest: rgba(70, 106, 68, 0.8);
+        --spa-sand: rgba(224, 213, 190, 0.8);
+        --spa-coral: rgba(224, 144, 141, 0.8);
+        --spa-berry: rgba(199, 73, 92, 0.8);
+        --spa-sage-light: rgba(154, 168, 168, 0.1);
+        --spa-forest-light: rgba(70, 106, 68, 0.1);
+        --spa-sand-light: rgba(224, 213, 190, 0.15);
+        --spa-coral-light: rgba(224, 144, 141, 0.1);
+        --spa-berry-light: rgba(199, 73, 92, 0.1);
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--spa-sand-light) 0%, #f1f5f4 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .create-professional-header {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));
+        color: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.2);
+    }
+
+    .page-title {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1rem;
+        font-weight: 300;
+    }
+    
+    .form-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 24px rgba(70, 106, 68, 0.1);
+        border: 1px solid var(--spa-sand-light);
+        transition: transform 0.2s ease;
+    }
+
+    .form-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(70, 106, 68, 0.15);
+    }
+    
+    .form-section h5 {
+        color: var(--spa-forest);
+        font-family: 'Raleway', sans-serif;
+        font-weight: 500;
+        border-bottom: 2px solid var(--spa-sand);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+      .form-control, .form-select {
+        border-radius: 8px;
+        border: 2px solid var(--spa-sand-light);
+        padding: 0.8rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+    }
+    
+    /* Estilos específicos para campos de contraseña */
+    input[type="password"] {
+        border-radius: 8px;
+        border: 2px solid var(--spa-sand-light);
+        padding: 0.8rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+        width: 100%;
+        background: white;
+    }
+    
+    input[type="password"]:focus {
+        border-color: var(--spa-forest);
+        box-shadow: 0 0 0 0.2rem rgba(70, 106, 68, 0.25);
+        outline: none;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--spa-forest);
+        box-shadow: 0 0 0 0.2rem rgba(70, 106, 68, 0.25);
+        outline: none;
+    }
+
+    .form-label {
+        color: var(--spa-forest);
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-text {
+        color: #666;
+        font-size: 0.8rem;
+    }
+    
+    .btn-action {
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary-custom {
+        background: linear-gradient(135deg, var(--spa-forest), var(--spa-sage));        border: none;
+        color: white;
+        box-shadow: 0 4px 16px rgba(70, 106, 68, 0.2);
+    }
+    
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(70, 106, 68, 0.3);
+        color: white;
+    }
+    
+    .btn-secondary-custom {
+        background: linear-gradient(135deg, var(--spa-berry), #c7495c);
+        border: none;
+        color: white;
+        box-shadow: 0 4px 16px rgba(199, 73, 92, 0.2);
+    }
+    
+    .btn-secondary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(199, 73, 92, 0.3);
+        color: white;
+    }
+    
+    .time-input-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+      .help-text {
+        color: var(--spa-sage);
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+        font-style: italic;
+        line-height: 1.4;
+    }    
+    
+    .required-field::after {
+        content: " *";
+        color: var(--spa-berry);
+        font-weight: bold;
+    }
+
+    /* Estilos para mensajes de error */
+    .text-danger {
+        color: var(--spa-berry) !important;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    /* Mejoras para campos de contraseña */
+    .password-requirements {
+        background: var(--spa-sand-light);
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--spa-forest);
+    }
+
+    .password-requirements ul {
+        margin: 0;
+        padding-left: 1.2rem;
+    }
+
+    .password-requirements li {
+        margin: 0.2rem 0;
+    }/* Estilos para la selección de servicios */
+    .services-selection-container {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid rgba(154, 168, 168, 0.2);
+    }
+
+    .services-selection-container select {
+        width: 100% !important;
+        min-height: 200px !important;
+        border: 2px solid rgba(154, 168, 168, 0.3) !important;
+        border-radius: 8px !important;
+        padding: 0.75rem !important;
+        font-size: 0.95rem !important;
+        background: white !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .services-selection-container select:focus {
+        border-color: var(--spa-forest) !important;
+        box-shadow: 0 0 0 0.2rem rgba(70, 106, 68, 0.25) !important;
+        outline: none !important;
+    }
+
+    .services-selection-container select option {
+        padding: 8px 12px !important;
+        background: white !important;
+        color: #2c3e50 !important;
+        border-bottom: 1px solid rgba(154, 168, 168, 0.1) !important;
+    }
+
+    .services-selection-container select option:checked {
+        background: linear-gradient(135deg, var(--spa-sage-light), rgba(70, 106, 68, 0.1)) !important;
+        color: var(--spa-forest) !important;
+        font-weight: 600 !important;
+    }
+
+    .services-selection-container select option:hover {
+        background: rgba(154, 168, 168, 0.1) !important;
+    }
+
+    /* Instrucciones de uso */
+    .services-help {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-style: italic;
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+    <!-- Header -->
+    <div class="create-professional-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-2"><i class="fas fa-user-plus me-2"></i>Crear Nuevo Profesional</h2>
+                <p class="mb-0">Completa la información para agregar un nuevo profesional al equipo</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{% url 'usuarios:gestionar_profesionales' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="profesionalForm">
+        {% csrf_token %}
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Información de Usuario -->
+                <div class="form-section">
+                    <h5><i class="fas fa-user me-2"></i>Información de Acceso</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ user_form.username.id_for_label }}" class="form-label required-field">
+                                    Nombre de Usuario
+                                </label>
+                                {{ user_form.username }}
+                                {% if user_form.username.help_text %}
+                                    <div class="help-text">{{ user_form.username.help_text }}</div>
+                                {% endif %}
+                                {% if user_form.username.errors %}
+                                    <div class="text-danger small">{{ user_form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ user_form.email.id_for_label }}" class="form-label required-field">
+                                    Email
+                                </label>
+                                {{ user_form.email }}
+                                {% if user_form.email.errors %}
+                                    <div class="text-danger small">{{ user_form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ user_form.first_name.id_for_label }}" class="form-label required-field">
+                                    Nombre
+                                </label>
+                                {{ user_form.first_name }}
+                                {% if user_form.first_name.errors %}
+                                    <div class="text-danger small">{{ user_form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ user_form.last_name.id_for_label }}" class="form-label required-field">
+                                    Apellido
+                                </label>
+                                {{ user_form.last_name }}
+                                {% if user_form.last_name.errors %}
+                                    <div class="text-danger small">{{ user_form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">                            <div class="mb-3">                                <label for="{{ user_form.password1.id_for_label }}" class="form-label required-field">
+                                    Contraseña
+                                </label>
+                                {{ user_form.password1 }}
+                                <div class="password-requirements">
+                                    <strong>Requisitos de contraseña:</strong><br>
+                                    • Mínimo 8 caracteres de longitud<br>
+                                    • No puede ser solo números o completamente numérica
+                                </div>
+                                {% if user_form.password1.errors %}
+                                    <div class="text-danger small">{{ user_form.password1.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ user_form.password2.id_for_label }}" class="form-label required-field">
+                                    Confirmar Contraseña
+                                </label>
+                                {{ user_form.password2 }}
+                                {% if user_form.password2.errors %}
+                                    <div class="text-danger small">{{ user_form.password2.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Profesional -->
+                <div class="form-section">
+                    <h5><i class="fas fa-id-badge me-2"></i>Información Profesional</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ profesional_form.nombre_completo.id_for_label }}" class="form-label required-field">
+                                    Nombre Completo Profesional
+                                </label>
+                                {{ profesional_form.nombre_completo }}
+                                {% if profesional_form.nombre_completo.help_text %}
+                                    <div class="help-text">{{ profesional_form.nombre_completo.help_text }}</div>
+                                {% endif %}
+                                {% if profesional_form.nombre_completo.errors %}
+                                    <div class="text-danger small">{{ profesional_form.nombre_completo.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ profesional_form.especialidad.id_for_label }}" class="form-label required-field">
+                                    Especialidad Principal
+                                </label>
+                                {{ profesional_form.especialidad }}
+                                {% if profesional_form.especialidad.help_text %}
+                                    <div class="help-text">{{ profesional_form.especialidad.help_text }}</div>
+                                {% endif %}
+                                {% if profesional_form.especialidad.errors %}
+                                    <div class="text-danger small">{{ profesional_form.especialidad.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ profesional_form.numero_matricula.id_for_label }}" class="form-label required-field">
+                                    Número de Matrícula
+                                </label>
+                                {{ profesional_form.numero_matricula }}
+                                {% if profesional_form.numero_matricula.help_text %}
+                                    <div class="help-text">{{ profesional_form.numero_matricula.help_text }}</div>
+                                {% endif %}
+                                {% if profesional_form.numero_matricula.errors %}
+                                    <div class="text-danger small">{{ profesional_form.numero_matricula.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ profesional_form.colegio_profesional.id_for_label }}" class="form-label">
+                                    Colegio Profesional
+                                </label>
+                                {{ profesional_form.colegio_profesional }}
+                                {% if profesional_form.colegio_profesional.help_text %}
+                                    <div class="help-text">{{ profesional_form.colegio_profesional.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ profesional_form.contacto.id_for_label }}" class="form-label required-field">
+                                    Email de Contacto
+                                </label>
+                                {{ profesional_form.contacto }}
+                                {% if profesional_form.contacto.help_text %}
+                                    <div class="help-text">{{ profesional_form.contacto.help_text }}</div>
+                                {% endif %}
+                                {% if profesional_form.contacto.errors %}
+                                    <div class="text-danger small">{{ profesional_form.contacto.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ profesional_form.telefono_profesional.id_for_label }}" class="form-label">
+                                    Teléfono Profesional
+                                </label>
+                                {{ profesional_form.telefono_profesional }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ profesional_form.especialidades_secundarias.id_for_label }}" class="form-label">
+                            Especialidades Secundarias
+                        </label>
+                        {{ profesional_form.especialidades_secundarias }}
+                        {% if profesional_form.especialidades_secundarias.help_text %}
+                            <div class="help-text">{{ profesional_form.especialidades_secundarias.help_text }}</div>
+                        {% endif %}
+                    </div>
+                </div>                <!-- Servicios de Especialidad -->
+                <div class="form-section">
+                    <h5><i class="fas fa-spa me-2"></i>Servicios de Especialidad</h5>
+                    <p class="text-muted small mb-3">Seleccione los servicios que puede realizar este profesional</p>
+                      <div class="services-selection-container">
+                        {{ profesional_form.servicios_especialidad }}
+                        <div class="services-help">
+                            💡 Mantén presionado Ctrl (o Cmd en Mac) para seleccionar múltiples servicios
+                        </div>
+                    </div>
+                    
+                    {% if profesional_form.servicios_especialidad.help_text %}
+                        <div class="help-text mt-2">{{ profesional_form.servicios_especialidad.help_text }}</div>
+                    {% endif %}
+                    {% if profesional_form.servicios_especialidad.errors %}
+                        <div class="text-danger small mt-2">{{ profesional_form.servicios_especialidad.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>            <div class="col-lg-4">
+                <!-- Información Adicional -->
+                <div class="form-section">
+                    <h5><i class="fas fa-info-circle me-2"></i>Información Adicional</h5>
+                    <div class="mb-3">
+                        <label for="{{ profesional_form.experiencia_anos.id_for_label }}" class="form-label">
+                            Años de Experiencia
+                        </label>
+                        {{ profesional_form.experiencia_anos }}
+                        {% if profesional_form.experiencia_anos.help_text %}
+                            <div class="help-text">{{ profesional_form.experiencia_anos.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ profesional_form.biografia.id_for_label }}" class="form-label">
+                            Biografía Profesional
+                        </label>
+                        {{ profesional_form.biografia }}
+                        {% if profesional_form.biografia.help_text %}
+                            <div class="help-text">{{ profesional_form.biografia.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ profesional_form.disponibilidad_notas.id_for_label }}" class="form-label">
+                            Notas sobre Disponibilidad
+                        </label>
+                        {{ profesional_form.disponibilidad_notas }}
+                        {% if profesional_form.disponibilidad_notas.help_text %}
+                            <div class="help-text">{{ profesional_form.disponibilidad_notas.help_text }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="form-section">
+            <div class="d-flex justify-content-end gap-3">
+                <a href="{% url 'usuarios:gestionar_profesionales' %}" class="btn btn-secondary-custom btn-action">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary-custom btn-action">
+                    <i class="fas fa-save me-2"></i>Crear Profesional
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-completar email de contacto con el email del usuario
+    const userEmail = document.querySelector('#id_email');
+    const contactEmail = document.querySelector('#id_contacto');
+    
+    if (userEmail && contactEmail) {
+        userEmail.addEventListener('blur', function() {
+            if (this.value && !contactEmail.value) {
+                contactEmail.value = this.value;
+            }
+        });
+    }
+
+    // Auto-completar nombre completo profesional
+    const firstName = document.querySelector('#id_first_name');
+    const lastName = document.querySelector('#id_last_name');
+    const nombreCompleto = document.querySelector('#id_nombre_completo');
+    
+    function updateNombreCompleto() {
+        if (firstName && lastName && nombreCompleto) {
+            const fullName = `${firstName.value} ${lastName.value}`.trim();
+            if (fullName !== ' ' && !nombreCompleto.value) {
+                nombreCompleto.value = fullName;
+            }
+        }
+    }
+    
+    if (firstName) firstName.addEventListener('blur', updateNombreCompleto);
+    if (lastName) lastName.addEventListener('blur', updateNombreCompleto);
+
+    // Mejorar la selección de servicios - simple y funcional
+    const serviciosSelect = document.querySelector('select[name="servicios_especialidad"]');
+    if (serviciosSelect) {
+        // Agregar contador dinámico simple
+        const container = serviciosSelect.closest('.services-selection-container');
+        const counter = document.createElement('div');
+        counter.className = 'services-help';
+        counter.style.marginTop = '0.5rem';
+        counter.style.fontWeight = '600';
+        counter.style.color = 'var(--spa-forest)';
+        
+        serviciosSelect.addEventListener('change', function() {
+            const selected = Array.from(this.selectedOptions);
+            if (selected.length > 0) {
+                counter.textContent = `✅ ${selected.length} servicio${selected.length > 1 ? 's' : ''} seleccionado${selected.length > 1 ? 's' : ''}`;
+                counter.style.display = 'block';
+            } else {
+                counter.style.display = 'none';
+            }
+        });
+        
+        container.appendChild(counter);
+        
+        // Trigger inicial para mostrar servicios ya seleccionados
+        serviciosSelect.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+{% endblock %}
